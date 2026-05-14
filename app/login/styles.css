@@ -1,0 +1,45 @@
+.fondo {
+    background-image: url("/FondoInicioSesion.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 100vw;
+}
+
+html, body, #root{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Sirve para que no aparezca la barrita de scrollear */
+}
+
+.logo{
+  font-family: var(--font-rubik-mono);
+  font-size: 58px;
+  font-weight: 400;
+  letter-spacing: -8px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transform: scaleY(0.9);
+}
+
+.blanco,
+.amarillo{
+  display: inline-block;
+ -webkit-text-stroke: 2px #000;
+   text-shadow:
+    2px 2px 0 #000;
+   transform: skewX(-2deg);
+}
+
+.blanco{
+  color: #f4f4f4;
+}
+
+.amarillo{
+  color: #f5c518;
+  margin-left: 6px;
+}
