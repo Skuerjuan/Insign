@@ -27,7 +27,7 @@ export default function PhaserGame() {
 
     function create(this: Phaser.Scene) {
 
-      this.add.text(250, 250, " funcionando", {
+      this.add.text(550, 300, " funcionando", {
         color: "#ffffff",
         fontSize: "32px"
       });
