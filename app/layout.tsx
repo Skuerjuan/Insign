@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Rubik_Mono_One, Baloo_2} from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Rubik_Mono_One,
+  Baloo_2,
+} from "next/font/google";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,10 +25,9 @@ const rubikMono = Rubik_Mono_One({
 });
 
 const baloo = Baloo_2({
-  subsets: ["latin"],
   variable: "--font-baloo",
+  subsets: ["latin"],
 });
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -41,6 +46,7 @@ export default function RootLayout({
         ${geistSans.variable}
         ${geistMono.variable}
         ${rubikMono.variable}
+        ${baloo.variable}
         h-full antialiased
       `}
     >

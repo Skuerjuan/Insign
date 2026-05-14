@@ -71,3 +71,13 @@ html, body, #root{
 p {
   color: black;
 }
+
+h2 {
+  color: #0042AD;
+  font-family: var(--font-baloo);
+   font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+}
