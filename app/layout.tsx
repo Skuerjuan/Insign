@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Rubik_Mono_One, Fredoka} from "next/font/google";
+import { Geist, Geist_Mono, Rubik_Mono_One, Baloo_2} from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,12 +18,11 @@ const rubikMono = Rubik_Mono_One({
   weight: "400",
 });
 
-
-const fredoka = Fredoka({
+const baloo = Baloo_2({
   subsets: ["latin"],
-  weight: ["700"],
-  variable: "--font-fredoka",
+  variable: "--font-baloo",
 });
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
