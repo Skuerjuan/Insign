@@ -8,6 +8,7 @@
 !.yarn/releases
 !.yarn/versions
 /prisma/generated
+/.agents
 
 # testing
 /coverage
