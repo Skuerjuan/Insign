@@ -66,6 +66,7 @@ html, body, #root{
   position: absolute;
   right: 35px;
   top: 40px;
+  opacity: 0.85;
 }
 
 p {
@@ -80,6 +81,7 @@ h2 {
   line-height: 1;
   display: flex;
   justify-content: center;
+  padding-top: 20px;
 }
 
 .adInicia {
@@ -127,4 +129,102 @@ h2 {
   width: 28px;
   height: 28px;
   object-fit: contain;
+}
+
+.eyeicon {
+  cursor: pointer;
+}
+
+.inicia {
+  background-color: #126cff;
+  font-family: var(--font-baloo);
+  font-size: 30px;
+  font-weight: bold;
+  border-radius: 5px;
+  width: 350px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.olvid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  padding-top: 10px;
+  font-family: var(--font-baloo);
+  font-size: 17px;
+  color: #126cff;
+  font-weight: bold;
+
+}
+
+.separador{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.linea{
+  width: 140px;
+  height: 1px;
+  background-color: #7a7a7a;
+}
+
+.separador p{
+  font-family: var(--font-baloo);
+  color: #7a7a7a;
+  font-size: 18px;
+  margin: 0;
+}
+
+.googleBtn{
+  width: 150px;
+  height: 50px;
+  border-radius: 12px;
+  border: 2px solid #d9d9d9;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-baloo);
+  font-size: 20px;
+  color: black;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.googleIcon{
+  width: 28px;
+  height: 28px;
+}
+
+.registro{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
+  font-family: var(--font-baloo);
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: 430px;
+  right: 100px;
+}
+
+.registro p{
+  color: #0047c7;
+  margin: 0;
+}
+
+.registro a{
+  color: #126cff;
+  text-decoration: none;
 }

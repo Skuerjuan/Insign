@@ -1,6 +1,6 @@
 import "./styles.css";
 import Link from "next/link";
-import Input from "../../components/input";
+import Input from "../../../components/input";
 
 export default function Login() {
   return (
@@ -23,6 +23,7 @@ export default function Login() {
           placeholder="Correo electrónico"
           type="email"
           icon="/user.png"
+          eyeIcon={null}
         />
 
         <Input
@@ -32,16 +33,27 @@ export default function Login() {
           eyeIcon="/eye.png"
         />
 
-        <Link href="/">Inicia Sesión</Link>
+        <Link href="/" className="inicia">Inicia Sesión</Link>
 
-        <p>Olvidaste tu contraseña</p>
+        <p className="olvid">¿Olvidaste tu contraseña?</p>
+        <div className="separador">
+        <div className="linea"></div>
 
-        <p>-------------------- o continúa con --------------------</p>
+        <p>o continúa con</p>
 
+        <div className="linea"></div>
+        </div>
+        
+       
+        <button className="googleBtn">
+        <img src="/google.png" className="googleIcon" />
         <Link href="/">Google</Link>
-
-        <p>¿No tienes una cuenta? Registrate</p>
-      </div>
+        </button>
+           <div className="registro">
+          <p>¿No tienes una cuenta?</p>
+          <Link href="/">Registrate</Link>
+          </div>
+       </div>
     </div>
   );
 }
