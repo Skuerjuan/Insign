@@ -29,16 +29,16 @@ export default function register() {
 
        <Input
         placeholder="Contraseña"
-        type="password"
+        type="text"
         icon="/lock.png"
         eyeIcon="/eye.png"
         />
 
         <Input
         placeholder="Repetir Contraseña"
-        type="password"
+        type="text"
         icon="/lock.png"
-        eyeIcon={null}
+        eyeIcon="/eye.png"
         />
 
         <Link href="/" className="inicia">Registrarme</Link>
