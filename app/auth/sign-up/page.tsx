@@ -23,7 +23,7 @@ export default function register() {
        <Input
         placeholder="Correo Electronico"
         type="email"
-        icon=""
+        icon="/card.png"
         eyeIcon={null}
         />
 
