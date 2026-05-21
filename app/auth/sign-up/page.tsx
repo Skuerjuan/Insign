@@ -29,14 +29,14 @@ export default function register() {
 
        <Input
         placeholder="Contraseña"
-        type="text"
+        type="password"
         icon="/lock.png"
         eyeIcon="/eye.png"
         />
 
         <Input
         placeholder="Repetir Contraseña"
-        type="text"
+        type="password"
         icon="/lock.png"
         eyeIcon="/eye.png"
         />
