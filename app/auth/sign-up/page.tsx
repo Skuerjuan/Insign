@@ -23,7 +23,7 @@ export default function Register() {
         />
 
         <Input
-          placeholder="Correo Electronico"
+          placeholder="Correo electronico"
           type="email"
           icon="/card.png"
           eyeIcon={null}
@@ -43,7 +43,7 @@ export default function Register() {
           eyeIcon="/eye.png"
         />
 
-        <Link href="/" className={styles.inicia}>
+        <Link href="/auth/sign-in" className={styles.inicia}>
           Registrarme
         </Link>
       </div>

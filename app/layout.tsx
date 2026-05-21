@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import {
   Geist,
   Geist_Mono,
-  Rubik_Mono_One,
+  Rubik,
   Baloo_2,
 } from "next/font/google";
 
@@ -18,10 +18,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const rubikMono = Rubik_Mono_One({
-  variable: "--font-rubik-mono",
+const rubikOne = Rubik({
+  variable: "--font-rubik-one",
   subsets: ["latin"],
-  weight: "400",
+  weight: "900",
 });
 
 const baloo = Baloo_2({
@@ -45,7 +45,7 @@ export default function RootLayout({
       className={`
         ${geistSans.variable}
         ${geistMono.variable}
-        ${rubikMono.variable}
+        ${rubikOne.variable}
         ${baloo.variable}
         h-full antialiased
       `}
