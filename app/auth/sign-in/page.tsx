@@ -1,59 +1,83 @@
-import "./styles.css";
+import styles from "./styles.module.css";
 import Link from "next/link";
 import Input from "../../../components/input";
 
 export default function Login() {
   return (
-    <div className="fondo">
-      <h1 className="logo">
-        <span className="blanco">In</span>
-        <span className="amarillo">Sign</span>
+    <div className={styles.fondo}>
+      <h1 className={styles.logo}>
+        <span className={styles.blanco}>In</span>
+        <span className={styles.amarillo}>Sign</span>
       </h1>
 
-      <div className="gorilaSaludando"></div>
+      <div className={styles.gorilaSaludando}></div>
 
-      <div className="container">
-        <h2>¡Bienvenido!</h2>
+      <div className={styles.container}>
+        <h2 className={styles.titulo}>¡Bienvenido!</h2>
 
-        <p className="adInicia">
+        <p className={styles.adInicia}>
           Inicia sesión para seguir aprendiendo
         </p>
 
         <Input
           placeholder="Correo electrónico"
           type="email"
-          icon="user.png"
+          icon="/user.png"
           eyeIcon={null}
         />
 
         <Input
           placeholder="Contraseña"
           type="password"
-          icon="lock.png"
+          icon="/lock.png"
           eyeIcon="/eye.png"
         />
 
-        <Link href="/menu" className="inicia">Inicia Sesión</Link>
+        <Link href="/menu" className={styles.inicia}>
+          Inicia Sesión
+        </Link>
 
-        <p className="olvid">¿Olvidaste tu contraseña?</p>
-        <div className="separador">
-        <div className="linea"></div>
+        <p className={styles.olvid}>
+          ¿Olvidaste tu contraseña?
+        </p>
 
-        <p>o continúa con</p>
+        <div className={styles.separador}>
+          <div className={styles.linea}></div>
 
-        <div className="linea"></div>
+          <p className={styles.textoSeparador}>
+            o continúa con
+          </p>
+
+          <div className={styles.linea}></div>
         </div>
-        
-       
-        <button className="googleBtn">
-        <img src="/google.png" className="googleIcon" />
-        <Link href="/">Google</Link>
+
+        <button className={styles.googleBtn}>
+          <img
+            src="/google.png"
+            className={styles.googleIcon}
+          />
+
+          <Link
+            href="/"
+            className={styles.googleLink}
+          >
+            Google
+          </Link>
         </button>
-           <div className="registro">
-          <p>¿No tienes una cuenta?</p>
-          <Link href="/auth/sign-up">Registrate</Link>
-          </div>
-       </div>
+
+        <div className={styles.registro}>
+          <p className={styles.registroTexto}>
+            ¿No tienes una cuenta?
+          </p>
+
+          <Link
+            href="/auth/sign-up"
+            className={styles.registroLink}
+          >
+            Registrate
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

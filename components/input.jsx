@@ -1,42 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import styles from "./input.module.css";
 
-export default function Input({
-  placeholder,
-  type,
-  icon,
-  eyeIcon
-}) {
-
+export default function Input({ placeholder, type, icon, eyeIcon }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="containerIni">
-
-      <img
-        src={'/' + icon}
-        className="icon"
-      />
+    <div className={styles.containerIni}>
+      <img src={icon} className={styles.icon} />
 
       <input
         type={
           type === "password"
-            ? (showPassword ? "text" : "password")
+            ? showPassword
+              ? "text"
+              : "password"
             : type
         }
         placeholder={placeholder}
-        className="input"
+        className={styles.input}
       />
 
       {eyeIcon && (
         <img
           src={eyeIcon}
-          className="icon eyeIcon"
+          className={`${styles.icon} ${styles.eyeIcon}`}
           onClick={() => setShowPassword(!showPassword)}
         />
       )}
-
     </div>
   );
 }

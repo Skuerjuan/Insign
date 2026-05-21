@@ -44,3 +44,33 @@ html, body, #root{
   color: #ffd32a;
   margin-left: 5px;
 }
+
+ h2 { 
+  color: #0042AD;
+  font-family: var(--font-baloo);
+   font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  position: absolute;
+  top: 200px;
+  left: 350px;
+ }
+
+ .play {
+    background-color: #0042AD;
+    color: #ffffff;
+    font-family: var(--font-baloo);
+    font-size: 50px;
+    width: 280px;
+    height: 100px;
+    position: absolute;
+    top: 350px;
+    left: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+ }

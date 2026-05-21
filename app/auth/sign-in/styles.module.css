@@ -1,18 +1,12 @@
 .fondo {
-    background-image: url("/FondoInicioSesion.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100vw;
-    height: 100vw;
-}
-
-html, body, #root{
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* Sirve para que no aparezca la barrita de scrollear */
+  background-image: url("/FondoInicioSesion.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .logo {
@@ -31,9 +25,9 @@ html, body, #root{
 .blanco,
 .amarillo {
   display: inline-block;
- -webkit-text-stroke: 4px #000;  /* borde negro */
+  -webkit-text-stroke: 4px #000;
   paint-order: stroke fill;
-  text-shadow: none; /* sacamos la sombra */
+  text-shadow: none;
 }
 
 .blanco {
@@ -46,15 +40,15 @@ html, body, #root{
 }
 
 .gorilaSaludando {
- background-image: url("/Gorilainicio.png");
- width: 550px;
- height: 550px;
- background-size: contain;
- background-repeat: no-repeat;
- background-position: center;
- position: absolute;
- top: 100px;
- left: 75px;
+  background-image: url("/Gorilainicio.png");
+  width: 550px;
+  height: 550px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 100px;
+  left: 75px;
 }
 
 .container {
@@ -68,19 +62,16 @@ html, body, #root{
   opacity: 0.85;
 }
 
-p {
-  color: black;
-}
-
-h2 {
+.titulo {
   color: #0042AD;
   font-family: var(--font-baloo);
-   font-size: 50px;
+  font-size: 50px;
   font-weight: 700;
   line-height: 1;
   display: flex;
   justify-content: center;
   padding-top: 20px;
+  margin: 0;
 }
 
 .adInicia {
@@ -89,49 +80,7 @@ h2 {
   font-size: 25px;
   display: flex;
   justify-content: center;
-}
-
-.containerIni {
-  width: 350px;
-  height: 55px;
-  border: 2px solid #b5b5b5;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  margin: 20px auto;
-  padding: 0 20px;
-  background-color: white;
-  gap: 12px;
-}
-
-.input {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  font-size: 22px;
-  font-family: var(--font-baloo);
-  color: #7a7a7a;
-  background: transparent;
-   flex: 1;
-  border: none;
-  outline: none;
- }
-
-.input::placeholder {
-  color: #b5b5b5;
-}
-
-
-
-.icon {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.eyeIcon {
-  cursor: pointer;
+  margin: 0;
 }
 
 .inicia {
@@ -146,6 +95,8 @@ h2 {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+  color: white;
+  text-decoration: none;
 }
 
 .olvid {
@@ -158,10 +109,9 @@ h2 {
   font-size: 17px;
   color: #126cff;
   font-weight: bold;
-
 }
 
-.separador{
+.separador {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -169,20 +119,20 @@ h2 {
   margin-top: 5px;
 }
 
-.linea{
+.linea {
   width: 140px;
   height: 1px;
   background-color: #7a7a7a;
 }
 
-.separador p{
+.textoSeparador {
   font-family: var(--font-baloo);
   color: #7a7a7a;
   font-size: 18px;
   margin: 0;
 }
 
-.googleBtn{
+.googleBtn {
   width: 150px;
   height: 50px;
   border-radius: 12px;
@@ -199,12 +149,17 @@ h2 {
   margin: 0 auto;
 }
 
-.googleIcon{
+.googleIcon {
   width: 28px;
   height: 28px;
 }
 
-.registro{
+.googleLink {
+  color: black;
+  text-decoration: none;
+}
+
+.registro {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -218,24 +173,21 @@ h2 {
   right: 100px;
 }
 
-.registro p{
+.registroTexto {
   color: #0047c7;
   margin: 0;
 }
 
-.registro a{
+.registroLink {
   color: #126cff;
   text-decoration: none;
 }
 
 @media (max-width: 768px) {
-  html, body, #root {
-    overflow-y: auto;
-  }
-
   .fondo {
     height: auto;
     min-height: 950px;
+    overflow-y: auto;
   }
 
   .logo {
@@ -254,12 +206,8 @@ h2 {
     top: 200px;
   }
 
-  h2 {
+  .titulo {
     font-size: 40px;
-  }
-
-  .containerIni {
-    width: 80%;
   }
 
   .inicia {

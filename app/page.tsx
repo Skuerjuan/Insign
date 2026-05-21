@@ -8,8 +8,8 @@ export default function Home() {
         <span className="blanco">In</span>
         <span className="amarillo">Sign</span>
       </h1>
-      <p>Juga, aprende y comunica</p>
-      <Link href="/auth/sign-in">Jugar</Link>
+      <h2>Juga, aprende y comunica</h2>
+      <Link href="/auth/sign-in" className="play">Jugar</Link>
     </div>
   );
 }
