@@ -1,4 +1,4 @@
-import PhaserGame from "@/src/componentes/JuegoMemoria";
+import PhaserGame from "@/src/juegos/JuegoMemoria";
 export default function Home() {
   return (
     <main>
