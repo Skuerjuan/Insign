@@ -33,7 +33,7 @@ export default function Login() {
           eyeIcon="/eye.png"
         />
 
-        <Link href="/" className="inicia">Inicia Sesión</Link>
+        <Link href="/menu" className="inicia">Inicia Sesión</Link>
 
         <p className="olvid">¿Olvidaste tu contraseña?</p>
         <div className="separador">
