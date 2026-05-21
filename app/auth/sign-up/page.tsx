@@ -16,28 +16,28 @@ export default function register() {
       <Input
        placeholder="Nombre de usuario"
        type="string"
-       icon="/user.png"
+       icon="user.png"
        eyeIcon={null}
        />
         
        <Input
         placeholder="Correo Electronico"
         type="email"
-        icon="/card.png"
+        icon="card.png"
         eyeIcon={null}
         />
 
        <Input
         placeholder="Contraseña"
         type="password"
-        icon="/lock.png"
+        icon="lock.png"
         eyeIcon="/eye.png"
         />
 
         <Input
         placeholder="Repetir Contraseña"
         type="password"
-        icon="/lock.png"
+        icon="lock.png"
         eyeIcon="/eye.png"
         />
 

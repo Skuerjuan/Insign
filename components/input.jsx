@@ -15,7 +15,7 @@ export default function Input({
     <div className="containerIni">
 
       <img
-        src={icon}
+        src={'/' + icon}
         className="icon"
       />
 

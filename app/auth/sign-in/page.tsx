@@ -22,14 +22,14 @@ export default function Login() {
         <Input
           placeholder="Correo electrónico"
           type="email"
-          icon="/user.png"
+          icon="user.png"
           eyeIcon={null}
         />
 
         <Input
           placeholder="Contraseña"
           type="password"
-          icon="/lock.png"
+          icon="lock.png"
           eyeIcon="/eye.png"
         />
 
