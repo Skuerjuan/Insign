@@ -1,0 +1,70 @@
+.fondo {
+    background-image: url("/FondoInicioSesion.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo {
+  font-family: var(--font-rubik-one);
+  font-size: 100px;
+  font-weight: 900;
+  line-height: 0.9;
+  display: flex;
+  align-items: center;
+  letter-spacing: -4px;
+  position: absolute;
+  top: 40px;
+  left: 475px;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+ -webkit-text-stroke: 4px #000;  /* borde negro */
+  paint-order: stroke fill;
+  text-shadow: none; /* sacamos la sombra */
+}
+
+.blanco {
+  color: #ffffff;
+}
+
+.amarillo {
+  color: #ffd32a;
+  margin-left: 5px;
+}
+
+.subtitulo { 
+  color: #0042AD;
+  font-family: var(--font-baloo);
+   font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  position: absolute;
+  top: 200px;
+  left: 350px;
+ }
+
+ .play {
+    background-color: #0042AD;
+    color: #ffffff;
+    font-family: var(--font-baloo);
+    font-size: 50px;
+    width: 280px;
+    height: 100px;
+    position: absolute;
+    top: 350px;
+    left: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+ }

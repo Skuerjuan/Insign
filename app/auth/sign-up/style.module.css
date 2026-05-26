@@ -1,0 +1,127 @@
+.fondo {
+  background-image: url("/FondoInicioSesion.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo {
+  font-family: var(--font-rubik-one);
+  font-size: 100px;
+  font-weight: 900;
+  line-height: 0.9;
+  display: flex;
+  align-items: center;
+  letter-spacing: -4px;
+  position: absolute;
+  top: 40px;
+  left: 160px;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+  -webkit-text-stroke: 4px #000;
+  paint-order: stroke fill;
+  text-shadow: none;
+}
+
+.blanco {
+  color: #ffffff;
+}
+
+.amarillo {
+  color: #ffd32a;
+  margin-left: 5px;
+}
+
+.gorilaSaludando {
+  background-image: url("/Gorilainicio.png");
+  width: 550px;
+  height: 550px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 100px;
+  left: 75px;
+}
+
+.container {
+  height: 500px;
+  width: 500px;
+  background-color: white;
+  border-radius: 15px;
+  position: absolute;
+  right: 35px;
+  top: 40px;
+  opacity: 0.85;
+}
+
+.titulo {
+  color: #0042AD;
+  font-family: var(--font-baloo);
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  margin: 0 0 20px;
+}
+
+.inicia {
+  background-color: #126cff;
+  color: white;
+  font-family: var(--font-baloo);
+  font-size: 30px;
+  font-weight: bold;
+  border-radius: 5px;
+  width: 350px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .fondo {
+    height: auto;
+    min-height: 950px;
+    overflow-y: auto;
+  }
+
+  .logo {
+    font-size: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25px;
+  }
+
+  .gorilaSaludando {
+    width: 350px;
+    height: 350px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 120px;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 500px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 430px;
+  }
+
+  .inicia {
+    width: 80%;
+  }
+}

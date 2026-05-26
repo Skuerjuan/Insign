@@ -1,41 +1,90 @@
 'use client';
 
+import styles from "./styles.module.css";
+import Link from "next/link";
+import Input from "../../../components/input";
+
 import { useActionState } from 'react';
 import { signInWithEmail } from './actions';
 
-export default function SignInForm() {
+export default function SignIn() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
 
     return (
-        <form action={formAction}
-        className="flex flex-col gap-5 min-h-screen items-center justify-center bg-gray-900">
+      <div className={styles.fondo}>
+      <h1 className={styles.logo}>
+        <span className={styles.blanco}>In</span>
+        <span className={styles.amarillo}>Sign</span>
+      </h1>
 
-        <div className="w-sm">
-        <h1 className="mt-10 text-center text-2xl/9 font-bold text-white">Sign in to your account</h1>
+      <div className={styles.gorilaSaludando}></div>
+
+      <div className={styles.container}>
+        <h2 className={styles.titulo}>¡Bienvenido!</h2>
+
+        <p className={styles.adInicia}>
+          Inicia sesión para seguir aprendiendo
+        </p>
+
+        <Input
+          placeholder="Correo electrónico"
+          type="email"
+          icon="/user.png"
+          eyeIcon={null}
+        />
+
+        <Input
+          placeholder="Contraseña"
+          type="password"
+          icon="/lock.png"
+          eyeIcon="/eye.png"
+        />
+
+        <Link href="/menu" className={styles.inicia}>
+          Inicia Sesión
+        </Link>
+
+        <p className={styles.olvid}>
+          ¿Olvidaste tu contraseña?
+        </p>
+
+        <div className={styles.separador}>
+          <div className={styles.linea}></div>
+
+          <p className={styles.textoSeparador}>
+            o continúa con
+          </p>
+
+          <div className={styles.linea}></div>
         </div>
 
-        <div className='flex flex-col gap-1.5 w-sm'>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-100">Email address</label>
-            <input id="email" name="email" type="email" required placeholder="john@my-company.com"
-            className="block rounded-md w-full bg-white/5 px-2 py-1.5 placeholder:text-gray-500 text-white outline-1 outline-white/10  focus:outline-indigo-500"/>
-        </div>
+        <button className={styles.googleBtn}>
+          <img
+            src="/google.png"
+            className={styles.googleIcon}
+          />
 
-        <div className='flex flex-col gap-1.5 w-sm'>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-100">Password</label>
-            <input id="password" name="password" type="password" required placeholder="*****"
-            className="block rounded-md w-full bg-white/5 px-2 py-1.5 placeholder:text-gray-500 text-white outline-1 outline-white/10  focus:outline-indigo-500"/>
-        </div>
-
-        {state?.error && (
-            <div className="rounded-md px-3 py-2 text-sm text-red-500">
-            {state.error}
-            </div>
-        )}
-
-        <button type="submit" disabled={isPending}
-            className="flex w-sm justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400">
-            Sign in
+          <Link
+            href="/"
+            className={styles.googleLink}
+          >
+            Google
+          </Link>
         </button>
-        </form>
+
+        <div className={styles.registro}>
+          <p className={styles.registroTexto}>
+            ¿No tienes una cuenta?
+          </p>
+
+          <Link
+            href="/auth/sign-up"
+            className={styles.registroLink}
+          >
+            Registrate
+          </Link>
+        </div>
+      </div>
+    </div>
     );
 }
