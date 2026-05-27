@@ -34,20 +34,51 @@ export default function JuegoMemoria() {
           this.segundaCarta = null;
           this.bloqueado = false;
 
-          const pares = ["Perro", "Gato", "Casa", "Mamá"];
+          const pares = ["Hola", "Adiós", "Casa", "Dónde", "Gracias", "Por favor", "Mamá", "Papá", "Ayuda", "Bien"];
+          
           const columnaSenias = Phaser.Utils.Array.Shuffle([...pares]);
           const columnaSignificados = Phaser.Utils.Array.Shuffle([...pares]);
 
-          this.crearColumna(columnaSenias, width / 2 - 180, "seña");
-          this.crearColumna(columnaSignificados, width / 2 + 180, "significado");
+          const seniasCol1 = columnaSenias.slice(0, 5);
+          const seniasCol2 = columnaSenias.slice(5, 10);
+
+          const significadosCol1 = columnaSignificados.slice(0, 5);
+          const significadosCol2 = columnaSignificados.slice(5, 10);
+
+          // Posiciones X de las columnas
+          const posXSenias1 = width / 2 - 380;
+          const posXSenias2 = width / 2 - 140;
+          const posXSignificados1 = width / 2 + 140;
+          const posXSignificados2 = width / 2 + 380;
+
+          this.crearColumna(seniasCol1, posXSenias1, "seña");
+          this.crearColumna(seniasCol2, posXSenias2, "seña");
+          this.crearColumna(significadosCol1, posXSignificados1, "significado");
+          this.crearColumna(significadosCol2, posXSignificados2, "significado");
           
-          this.add.text(width / 2, height * 0.1, "Relacioná la Seña con su Significado", { 
+          this.add.text(width / 2, height * 0.06, "Relacioná la Seña con su Significado", { 
               fontSize: "28px", 
               fontFamily: "Arial, sans-serif", 
               color: "#ffffff",
               backgroundColor: "#0055ff", 
-              padding: { x: 15, y: 10 }
-          }).setOrigin(0.5);
+              padding: { x: 1280, y: 20 },
+          }).setOrigin(0.5, 0.6);
+
+          this.add.text((posXSenias1 + posXSenias2) / 2, height * 0.16, "SEÑAS", {
+              fontSize: "20px",
+              fontFamily: "Arial, sans-serif",
+              color: "#002D76",
+              backgroundColor: "#FACC15", 
+              padding: { x: 20, y: 6 },
+          }).setOrigin(0.5, 1);
+
+          this.add.text((posXSignificados1 + posXSignificados2) / 2, height * 0.16, "SIGNIFICADOS", {
+              fontSize: "20px",
+              fontFamily: "Arial, sans-serif",
+              color: "#002D76",
+              backgroundColor: "#FACC15", 
+              padding: { x: 20, y: 6 },
+          }).setOrigin(0.5, 1);
 
           this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
             background.setDisplaySize(gameSize.width, gameSize.height);
@@ -56,19 +87,19 @@ export default function JuegoMemoria() {
 
         crearColumna(items: string[], x: number, tipo: string) {
           const { height } = this.scale;
-          const startY = height * 0.3; 
+          const startY = height * 0.24; 
 
           items.forEach((item, index) => {
-            const y = startY + index * 120; 
+            const y = startY + index * 105; 
             
             const carta = this.add.container(x, y);
-            carta.setSize(120, 100);
+            carta.setSize(120, 95);
             carta.setInteractive();
 
-            const fondoObj = this.add.image(0, 0, 'fondoFicha').setDisplaySize(120, 100);
+            const fondoObj = this.add.image(0, 0, 'fondoFicha').setDisplaySize(120, 95);
 
             const texto = this.add.text(0, 0, item, { 
-              fontSize: "20px", 
+              fontSize: "18px", 
               color: "#000000",
               backgroundColor: "#ffffff",
               padding: { x: 8, y: 4 }
