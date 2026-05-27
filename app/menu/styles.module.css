@@ -1,0 +1,95 @@
+body {
+   .fondo {
+   background-image: url("/FondoInicioSesion.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+}
+
+.logo {
+  font-family: var(--font-rubik-one);
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 0.9;
+  display: flex;
+  align-items: center;
+  letter-spacing: -4px;
+  position: absolute;
+  top: 25px;
+  left: 60px;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+  -webkit-text-stroke: 4px #000;
+  paint-order: stroke fill;
+  text-shadow: none;
+}
+
+.blanco {
+  color: #ffffff;
+}
+
+.amarillo {
+  color: #ffd32a;
+  margin-left: 5px;
+}
+
+.aside {
+    background-image: url("/asidevector.svg");
+    background-color: #126cff;
+    height: 700px;
+    width:400px;
+}
+
+.inicio {
+    background-color: #FACC15;
+    width: 250px;
+    height: 50px;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 122px;
+    left: 62px;
+    padding-top: 5px;
+    border: 1px;
+    border-radius: 5px;
+    font-family: var(--font-rubik-one);
+    color: #126cff;    
+}
+
+.casa {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 10px;
+    top: 3px;
+}
+
+.train{
+    width: 300px;
+    height: 50px;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 200px;
+    left: 40px;
+    padding-top: 5px;
+    border: 1px;
+    border-radius: 5px;
+    font-family: var(--font-rubik-one);
+}
+
+.pesa {
+width: 40px;
+height: 40px;
+padding-right: 8px;
+}
