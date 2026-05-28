@@ -4,12 +4,7 @@ import { useEffect, useRef } from "react";
 import fondoCartas from "./fondo.png"; 
 import fondo from "./fondoP.png";
 
-interface JuegoMemoriaProps {
-  palabras?: string[]; 
-  onParAdivinado: (actuales: number) => void; 
-}
-
-export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaProps) {
+export default function JuegoMemoria() {
   const gameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,7 +14,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         private primeraCarta: any = null;
         private segundaCarta: any = null;
         private bloqueado: boolean = false;
-        private aciertos: number = 0;
 
         constructor() {
           super("MemoryScene");
@@ -39,11 +33,8 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           this.primeraCarta = null;
           this.segundaCarta = null;
           this.bloqueado = false;
-          this.aciertos = 0;
 
-          const pares = palabras && palabras.length > 0 
-            ? palabras 
-            : ["Hola", "Adiós", "Casa", "Dónde", "Gracias", "Por favor", "Mamá", "Papá", "Ayuda", "Bien"];
+          const pares = ["Hola", "Adiós", "Casa", "Dónde", "Gracias", "Por favor", "Mamá", "Papá", "Ayuda", "Bien"];
           
           const columnaSenias = Phaser.Utils.Array.Shuffle([...pares]);
           const columnaSignificados = Phaser.Utils.Array.Shuffle([...pares]);
@@ -54,6 +45,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           const significadosCol1 = columnaSignificados.slice(0, 5);
           const significadosCol2 = columnaSignificados.slice(5, 10);
 
+          // Posiciones X de las columnas
           const posXSenias1 = width / 2 - 380;
           const posXSenias2 = width / 2 - 140;
           const posXSignificados1 = width / 2 + 140;
@@ -66,25 +58,25 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           
           this.add.text(width / 2, height * 0.06, "Relacioná la Seña con su Significado", { 
               fontSize: "28px", 
-              fontFamily: "var(--font-baloo), Arial, sans-serif", 
+              fontFamily: "Arial, sans-serif", 
               color: "#ffffff",
-              backgroundColor: "#0042AD", 
+              backgroundColor: "#0055ff", 
               padding: { x: 1280, y: 20 },
           }).setOrigin(0.5, 0.6);
 
           this.add.text((posXSenias1 + posXSenias2) / 2, height * 0.16, "SEÑAS", {
               fontSize: "20px",
-              fontFamily: "var(--font-baloo), Arial, sans-serif",
-              color: "#0042AD",
-              backgroundColor: "#ffd32a", 
+              fontFamily: "Arial, sans-serif",
+              color: "#002D76",
+              backgroundColor: "#FACC15", 
               padding: { x: 20, y: 6 },
           }).setOrigin(0.5, 1);
 
           this.add.text((posXSignificados1 + posXSignificados2) / 2, height * 0.16, "SIGNIFICADOS", {
               fontSize: "20px",
-              fontFamily: "var(--font-baloo), Arial, sans-serif",
-              color: "#0042AD",
-              backgroundColor: "#ffd32a", 
+              fontFamily: "Arial, sans-serif",
+              color: "#002D76",
+              backgroundColor: "#FACC15", 
               padding: { x: 20, y: 6 },
           }).setOrigin(0.5, 1);
 
@@ -108,7 +100,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
             const texto = this.add.text(0, 0, item, { 
               fontSize: "18px", 
-              fontFamily: "var(--font-baloo), Arial, sans-serif",
               color: "#000000",
               backgroundColor: "#ffffff",
               padding: { x: 8, y: 4 }
@@ -156,10 +147,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               this.time.delayedCall(500, () => {
                 this.primeraCarta.fondoObj.setTint(0x00ff00); 
                 this.segundaCarta.fondoObj.setTint(0x00ff00);
-                
-                this.aciertos++;
-                onParAdivinado(this.aciertos);
-
                 this.resetSeleccion();
               });
             } else {
@@ -206,6 +193,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
       };
 
       const game = new Phaser.Game(config);
+
       (gameRef as any).current._gameInstance = game;
     });
 
@@ -214,7 +202,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         (gameRef as any).current._gameInstance.destroy(true);
       }
     };
-  }, [palabras, onParAdivinado]);
+  }, []);
 
-  return <div ref={gameRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={gameRef} style={{ width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 0, padding: 0, overflow: 'hidden' }} />;
 }
