@@ -11,7 +11,8 @@ export default function SignIn() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
 
     return (
-      <div className={styles.fondo}>
+    <div className={styles.fondo}>
+
       <h1 className={styles.logo}>
         <span className={styles.blanco}>In</span>
         <span className={styles.amarillo}>Sign</span>
@@ -19,6 +20,7 @@ export default function SignIn() {
 
       <div className={styles.gorilaSaludando}></div>
 
+      <form action={formAction}>
       <div className={styles.container}>
         <h2 className={styles.titulo}>¡Bienvenido!</h2>
 
@@ -31,6 +33,7 @@ export default function SignIn() {
           type="email"
           icon="/user.png"
           eyeIcon={null}
+          idInput="email"
         />
 
         <Input
@@ -38,11 +41,18 @@ export default function SignIn() {
           type="password"
           icon="/lock.png"
           eyeIcon="/eye.png"
+          idInput="password"
         />
 
-        <Link href="/menu" className={styles.inicia}>
+        {state?.error && (
+          <div className="rounded-md px-3 py-2 text-sm text-red-500">
+          {state.error}
+          </div>
+        )}
+
+        <button type="submit" disabled={isPending} className={styles.inicia}>
           Inicia Sesión
-        </Link>
+        </button>
 
         <p className={styles.olvid}>
           ¿Olvidaste tu contraseña?
@@ -62,7 +72,8 @@ export default function SignIn() {
           <img
             src="/google.png"
             className={styles.googleIcon}
-          />
+            />
+
 
           <Link
             href="/"
@@ -84,7 +95,9 @@ export default function SignIn() {
             Registrate
           </Link>
         </div>
+
       </div>
+      </form>
     </div>
     );
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./input.module.css";
 
-export default function Input({ placeholder, type, icon, eyeIcon }) {
+export default function Input({ placeholder, type, icon, eyeIcon, idInput }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -20,6 +20,9 @@ export default function Input({ placeholder, type, icon, eyeIcon }) {
         }
         placeholder={placeholder}
         className={styles.input}
+        id={idInput}
+        name={idInput}
+        required
       />
 
       {eyeIcon && (
