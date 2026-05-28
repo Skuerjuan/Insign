@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model test {
+  id   Int     @id @default(autoincrement())
+  test String?
+}
+
+model ejercicios {
+  id         Int        @id @default(autoincrement())
+  tema       String
+  dificultad Int        @db.SmallInt
+  tipo       String
+  opciones   opciones[]
+}
+
+model opciones {
+  id           Int        @id @default(autoincrement())
+  ejercicio_id Int
+  palabra_id   Int
+  ejercicios   ejercicios @relation(fields: [ejercicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ej")
+  palabras     palabras   @relation(fields: [palabra_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_p")
+}
+
+model palabras {
+  id        Int        @id @default(autoincrement())
+  palabra   String     @unique
+  dibujo    String?
+  animacion String?
+  opciones  opciones[]
+}

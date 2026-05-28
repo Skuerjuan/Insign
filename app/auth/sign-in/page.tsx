@@ -1,10 +1,17 @@
+'use client';
+
 import styles from "./styles.module.css";
 import Link from "next/link";
 import Input from "../../../components/input";
 
-export default function Login() {
-  return (
-    <div className={styles.fondo}>
+import { useActionState } from 'react';
+import { signInWithEmail } from './actions';
+
+export default function SignIn() {
+    const [state, formAction, isPending] = useActionState(signInWithEmail, null);
+
+    return (
+      <div className={styles.fondo}>
       <h1 className={styles.logo}>
         <span className={styles.blanco}>In</span>
         <span className={styles.amarillo}>Sign</span>
@@ -79,5 +86,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );
+    );
 }

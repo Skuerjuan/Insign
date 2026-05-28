@@ -1,9 +1,16 @@
+'use client';
+
 import styles from "./style.module.css";
 import Link from "next/link";
 import Input from "../../../components/input";
 
-export default function Register() {
-  return (
+import { useActionState } from 'react';
+import { signUpWithEmail } from './actions';
+
+export default function SignUpForm() {
+    const [state, formAction, isPending] = useActionState(signUpWithEmail, null);
+
+    return (
     <div className={styles.fondo}>
       <h1 className={styles.logo}>
         <span className={styles.blanco}>In</span>
@@ -48,5 +55,5 @@ export default function Register() {
         </Link>
       </div>
     </div>
-  );
+    );
 }
