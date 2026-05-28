@@ -11,6 +11,18 @@ body {
 }
 }
 
+.fondo {
+  background-image: url("/FondoInicioSesion.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-baloo);
+}
+
 .logo {
   font-family: var(--font-rubik-one);
   font-size: 80px;
@@ -165,8 +177,304 @@ height: 40px;
 padding-right: 5px;
 }
 
+.mainContent {
+  position: absolute;
+  top: 0;
+  left: 400px;
+  right: 0;
+  height: 100vh;
+}
+
 .header {
   background-color: #cde0ff;
-  width: 500px;
-  height: 50px;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 20px 22px;
+  box-sizing: border-box;
+}
+
+.greeting {
+  width: 420px;
+  flex: 0 0 420px;
+  color: #0f59d7;
+}
+
+.greeting h2 {
+  margin: 0;
+  font-family: var(--font-baloo);
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 0.95;
+}
+
+.greeting p {
+  margin: 4px 0 0;
+  font-family: var(--font-baloo);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statsCard {
+  width: 260px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border-radius: 20px;
+  background: #fff;
+  flex: 0 0 auto;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-baloo);
+}
+
+.statItem strong {
+  display: block;
+  color: #000;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+.statItem span:last-child {
+  display: block;
+  color: #000;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.starIcon {
+  color: #fffb37;
+  font-size: 44px;
+  line-height: 1;
+}
+
+.fireIcon {
+  width: 40px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+  background: #ff4a0a;
+  border-radius: 55% 45% 55% 45%;
+  transform: rotate(45deg);
+}
+
+.fireIcon::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  border-radius: 50%;
+  background: #ffd632;
+}
+
+.statDivider {
+  width: 2px;
+  height: 76px;
+  background: #b8b8b8;
+}
+
+.profilePlaceholder {
+  width: 106px;
+  height: 106px;
+  display: grid;
+  place-items: center;
+  border: 5px solid #000;
+  border-radius: 999px;
+  background: #ffd735;
+  color: #8b6a00;
+  text-align: center;
+  font-family: var(--font-baloo);
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+  flex: 0 0 auto;
+  margin-left: 20px;
+}
+
+.levels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100vh - 150px);
+  padding-top: 22px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.levelCard {
+  position: relative;
+  width: calc(100% - 170px);
+  max-width: 680px;
+  height: 92px;
+  margin-left: 76px;
+  display: flex;
+  align-items: center;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.68);
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: width 180ms ease, max-width 180ms ease, height 180ms ease, margin-left 180ms ease, border-radius 180ms ease, background-color 180ms ease;
+}
+
+.levelCard:hover {
+  width: calc(100% - 60px);
+  max-width: 840px;
+  height: 250px;
+  margin-left: 30px;
+  border-radius: 30px;
+  background: #fff;
+  z-index: 2;
+}
+
+.levelCard:not(:hover) > * {
+  opacity: 0.58;
+}
+
+.levelImagePlaceholder {
+  width: 70px;
+  height: 70px;
+  margin-left: 16px;
+  display: grid;
+  place-items: center;
+  border: 5px solid #000;
+  border-radius: 999px;
+  background: #ffdd57;
+  color: #8b6a00;
+  text-align: center;
+  font-family: var(--font-baloo);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.05;
+  flex: 0 0 auto;
+  transition: width 180ms ease, height 180ms ease, margin-left 180ms ease, font-size 180ms ease;
+}
+
+.levelCard:hover .levelImagePlaceholder {
+  width: 190px;
+  height: 190px;
+  margin-left: 18px;
+  font-size: 19px;
+}
+
+.levelInfo {
+  width: 300px;
+  margin-left: 28px;
+  font-family: var(--font-baloo);
+  transition: width 180ms ease, margin-left 180ms ease;
+}
+
+.levelInfo h3 {
+  margin: 0;
+  color: #000;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 0.95;
+  transition: font-size 180ms ease;
+}
+
+.levelInfo p {
+  margin: 4px 0 0;
+  color: #062e72;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  transition: margin 180ms ease, font-size 180ms ease;
+}
+
+.levelCard:hover .levelInfo h3 {
+  font-size: 64px;
+}
+
+.levelCard:hover .levelInfo p {
+  margin: 8px 0 12px;
+  font-size: 27px;
+}
+
+.progressWrap {
+  position: relative;
+  width: 290px;
+  height: 64px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.levelCard:hover .progressWrap {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.progressBar {
+  position: absolute;
+  right: 0;
+  top: 11px;
+  width: 262px;
+  height: 46px;
+  border: 4px solid #b9b9b9;
+  border-radius: 16px;
+  background: white;
+  box-sizing: border-box;
+}
+
+.progressStar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  color: #fffb37;
+  font-size: 62px;
+  line-height: 1;
+}
+
+.playButton {
+  width: 145px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-left: auto;
+  margin-right: 14px;
+  border-radius: 13px;
+  background: #3bd900;
+  color: white;
+  font-family: var(--font-baloo);
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  flex: 0 0 auto;
+  transition: width 180ms ease, height 180ms ease, border-radius 180ms ease, font-size 180ms ease, margin-right 180ms ease;
+}
+
+.levelCard:hover .playButton {
+  width: 180px;
+  height: 82px;
+  margin-right: 20px;
+  border-radius: 16px;
+  font-size: 32px;
+}
+
+.playIcon {
+  color: white;
+  font-size: 27px;
+  line-height: 1;
+  transition: font-size 180ms ease;
+}
+
+.levelCard:hover .playIcon {
+  font-size: 36px;
 }
