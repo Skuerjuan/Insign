@@ -19,7 +19,22 @@ export default function Menu() {
        <img src="pesa.png" className={styles.pesa}/>
        Entrenamiento
        </Link> 
+       <Link href="./" className={styles.progreso}>
+       <img src="premio.png" className={styles.premio}/>
+       Progreso
+       </Link>
+        <Link href="./" className={styles.usuario}>
+       <img src="userwhite.png" className={styles.userwhite}/>
+       Usuario
+       </Link>
+       <Link href="./" className={styles.source}>
+       <img src="ajustes.png" className={styles.ajustes}/>
+       Configuracion
+       </Link>
       </aside>
+      <header className={styles.header}>
+       <p>aieka</p>
+      </header>
     </div>
     );
 }
