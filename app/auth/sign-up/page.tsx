@@ -19,6 +19,7 @@ export default function SignUpForm() {
 
       <div className={styles.gorilaSaludando}></div>
 
+      <form action={formAction}>  
       <div className={styles.container}>
         <h2 className={styles.titulo}>¡Crea tu cuenta!</h2>
 
@@ -27,6 +28,7 @@ export default function SignUpForm() {
           type="text"
           icon="/user.png"
           eyeIcon={null}
+          idInput={"name"}
         />
 
         <Input
@@ -34,6 +36,7 @@ export default function SignUpForm() {
           type="email"
           icon="/card.png"
           eyeIcon={null}
+          idInput={"email"}
         />
 
         <Input
@@ -41,6 +44,7 @@ export default function SignUpForm() {
           type="password"
           icon="/lock.png"
           eyeIcon="/eye.png"
+          idInput={"password"}
         />
 
         <Input
@@ -48,12 +52,20 @@ export default function SignUpForm() {
           type="password"
           icon="/lock.png"
           eyeIcon="/eye.png"
+          idInput={"confirmPassword"}
         />
 
-        <Link href="/auth/sign-in" className={styles.inicia}>
+        {state?.error && (
+            <div className="rounded-md px-3 py-2 text-sm text-red-500">
+            {state.error}
+            </div>
+        )}
+
+        <button type="submit" disabled={isPending} className={styles.inicia}>
           Registrarme
-        </Link>
+        </button>
       </div>
+      </form>
     </div>
     );
 }
