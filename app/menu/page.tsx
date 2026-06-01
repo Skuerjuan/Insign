@@ -1,7 +1,18 @@
 import styles from "./styles.module.css";
 import Link from "next/link";
+import { auth } from "@/lib/auth/server"
+import { redirect } from "next/navigation";
 
-export default function Menu() {
+export const dynamic = "force-dynamic";
+
+export default async function Menu() {
+  const { data: session } = await auth.getSession();
+
+  if (!session?.user) {
+      redirect("/auth/sign-in");
+  }
+  const { user } = session;
+
   return (
     <div className={styles.fondo}>
       <aside className={styles.aside}>
@@ -35,7 +46,7 @@ export default function Menu() {
         
         <header className={styles.header}>
           <div className={styles.greeting}>
-            <h2>¡Hola Username!</h2>
+            <h2>¡Hola {user.name}!</h2>
             <p>¿Que juego quieres jugar hoy?</p>
           </div>
 
@@ -58,7 +69,7 @@ export default function Menu() {
           </div>
 
           <div className={styles.profilePlaceholder}>
-            <span>Foto perfil</span>
+            <span>Foto {user.name}</span>
           </div>
         </header>
 
