@@ -254,30 +254,21 @@ padding-right: 5px;
 }
 
 .starIcon {
-  color: #fffb37;
-  font-size: 44px;
-  line-height: 1;
+  width: 46px;
+  height: 46px;
+  display: block;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 .fireIcon {
-  width: 40px;
+  width: 42px;
   height: 48px;
-  display: inline-block;
+  display: block;
+  object-fit: contain;
+  flex: 0 0 auto;
   position: relative;
-  background: #ff4a0a;
-  border-radius: 55% 45% 55% 45%;
-  transform: rotate(45deg);
-}
-
-.fireIcon::after {
-  content: "";
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  left: 8px;
-  bottom: 8px;
-  border-radius: 50%;
-  background: #ffd632;
+  left: -5px;
 }
 
 .statDivider {
@@ -434,9 +425,9 @@ padding-right: 5px;
   left: 0;
   top: 0;
   z-index: 1;
-  color: #fffb37;
-  font-size: 62px;
-  line-height: 1;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
 }
 
 .playButton {
@@ -469,12 +460,14 @@ padding-right: 5px;
 }
 
 .playIcon {
-  color: white;
-  font-size: 27px;
-  line-height: 1;
-  transition: font-size 180ms ease;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid #fff;
+  transition: transform 180ms ease;
 }
 
 .levelCard:hover .playIcon {
-  font-size: 36px;
+  transform: scale(1.25);
 }

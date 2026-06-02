@@ -5,19 +5,18 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-}
-
-model test {
-  id   Int     @id @default(autoincrement())
-  test String?
+  schemas  = ["neon_auth", "public"]
 }
 
 model ejercicios {
-  id         Int        @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   tema       String
-  dificultad Int        @db.SmallInt
+  dificultad Int          @db.SmallInt
   tipo       String
+  completado completado[]
   opciones   opciones[]
+
+  @@schema("public")
 }
 
 model opciones {
@@ -26,6 +25,8 @@ model opciones {
   palabra_id   Int
   ejercicios   ejercicios @relation(fields: [ejercicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ej")
   palabras     palabras   @relation(fields: [palabra_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_p")
+
+  @@schema("public")
 }
 
 model palabras {
@@ -34,4 +35,44 @@ model palabras {
   dibujo    String?
   animacion String?
   opciones  opciones[]
+
+  @@schema("public")
+}
+
+model user {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  email         String       @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime     @default(now()) @db.Timestamptz(6)
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?    @db.Timestamptz(6)
+  completado    completado[]
+  profiles      profiles?
+
+  @@schema("neon_auth")
+}
+
+model completado {
+  id           Int        @id @default(autoincrement())
+  ejercicio_id Int
+  usuario_id   String     @db.Uuid
+  aprobado     Boolean
+  ejercicios   ejercicios @relation(fields: [ejercicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ej_id")
+  user         user       @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_id")
+
+  @@schema("public")
+}
+
+model profiles {
+  user_id        String    @id @db.Uuid
+  cumpleanos     DateTime? @db.Date
+  color_favorito String?
+  user           user      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user")
+
+  @@schema("public")
 }
