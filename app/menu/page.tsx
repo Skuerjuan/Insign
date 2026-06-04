@@ -34,9 +34,9 @@ export default async function Menu() {
           <img src="/premio.png" alt="" className={styles.premio} />
           Progreso
         </Link>
-        <Link href="./" className={styles.usuario}>
+        <Link href="./perfil" className={styles.usuario}>
           <img src="/userwhite.png" alt="" className={styles.userwhite} />
-          Usuario
+          Perfil
         </Link>
         <Link href="./" className={styles.source}>
           <img src="/ajustes.png" alt="" className={styles.ajustes} />
