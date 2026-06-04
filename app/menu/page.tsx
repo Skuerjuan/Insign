@@ -55,7 +55,7 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Star.png" alt="" className={styles.starIcon} />
               <div>
-                <strong>850</strong>
+                <strong>0</strong>
                 <span>Puntos</span>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Fire.png" alt="" className={styles.fireIcon} />
               <div>
-                <strong>7</strong>
+                <strong>0</strong>
                 <span>Racha</span>
               </div>
             </div>
