@@ -21,7 +21,7 @@ try {
   console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
 }
 
-const palabrasDisponiblesAutomáticas = Object.keys(diccionarioGifs);
+const palabrasd = Object.keys(diccionarioGifs);
 
 interface JuegoMemoriaProps {
   palabras?: string[]; 
@@ -64,10 +64,9 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           this.bloqueado = false;
           this.aciertos = 0;
 
-          const mazoBase = palabrasDisponiblesAutomáticas.length > 0 
-            ? palabrasDisponiblesAutomáticas 
-            : ["Hola", "Adiós"]; 
-
+          const mazoBase = palabrasd.length > 0 
+            ? palabrasd 
+            : ["Hola", "Adiós", "Gracias", "Bien", "Mal", "Por favor"];//, "Sí", "No", "Comida", "Agua", "Casa", "Dónde", "Gracias", "Mamá", "Papá", "Ayuda", 
           const pares = palabras && palabras.length > 0 ? palabras : mazoBase;
           this.totalPares = pares.length; // Anotamos cuántos pares hay en total
 
