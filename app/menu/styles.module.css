@@ -1,39 +1,25 @@
-body {
-   .fondo {
-   background-image: url("/FondoInicioSesion.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-}
-
 .fondo {
   background-image: url("/FondoInicioSesion.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
+  width: 100%;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 320px 1fr;
   overflow: hidden;
   font-family: var(--font-baloo);
 }
 
 .logo {
   font-family: var(--font-rubik-one);
-  font-size: 80px;
+  font-size: clamp(54px, 5.5vw, 80px);
   font-weight: 900;
   line-height: 0.9;
   display: flex;
   align-items: center;
-  letter-spacing: -4px;
-  position: absolute;
-  top: 25px;
-  left: 60px;
+  letter-spacing: 0;
+  margin: 0 0 28px;
 }
 
 .blanco,
@@ -56,150 +42,86 @@ body {
 .aside {
     background-image: url("/asidevector.svg");
     background-color: #126cff;
-    height: 700px;
-    width:400px;
-    position: relative;
+    height: 100dvh;
+    width: 100%;
+    padding: 25px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.inicio {
+.inicio,
+.train,
+.progreso,
+.usuario,
+.source {
     background-color: #FACC15;
-    width: 300px;
-    height: 50px;
-    font-size: 25px;
+    width: 100%;
+    min-height: 50px;
+    font-size: clamp(20px, 2vw, 25px);
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    position: absolute;
-    top: 122px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-top: 0;
-    padding-left: 74px;
+    gap: 16px;
+    padding: 0 20px;
     box-sizing: border-box;
-    border: 1px;
     border-radius: 5px;
     font-family: var(--font-baloo);
     font-weight: bold;
-    color: #126cff;
     text-decoration: none;
+}
+
+.inicio {
+    color: #126cff;
 }
 
 .casa {
     width: 40px;
     height: 40px;
-    margin-right: 18px;
     flex: 0 0 auto;
 }
 
 .train{
-    width: 300px;
-    height: 50px;
-    font-size: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    top: 200px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-top: 0;
-    padding-left: 74px;
-    box-sizing: border-box;
-    border: 1px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: var(--font-baloo);
-    text-decoration: none;
+    background: transparent;
+    color: white;
 }
 
 .pesa {
 width: 40px;
 height: 40px;
-margin-right: 18px;
 flex: 0 0 auto;
 }
 
 .progreso {
-     width: 300px;
-    height: 50px;
-    font-size: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    top: 300px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-top: 0;
-    padding-left: 74px;
-    box-sizing: border-box;
-    border: 1px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: var(--font-baloo);
-    text-decoration: none;
+    background: transparent;
+    color: white;
 }
 
 .premio {
   width: 40px;
 height: 40px;
-margin-right: 18px;
 flex: 0 0 auto;
 }
 
 .usuario {
-    width: 300px;
-    height: 50px;
-    font-size: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    top: 400px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-top: 0;
-    padding-left: 74px;
-    box-sizing: border-box;
-    border: 1px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: var(--font-baloo);
-    text-decoration: none;
+    background: transparent;
+    color: white;
 }
 
 .userwhite {
   width: 40px;
 height: 40px;
-margin-right: 18px;
 flex: 0 0 auto;
 }
 
 .source {
-   width: 300px;
-    height: 50px;
-    font-size: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    top: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-top: 0;
-    padding-left: 74px;
-    box-sizing: border-box;
-    border: 1px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-family: var(--font-baloo);
-    text-decoration: none;
+    background: transparent;
+    color: white;
 }
 
 .ajustes {
   width: 40px;
 height: 40px;
-margin-right: 18px;
 flex: 0 0 auto;
 }
 
@@ -213,11 +135,9 @@ flex: 0 0 auto;
 }
 
 .mainContent {
-  position: absolute;
-  top: 0;
-  left: 400px;
-  right: 0;
-  height: 100vh;
+  min-width: 0;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .header {
@@ -226,21 +146,22 @@ flex: 0 0 auto;
   height: 150px;
   display: flex;
   align-items: center;
-  gap: 0;
-  padding: 20px 22px;
+  gap: 20px;
+  padding: 20px clamp(16px, 3vw, 32px);
   box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .greeting {
-  width: 420px;
-  flex: 0 0 420px;
+  min-width: min(100%, 280px);
+  flex: 1 1 320px;
   color: #0f59d7;
 }
 
 .greeting h2 {
   margin: 0;
   font-family: var(--font-baloo);
-  font-size: 44px;
+  font-size: clamp(32px, 4vw, 44px);
   font-weight: 900;
   line-height: 0.95;
 }
@@ -248,13 +169,13 @@ flex: 0 0 auto;
 .greeting p {
   margin: 4px 0 0;
   font-family: var(--font-baloo);
-  font-size: 28px;
+  font-size: clamp(21px, 3vw, 28px);
   font-weight: 800;
   line-height: 1;
 }
 
 .statsCard {
-  width: 260px;
+  width: min(260px, 100%);
   height: 96px;
   display: flex;
   align-items: center;
@@ -342,18 +263,17 @@ flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: calc(100vh - 150px);
-  padding-top: 22px;
+  height: calc(100dvh - 150px);
+  padding: 22px clamp(16px, 4vw, 76px) 32px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .levelCard {
   position: relative;
-  width: calc(100% - 170px);
+  width: 100%;
   max-width: 680px;
-  height: 92px;
-  margin-left: 76px;
+  min-height: 92px;
   display: flex;
   align-items: center;
   border-radius: 18px;
@@ -364,10 +284,9 @@ flex: 0 0 auto;
 }
 
 .levelCard:hover {
-  width: calc(100% - 60px);
+  width: 100%;
   max-width: 840px;
-  height: 250px;
-  margin-left: 30px;
+  min-height: 250px;
   border-radius: 30px;
   background: #fff;
   z-index: 2;
@@ -404,8 +323,9 @@ flex: 0 0 auto;
 }
 
 .levelInfo {
-  width: 300px;
-  margin-left: 28px;
+  min-width: 0;
+  width: 100%;
+  margin-left: 24px;
   font-family: var(--font-baloo);
   transition: width 180ms ease, margin-left 180ms ease;
   padding-top: 14px;
@@ -414,7 +334,7 @@ flex: 0 0 auto;
 .levelInfo h3 {
   margin: 0;
   color: #000;
-  font-size: 42px;
+  font-size: clamp(32px, 4vw, 42px);
   font-weight: 900;
   line-height: 1.12;
   transition: font-size 180ms ease;
@@ -423,19 +343,19 @@ flex: 0 0 auto;
 .levelInfo p {
   margin: 4px 0 0;
   color: #062e72;
-  font-size: 22px;
+  font-size: clamp(18px, 2.4vw, 22px);
   font-weight: 900;
   line-height: 1;
   transition: margin 180ms ease, font-size 180ms ease;
 }
 
 .levelCard:hover .levelInfo h3 {
-  font-size: 64px;
+  font-size: clamp(42px, 6vw, 64px);
 }
 
 .levelCard:hover .levelInfo p {
   margin: 8px 0 12px;
-  font-size: 27px;
+  font-size: clamp(22px, 3vw, 27px);
 }
 
 .progressWrap {
@@ -514,4 +434,109 @@ flex: 0 0 auto;
 
 .levelCard:hover .playIcon {
   transform: scale(1.25);
+}
+
+@media (max-width: 980px) {
+  .fondo {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .aside {
+    height: auto;
+    min-height: auto;
+    background-size: cover;
+  }
+
+  .logo {
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .inicio,
+  .train,
+  .progreso,
+  .usuario,
+  .source {
+    width: min(100%, 520px);
+    margin: 0 auto;
+  }
+
+  .mainContent {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .levels {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .aside {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .header {
+    align-items: stretch;
+  }
+
+  .statsCard {
+    width: 100%;
+  }
+
+  .profilePlaceholder {
+    margin-left: 0;
+  }
+
+  .levels {
+    padding: 18px 14px 28px;
+  }
+
+  .levelCard,
+  .levelCard:hover {
+    max-width: none;
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .levelCard:not(:hover) > * {
+    opacity: 1;
+  }
+
+  .levelImagePlaceholder,
+  .levelCard:hover .levelImagePlaceholder {
+    width: 86px;
+    height: 86px;
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  .levelInfo {
+    margin-left: 0;
+    padding-top: 0;
+  }
+
+  .progressWrap {
+    opacity: 1;
+    transform: none;
+  }
+
+  .playButton,
+  .levelCard:hover .playButton {
+    width: 100%;
+    height: 58px;
+    margin: 0;
+    font-size: 26px;
+  }
 }

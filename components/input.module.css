@@ -1,11 +1,11 @@
 .containerIni {
-  width: 350px;
-  height: 55px;
+  width: min(100%, 390px);
+  height: 52px;
   border: 2px solid #b5b5b5;
   border-radius: 15px;
   display: flex;
   align-items: center;
-  margin: 20px auto;
+  margin: 16px auto;
   padding: 0 20px;
   background-color: white;
   gap: 12px;
@@ -14,7 +14,8 @@
 .input {
   width: 100%;
   height: 100%;
-  font-size: 22px;
+  min-width: 0;
+  font-size: clamp(17px, 4vw, 22px);
   font-family: var(--font-baloo);
   color: #000;
   background: transparent;
@@ -37,4 +38,24 @@
 .eyeIcon {
   cursor: pointer;
   z-index: 10;
+}
+
+@media (max-height: 760px) and (min-width: 769px) {
+  .containerIni {
+    height: 46px;
+    margin: 14px auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .containerIni {
+    height: 52px;
+    padding: 0 14px;
+    gap: 10px;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
 }
