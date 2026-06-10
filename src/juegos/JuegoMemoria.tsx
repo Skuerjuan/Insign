@@ -43,6 +43,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         private bloqueado: boolean = false;
         private aciertos: number = 0;
         private totalPares: number = 0; 
+        private textoMarcador: Phaser.GameObjects.Text | null = null; // Guardamos el objeto de texto para actualizarlo
 
         constructor() {
           super("MemoryScene"); 
@@ -66,9 +67,9 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
           const mazoBase = palabrasd.length > 0 
             ? palabrasd 
-            : ["Hola", "Adiós", "Gracias", "Bien", "Mal", "Por favor"];//, "Sí", "No", "Comida", "Agua", "Casa", "Dónde", "Gracias", "Mamá", "Papá", "Ayuda", 
+            : ["Hola", "Adiós", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"]; 
           const pares = palabras && palabras.length > 0 ? palabras : mazoBase;
-          this.totalPares = pares.length; // Anotamos cuántos pares hay en total
+          this.totalPares = pares.length; 
 
           const columnaSenias = Phaser.Utils.Array.Shuffle([...pares]);
           const columnaSignificados = Phaser.Utils.Array.Shuffle([...pares]);
@@ -99,7 +100,16 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               padding: { x: 1280, y: 20 },
           }).setOrigin(0.5, 0.6);
 
-          this.add.text((posXSenias1 + posXSenias2) / 2, height * 0.16, "SEÑAS", {
+          // === AQUÍ CREAMOS EL MARCADOR VISUAL DE PARES ===
+          this.textoMarcador = this.add.text(width / 2, height * 0.12, `Pares encontrados: 0 de ${this.totalPares}`, {
+            fontSize: "22px",
+            fontFamily: "var(--font-baloo), Arial, sans-serif",
+            color: "#ffffff",
+            backgroundColor: "#2ed573", // Un color verde llamativo
+            padding: { x: 25, y: 8 },
+          }).setOrigin(0.5);
+
+          this.add.text((posXSenias1 + posXSenias2) / 2, height * 0.18, "SEÑAS", {
               fontSize: "20px",
               fontFamily: "var(--font-baloo), Arial, sans-serif",
               color: "#0042AD",
@@ -107,7 +117,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               padding: { x: 20, y: 6 },
           }).setOrigin(0.5, 1);
 
-          this.add.text((posXSignificados1 + posXSignificados2) / 2, height * 0.16, "SIGNIFICADOS", {
+          this.add.text((posXSignificados1 + posXSignificados2) / 2, height * 0.18, "SIGNIFICADOS", {
               fontSize: "20px",
               fontFamily: "var(--font-baloo), Arial, sans-serif",
               color: "#0042AD",
@@ -117,12 +127,15 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
           this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
             background.setDisplaySize(gameSize.width, gameSize.height);
+            if (this.textoMarcador) {
+              this.textoMarcador.setPosition(gameSize.width / 2, gameSize.height * 0.12);
+            }
           });
         }
 
         crearColumna(items: string[], x: number, tipo: string) {
           const { height } = this.scale;
-          const startY = height * 0.24; 
+          const startY = height * 0.26; // Bajamos un pelín las cartas para que no pisen el marcador
 
           items.forEach((item, index) => {
             if (!item) return; 
@@ -205,13 +218,16 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
                 
                 this.aciertos++;
                 
+                // === REESCRITURA DEL TEXTO DEL MARCADOR ===
+                if (this.textoMarcador) {
+                  this.textoMarcador.setText(`Pares encontrados: ${this.aciertos} de ${this.totalPares}`);
+                }
+                
                 if (typeof onParAdivinado === "function") {
                   onParAdivinado(this.aciertos);
                 }
 
-                // CONDICIÓN DE VICTORIA: Si encontramos todos los pares...
                 if (this.aciertos === this.totalPares) {
-                  // Viajamos a la escena de fin de juego
                   this.scene.start("PantallaFin");
                 } else {
                   this.resetSeleccion();
@@ -249,20 +265,18 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
       }
 
       // =======================================================
-      // 2. NUEVA ESCENA SIMPLE: PANTALLA DE FIN DE JUEGO
+      // 2. ESCENA SIMPLE: PANTALLA DE FIN DE JUEGO
       // =======================================================
       class PantallaFin extends Phaser.Scene {
         constructor() {
-          super("PantallaFin"); // El nombre de identificación de esta pantalla
+          super("PantallaFin"); 
         }
 
         create() {
           const { width, height } = this.scale;
 
-          // Pintamos el fondo de un color verde lindo
           this.cameras.main.setBackgroundColor("#2ed573");
 
-          // Añadimos el cartel de "¡Excelente!" centrado
           this.add.text(width / 2, height / 2 - 40, "¡Excelente Trabajo!\nCompletaste el juego.", {
             fontSize: "36px",
             fontFamily: "var(--font-baloo), Arial, sans-serif",
@@ -270,19 +284,16 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
             align: "center"
           }).setOrigin(0.5);
 
-          // Creamos un botón simple para volver a jugar
           const botonReiniciar = this.add.text(width / 2, height / 2 + 80, " Jugar de nuevo ", {
             fontSize: "22px",
             fontFamily: "Arial, sans-serif",
             color: "#ffffff",
-            backgroundColor: "#ff4757", // Fondo rojo para el botón
+            backgroundColor: "#ff4757", 
             padding: { x: 20, y: 10 }
           }).setOrigin(0.5);
 
-          // Hacemos que el botón reaccione al mouse/dedo y cambie el cursor
           botonReiniciar.setInteractive({ useHandCursor: true });
 
-          // Al hacer clic, le decimos al árbitro que apague esta pantalla y vuelva a la principal
           botonReiniciar.on("pointerdown", () => {
             this.scene.start("MemoryScene");
           });
@@ -304,7 +315,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           height: '100%'
         },
         backgroundColor: "#87CEEB", 
-        // Añadimos la nueva escena a la lista de habitaciones permitidas del juego
         scene: [MemoryScene, PantallaFin] 
       };
 
