@@ -72,7 +72,7 @@ export default async function Perfil() {
           </div>
 
           <div className={styles.profilePhotoSmall}>
-            <img src="/Gorilainicio.png" alt={`Foto de ${user.name}`} />
+            <span>Foto {user.name}</span>
           </div>
         </header>
 
@@ -82,11 +82,7 @@ export default async function Perfil() {
               <span aria-hidden="true">✎</span>
             </button>
 
-            <img
-              src="/Gorilainicio.png"
-              alt={`Foto de ${user.name}`}
-              className={styles.userAvatar}
-            />
+            <div className={styles.userAvatar}>Foto {user.name}</div>
 
             <div className={styles.userInfo}>
               <h1>{user.name}</h1>
@@ -107,18 +103,20 @@ export default async function Perfil() {
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
-                <img src="/premio.png" alt="" />
+                <img src="/cupdorada.png" alt="" />
                 <strong>0</strong>
-                <span>Puntos</span>
+                <span>Premios</span>
               </div>
             </div>
           </section>
 
           <section className={styles.panel}>
-            <div className={styles.panelHeader}>
-              <h2>Mis logros</h2>
-              <Link href="/menu">Ver todos</Link>
-            </div>
+            <details className={styles.achievementsDetails}>
+              <summary className={styles.panelHeader}>
+                <h2>Mis logros</h2>
+                <span>Ver todos</span>
+              </summary>
+            </details>
           </section>
 
           <section className={styles.panelSmall}>

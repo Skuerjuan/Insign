@@ -13,9 +13,8 @@
   width: clamp(460px, 30vw, 560px);
   min-width: 0;
   position: absolute;
-  top: 50%;
+  top: clamp(42px, 7vh, 68px);
   right: clamp(70px, 6vw, 130px);
-  transform: translateY(-50%);
 }
 
 .logo {
