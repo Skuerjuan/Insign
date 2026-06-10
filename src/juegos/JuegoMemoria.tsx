@@ -43,7 +43,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         private bloqueado: boolean = false;
         private aciertos: number = 0;
         private totalPares: number = 0; 
-        private textoMarcador: Phaser.GameObjects.Text | null = null; // Guardamos el objeto de texto para actualizarlo
+        private textoMarcador: Phaser.GameObjects.Text | null = null;
 
         constructor() {
           super("MemoryScene"); 
@@ -100,12 +100,11 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               padding: { x: 1280, y: 20 },
           }).setOrigin(0.5, 0.6);
 
-          // === AQUÍ CREAMOS EL MARCADOR VISUAL DE PARES ===
           this.textoMarcador = this.add.text(width / 2, height * 0.12, `Pares encontrados: 0 de ${this.totalPares}`, {
             fontSize: "22px",
             fontFamily: "var(--font-baloo), Arial, sans-serif",
             color: "#ffffff",
-            backgroundColor: "#2ed573", // Un color verde llamativo
+            backgroundColor: "#2ed573", 
             padding: { x: 25, y: 8 },
           }).setOrigin(0.5);
 
@@ -135,7 +134,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
         crearColumna(items: string[], x: number, tipo: string) {
           const { height } = this.scale;
-          const startY = height * 0.26; // Bajamos un pelín las cartas para que no pisen el marcador
+          const startY = height * 0.26; 
 
           items.forEach((item, index) => {
             if (!item) return; 
@@ -186,6 +185,17 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         voltearCarta(carta: Phaser.GameObjects.Container, fondoObj: any, contenidoVisible: any) {
           if (this.bloqueado || carta.getData("volteada")) return;
 
+          // === VALIDACIÓN: Evitar elegir dos del mismo tipo ===
+          if (this.primeraCarta) {
+            const tipoPrimera = this.primeraCarta.carta.getData("tipo");
+            const tipoActual = carta.getData("tipo");
+            
+            if (tipoPrimera === tipoActual) {
+              // Si intenta clickear otra del mismo tipo, no hace nada
+              return;
+            }
+          }
+
           this.tweens.add({
             targets: carta,
             scaleX: 0,
@@ -208,17 +218,15 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
             const valor1 = this.primeraCarta.carta.getData("valor");
             const valor2 = this.segundaCarta.carta.getData("valor");
-            const tipo1 = this.primeraCarta.carta.getData("tipo");
-            const tipo2 = this.segundaCarta.carta.getData("tipo");
 
-            if (valor1 === valor2 && tipo1 !== tipo2) {
+            // Ya no hace falta verificar (tipo1 !== tipo2) aquí porque la validación anterior lo asegura
+            if (valor1 === valor2) {
               this.time.delayedCall(500, () => {
                 this.primeraCarta.fondoObj.setTint(0x00ff00); 
                 this.segundaCarta.fondoObj.setTint(0x00ff00);
                 
                 this.aciertos++;
                 
-                // === REESCRITURA DEL TEXTO DEL MARCADOR ===
                 if (this.textoMarcador) {
                   this.textoMarcador.setText(`Pares encontrados: ${this.aciertos} de ${this.totalPares}`);
                 }
