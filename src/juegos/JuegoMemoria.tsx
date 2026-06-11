@@ -300,7 +300,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           botonFinal.setInteractive({ useHandCursor: true });
 
           botonFinal.on("pointerdown", () => {
-            this.scene.start("JuegoEleccion");
+            this.scene.start("page");
           });
         }
       }
