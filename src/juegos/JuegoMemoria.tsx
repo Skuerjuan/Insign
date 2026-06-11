@@ -272,9 +272,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         }
       }
 
-      // =======================================================
-      // 2. ESCENA SIMPLE: PANTALLA DE FIN DE JUEGO
-      // =======================================================
       class PantallaFin extends Phaser.Scene {
         constructor() {
           super("PantallaFin"); 
@@ -292,7 +289,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
             align: "center"
           }).setOrigin(0.5);
 
-          const botonReiniciar = this.add.text(width / 2, height / 2 + 80, " Jugar de nuevo ", {
+          const botonFinal = this.add.text(width / 2, height / 2 + 80, " Volver a inicio ", {
             fontSize: "22px",
             fontFamily: "Arial, sans-serif",
             color: "#ffffff",
@@ -300,17 +297,14 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
             padding: { x: 20, y: 10 }
           }).setOrigin(0.5);
 
-          botonReiniciar.setInteractive({ useHandCursor: true });
+          botonFinal.setInteractive({ useHandCursor: true });
 
-          botonReiniciar.on("pointerdown", () => {
-            this.scene.start("MemoryScene");
+          botonFinal.on("pointerdown", () => {
+            this.scene.start("JuegoEleccion");
           });
         }
       }
 
-      // =======================================================
-      // 3. REGISTRO DE ESCENAS
-      // =======================================================
       const config: Phaser.Types.Core.GameConfig = {
         type: Phaser.AUTO,
         dom: {
