@@ -89,7 +89,7 @@ export default async function Menu() {
               </div>
             </div>
 
-            <Link href="./" className={styles.playButton}>
+            <Link href="/juego-memoria" className={styles.playButton}>
               <span className={styles.playIcon} aria-hidden="true" />
               Jugar
             </Link>

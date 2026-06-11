@@ -4,18 +4,37 @@ import { useEffect, useRef } from "react";
 import fondoCartas from "./fondo.png"; 
 import fondo from "./fondoP.png";
 
-const diccionarioGifs: Record<string, any> = {};
+type GifImport = string | { src: string };
+type WebpackRequire = NodeJS.Require & {
+  context: (
+    path: string,
+    useSubdirectories: boolean,
+    regExp: RegExp
+  ) => {
+    keys: () => string[];
+    (id: string): { default?: GifImport } | GifImport;
+  };
+};
+
+const diccionarioGifs: Record<string, GifImport> = {};
 
 try {
-  const contextoGifs = require.context("../../public/gifs", false, /\.gif$/);
+  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
   
-  contextoGifs.keys().forEach((rutaArchivo) => {
+  contextoGifs.keys().forEach((rutaArchivo: string) => {
     const moduloGif = contextoGifs(rutaArchivo);
     let nombrePalabra = rutaArchivo.replace(/^\.\//, "").replace(/\.gif$/, "");
     if (nombrePalabra === "Chau") {
       nombrePalabra = "Chau"; 
     }
-    diccionarioGifs[nombrePalabra] = moduloGif.default || moduloGif;
+    const gifImport =
+      typeof moduloGif === "object" && "default" in moduloGif && moduloGif.default
+        ? moduloGif.default
+        : moduloGif;
+
+    if (typeof gifImport === "string" || ("src" in gifImport && typeof gifImport.src === "string")) {
+      diccionarioGifs[nombrePalabra] = gifImport;
+    }
   });
 } catch (e) {
   console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
@@ -30,19 +49,31 @@ interface JuegoMemoriaProps {
 
 export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaProps) {
   const gameRef = useRef<HTMLDivElement>(null);
+  const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
     import("phaser").then((Phaser) => {
+      if (!gameRef.current || gameInstanceRef.current) return;
+
+      type CardBack = InstanceType<typeof Phaser.GameObjects.Image>;
+      type CardContent =
+        | InstanceType<typeof Phaser.GameObjects.DOMElement>
+        | InstanceType<typeof Phaser.GameObjects.Text>;
+      type SelectedCard = {
+        carta: InstanceType<typeof Phaser.GameObjects.Container>;
+        fondoObj: CardBack;
+        contenidoVisible: CardContent;
+      };
       
       // =======================================================
       // 1. ESCENA DEL JUEGO PRINCIPAL
       // =======================================================
       class MemoryScene extends Phaser.Scene {
-        private primeraCarta: any = null;
-        private segundaCarta: any = null;
-        private bloqueado: boolean = false;
-        private aciertos: number = 0;
-        private totalPares: number = 0; 
+        private primeraCarta: SelectedCard | null = null;
+        private segundaCarta: SelectedCard | null = null;
+        private bloqueado = false;
+        private aciertos = 0;
+        private totalPares = 0; 
         private textoMarcador: Phaser.GameObjects.Text | null = null;
 
         constructor() {
@@ -124,7 +155,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               padding: { x: 20, y: 6 },
           }).setOrigin(0.5, 1);
 
-          this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
+          this.scale.on('resize', (gameSize: { width: number; height: number }) => {
             background.setDisplaySize(gameSize.width, gameSize.height);
             if (this.textoMarcador) {
               this.textoMarcador.setPosition(gameSize.width / 2, gameSize.height * 0.12);
@@ -146,7 +177,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
             carta.setInteractive();
 
             const fondoObj = this.add.image(0, 0, 'fondoFicha').setDisplaySize(160, 125);
-            let contenidoVisible: any;
+            let contenidoVisible: CardContent;
 
             if (tipo === "seña") {
               const elementoImg = document.createElement('img');
@@ -158,7 +189,8 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
 
               const archivoImportado = diccionarioGifs[item];
               if (archivoImportado) {
-                elementoImg.src = `${archivoImportado.src}?v=${Date.now()}-${Math.random()}`;
+                const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
+                elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
               }
               contenidoVisible = this.add.dom(0, 0, elementoImg);
             } else {
@@ -182,7 +214,11 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           });
         }
 
-        voltearCarta(carta: Phaser.GameObjects.Container, fondoObj: any, contenidoVisible: any) {
+        voltearCarta(
+          carta: Phaser.GameObjects.Container,
+          fondoObj: CardBack,
+          contenidoVisible: CardContent
+        ) {
           if (this.bloqueado || carta.getData("volteada")) return;
 
           // === VALIDACIÓN: Evitar elegir dos del mismo tipo ===
@@ -209,7 +245,11 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
           });
         }
 
-        verificarPar(carta: Phaser.GameObjects.Container, fondoObj: any, contenidoVisible: any) {
+        verificarPar(
+          carta: Phaser.GameObjects.Container,
+          fondoObj: CardBack,
+          contenidoVisible: CardContent
+        ) {
           if (!this.primeraCarta) {
             this.primeraCarta = { carta, fondoObj, contenidoVisible };
           } else {
@@ -222,6 +262,8 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
             // Ya no hace falta verificar (tipo1 !== tipo2) aquí porque la validación anterior lo asegura
             if (valor1 === valor2) {
               this.time.delayedCall(500, () => {
+                if (!this.primeraCarta || !this.segundaCarta) return;
+
                 this.primeraCarta.fondoObj.setTint(0x00ff00); 
                 this.segundaCarta.fondoObj.setTint(0x00ff00);
                 
@@ -243,15 +285,17 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
               });
             } else {
               this.time.delayedCall(1000, () => {
-                this.ocultarCarta(this.primeraCarta);
-                this.ocultarCarta(this.segundaCarta);
+                if (this.primeraCarta && this.segundaCarta) {
+                  this.ocultarCarta(this.primeraCarta);
+                  this.ocultarCarta(this.segundaCarta);
+                }
                 this.resetSeleccion();
               });
             }
           }
         }
 
-        ocultarCarta(obj: any) {
+        ocultarCarta(obj: SelectedCard) {
           this.tweens.add({
             targets: obj.carta,
             scaleX: 0,
@@ -305,7 +349,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
         }
       }
 
-      const config: Phaser.Types.Core.GameConfig = {
+      const config: ConstructorParameters<typeof Phaser.Game>[0] = {
         type: Phaser.AUTO,
         dom: {
           createContainer: true
@@ -321,12 +365,14 @@ export default function JuegoMemoria({ palabras, onParAdivinado }: JuegoMemoriaP
       };
 
       const game = new Phaser.Game(config);
-      (gameRef as any).current._gameInstance = game;
+      gameInstanceRef.current = game;
     });
 
     return () => {
-      if (gameRef.current && (gameRef as any).current._gameInstance) {
-        (gameRef as any).current._gameInstance.destroy(true);
+      const game = gameInstanceRef.current;
+      if (game) {
+        game.destroy(true);
+        gameInstanceRef.current = null;
       }
     };
   }, [palabras, onParAdivinado]);
