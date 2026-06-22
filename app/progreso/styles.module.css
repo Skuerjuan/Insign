@@ -4,7 +4,11 @@
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   overflow: hidden;
-  background: #72cff4;
+  background-color: #72cff4;
+  background-image: url("/FondoInicioSesion.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   font-family: var(--font-baloo);
 }
 
@@ -183,7 +187,10 @@
 
 .summarySection {
   min-height: 0;
+  display: flex;
+  flex-direction: column;
   padding: 8px 24px 10px;
+  overflow: hidden;
 }
 
 .levelSection h2,
@@ -323,39 +330,59 @@
 }
 
 .summaryGrid {
+  min-height: 0;
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
   gap: 18px;
-  margin-top: 4px;
+  padding: 0;
 }
 
 .summaryItem {
   min-width: 0;
-  display: grid;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: #052c79;
   text-align: center;
 }
 
-.summaryImagePlaceholder {
-  width: 66px;
-  height: clamp(42px, 6vh, 54px);
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 800;
+.summaryIcon {
+  width: clamp(52px, 6.5vh, 64px);
+  height: clamp(52px, 6.5vh, 64px);
+  display: block;
+  object-fit: contain;
 }
 
 .summaryItem strong {
-  margin-top: 2px;
-  font-size: 23px;
+  max-width: 100%;
+  margin-top: 1px;
+  overflow-wrap: anywhere;
+  font-size: clamp(21px, 2vw, 26px);
+  font-weight: 900;
   line-height: 1;
 }
 
 .summaryItem span {
-  font-size: 14px;
+  margin-top: 2px;
+  font-size: clamp(13px, 1.35vw, 16px);
   line-height: 1.1;
+}
+
+@media (max-height: 760px) and (min-width: 701px) {
+  .summaryIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .summaryItem strong {
+    font-size: 21px;
+  }
+
+  .summaryItem span {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -408,6 +435,16 @@
   .summaryGrid {
     grid-template-columns: 1fr;
     gap: 24px;
+    padding: 18px 0;
+  }
+
+  .summarySection {
+    overflow: visible;
+  }
+
+  .summaryIcon {
+    width: 72px;
+    height: 72px;
   }
 }
 

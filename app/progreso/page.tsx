@@ -13,6 +13,11 @@ export default async function Progreso() {
   }
 
   const { user } = session;
+  const userProgress = user as typeof user & {
+    tiempodejuego?: string | number | null;
+    juegosjugados?: string | number | null;
+    diasactivo?: string | number | null;
+  };
 
   return (
     <div className={styles.fondo}>
@@ -116,20 +121,32 @@ export default async function Progreso() {
 
             <div className={styles.summaryGrid}>
               <article className={styles.summaryItem}>
-              <img src="./Joystick.png"/>
-                <strong>2</strong>
+                <img
+                  src="/Joystick.png"
+                  alt="Joystick"
+                  className={styles.summaryIcon}
+                />
+                <strong>{userProgress.juegosjugados ?? 0}</strong>
                 <span>Juegos jugados</span>
               </article>
 
               <article className={styles.summaryItem}>
-                <img src="./Reloj.png"/>
-                <strong>3h 30m</strong>
+                <img
+                  src="/Reloj.png"
+                  alt="Reloj"
+                  className={styles.summaryIcon}
+                />
+                <strong>{userProgress.tiempodejuego ?? 0}</strong>
                 <span>Tiempo de juego</span>
               </article>
 
               <article className={styles.summaryItem}>
-                <img src="./Calendario.png" alt="" />
-                <strong>5</strong>
+                <img
+                  src="/Calendario.png"
+                  alt="Calendario"
+                  className={styles.summaryIcon}
+                />
+                <strong>{userProgress.diasactivo ?? 0}</strong>
                 <span>Días activos</span>
               </article>
             </div>
