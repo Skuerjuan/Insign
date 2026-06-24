@@ -14,9 +14,12 @@ export default async function Progreso() {
 
   const { user } = session;
   const userProgress = user as typeof user & {
-    tiempodejuego?: string | number | null;
-    juegosjugados?: string | number | null;
-    diasactivo?: string | number | null;
+    puntos?: string | number | null;
+    aprendidas?: string | number | null;
+    poraprender?: string | number | null;
+    juego?: string | number | null;
+    tiempo?: string | number | null;
+    dias?: string | number | null;
   };
 
   return (
@@ -54,12 +57,14 @@ export default async function Progreso() {
       <div className={styles.mainContent}>
         <header className={styles.header}>
           <div className={styles.pageTitle}>
-            <div className={styles.smallImagePlaceholder} aria-label="Espacio para ícono" />
+            <div className={styles.smallImagePlaceholder} aria-label="Ícono de progreso">
+              <img src="/copaprogreso.png" alt="" />
+            </div>
             <h1>Progreso</h1>
           </div>
 
           <div className={styles.profileImagePlaceholder}>
-            <span>Imagen.{user.name}</span>
+            <span>foto.{user.name}</span>
           </div>
         </header>
 
@@ -87,7 +92,7 @@ export default async function Progreso() {
                   <span />
                 </div>
 
-                <p className={styles.points}>100 / 1000 puntos</p>
+                <p className={styles.points}>{userProgress.puntos ?? 0}</p>
               </div>
             </div>
           </section>
@@ -97,7 +102,6 @@ export default async function Progreso() {
 
             <div className={styles.learnedContent}>
               <div className={styles.chartPlaceholder}>
-                <strong>50%</strong>
                 <span>Espacio para gráfico o imagen</span>
               </div>
 
@@ -105,12 +109,12 @@ export default async function Progreso() {
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.learnedDot}`} />
                   <span>Aprendidas</span>
-                  <strong>25 / 50</strong>
+                  <strong>{userProgress.aprendidas ?? 0}</strong>
                 </div>
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.pendingDot}`} />
                   <span>Por aprender</span>
-                  <strong>25 / 50</strong>
+                  <strong>{userProgress.poraprender ?? 0}</strong>
                 </div>
               </div>
             </div>
@@ -126,7 +130,7 @@ export default async function Progreso() {
                   alt="Joystick"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.juegosjugados ?? 0}</strong>
+                <strong>{userProgress.juego ?? 0}</strong>
                 <span>Juegos jugados</span>
               </article>
 
@@ -136,7 +140,7 @@ export default async function Progreso() {
                   alt="Reloj"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.tiempodejuego ?? 0}</strong>
+                <strong>{userProgress.tiempo ?? 0}</strong>
                 <span>Tiempo de juego</span>
               </article>
 
@@ -146,7 +150,7 @@ export default async function Progreso() {
                   alt="Calendario"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.diasactivo ?? 0}</strong>
+                <strong>{userProgress.dias ?? 0}</strong>
                 <span>Días activos</span>
               </article>
             </div>

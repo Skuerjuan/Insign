@@ -127,7 +127,6 @@
   line-height: 1;
 }
 
-.smallImagePlaceholder,
 .profileImagePlaceholder,
 .levelImagePlaceholder,
 .chartPlaceholder,
@@ -140,20 +139,34 @@
 .smallImagePlaceholder {
   width: 52px;
   height: 52px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-}
-
-.profileImagePlaceholder {
-  width: 60px;
-  height: 60px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
   border-radius: 50%;
+}
+
+.smallImagePlaceholder img {
+  width: 42px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+}
+
+.profileImagePlaceholder {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  border: 5px solid #000;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ffd735;
+  color: #8b6a00;
   text-align: center;
+  font-family: var(--font-baloo);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
+  line-height: 1.05;
 }
 
 .progressMain {
@@ -350,14 +363,15 @@
 
 .summaryIcon {
   width: clamp(52px, 6.5vh, 64px);
-  height: clamp(52px, 6.5vh, 64px);
+  height: clamp(40px, 5.5vh, 48px);
   display: block;
   object-fit: contain;
+  transform: translateY(-6px);
 }
 
 .summaryItem strong {
   max-width: 100%;
-  margin-top: 1px;
+  margin-top: -5px;
   overflow-wrap: anywhere;
   font-size: clamp(21px, 2vw, 26px);
   font-weight: 900;
@@ -367,7 +381,7 @@
 .summaryItem span {
   margin-top: 2px;
   font-size: clamp(13px, 1.35vw, 16px);
-  line-height: 1.1;
+  line-height: 0.1;
 }
 
 @media (max-height: 760px) and (min-width: 701px) {
@@ -463,8 +477,8 @@
   }
 
   .profileImagePlaceholder {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
   }
 
   .levelSection,
