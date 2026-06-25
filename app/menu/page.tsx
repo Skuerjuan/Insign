@@ -22,23 +22,23 @@ export default async function Menu() {
           <span className={styles.amarillo}>Sign</span>
         </h1>
 
-        <Link href="./" className={styles.inicio}>
+        <Link href="/menu" className={styles.inicio}>
           <img src="/casa.png" alt="" className={styles.casa} />
           Inicio
         </Link>
-        <Link href="./" className={styles.train}>
+        <Link href="/menu" className={styles.train}>
           <img src="/pesa.png" alt="" className={styles.pesa} />
           Entrenamiento
         </Link>
-        <Link href="./progreso" className={styles.progreso}>
+        <Link href="/progreso" className={styles.progreso}>
           <img src="/premio.png" alt="" className={styles.premio} />
           Progreso
         </Link>
-        <Link href="./perfil" className={styles.usuario}>
+        <Link href="/perfil" className={styles.usuario}>
           <img src="/userwhite.png" alt="" className={styles.userwhite} />
           Perfil
         </Link>
-        <Link href="./" className={styles.source}>
+        <Link href="/menu" className={styles.source}>
           <img src="/ajustes.png" alt="" className={styles.ajustes} />
           Configuracion
         </Link>

@@ -30,7 +30,7 @@ export default async function Perfil() {
           <img src="/pesa.png" alt="" className={styles.pesa} />
           Entrenamiento
         </Link>
-        <Link href="/menu" className={styles.progreso}>
+        <Link href="/progreso" className={styles.progreso}>
           <img src="/premio.png" alt="" className={styles.premio} />
           Progreso
         </Link>
