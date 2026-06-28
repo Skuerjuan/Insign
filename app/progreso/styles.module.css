@@ -143,6 +143,7 @@
   place-items: center;
   flex: 0 0 auto;
   border-radius: 50%;
+  background: #fff;
 }
 
 .smallImagePlaceholder img {
@@ -427,6 +428,8 @@
   .header {
     height: auto;
     min-height: 94px;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .progressMain {
@@ -474,6 +477,11 @@
   .smallImagePlaceholder {
     width: 48px;
     height: 48px;
+  }
+
+  .smallImagePlaceholder img {
+    width: 36px;
+    height: 36px;
   }
 
   .profileImagePlaceholder {

@@ -35,7 +35,7 @@ export default async function Progreso() {
             <img src="/casablanco.png" alt="" className={styles.navIcon} />
             Inicio
           </Link>
-          <Link href="/menu" className={styles.train}>
+          <Link href="/entrenamiento" className={styles.train}>
             <img src="/pesa.png" alt="" className={styles.navIcon} />
             Entrenamiento
           </Link>

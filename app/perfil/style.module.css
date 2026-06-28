@@ -139,16 +139,16 @@ flex: 0 0 auto;
   height: 96px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 24px;
   padding: 14px clamp(20px, 4vw, 42px);
   box-sizing: border-box;
   border-bottom: 8px solid #29afe6;
-  flex-wrap: wrap;
 }
 
 .profileTitle {
-  min-width: min(100%, 260px);
-  flex: 1 1 320px;
+  min-width: 0;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -166,8 +166,8 @@ flex: 0 0 auto;
 }
 
 .profileTitleIcon img {
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
@@ -188,7 +188,8 @@ flex: 0 0 auto;
 }
 
 .statsCard {
-  width: min(260px, 100%);
+  width: 260px;
+  max-width: 100%;
   height: 64px;
   display: flex;
   align-items: center;
@@ -197,7 +198,6 @@ flex: 0 0 auto;
   border-radius: 20px;
   background: #fff;
   flex: 0 0 auto;
-  margin-left: auto;
 }
 
 .statItem {
@@ -266,11 +266,10 @@ flex: 0 0 auto;
   color: #8b6a00;
   text-align: center;
   font-family: var(--font-baloo);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1.05;
   flex: 0 0 auto;
-  margin-left: 20px;
 }
 
 .profileMain {
@@ -509,18 +508,14 @@ flex: 0 0 auto;
   }
 
   .header {
-    align-items: stretch;
+    align-items: center;
     height: auto;
     min-height: 94px;
+    flex-wrap: wrap;
   }
 
   .statsCard {
     width: 100%;
-    margin-left: 0;
-  }
-
-  .profilePhotoSmall {
-    margin-left: 0;
   }
 
   .profileTitle {
@@ -556,8 +551,13 @@ flex: 0 0 auto;
   }
 
   .profileTitleIcon {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .profileTitleIcon img {
+    width: 36px;
+    height: 36px;
   }
 
   .profilePhotoSmall {
