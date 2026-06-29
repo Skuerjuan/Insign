@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/db"
-
+     
 export async function getProfile(userId: string){
     let profile = await prisma.profiles.findUnique({
         where: {

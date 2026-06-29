@@ -68,6 +68,13 @@ export default async function Entrenamiento() {
 
             <div className={styles.practiceGrid}>
               <article className={`${styles.practiceCard} ${styles.alphabetCard}`}>
+                <div
+                  className={styles.levelImageSlot}
+                  aria-label="Imagen correspondiente al nivel Abecedario"
+                >
+                  <span>Imagen del nivel</span>
+                </div>
+
                 <div className={styles.cardText}>
                   <h3>Abecedario</h3>
                   <p>Aprende las letras del abecedario.</p>
@@ -82,6 +89,13 @@ export default async function Entrenamiento() {
               </article>
 
               <article className={`${styles.practiceCard} ${styles.practiceCardGreen}`}>
+                <div
+                  className={`${styles.levelImageSlot} ${styles.greenImageSlot}`}
+                  aria-label="Imagen correspondiente al nivel Practicar"
+                >
+                  <span>Imagen del nivel</span>
+                </div>
+
                 <div className={styles.cardText}>
                   <h3>Practicar</h3>
                   <p>Juega sin temor de hacerlo mal.</p>
