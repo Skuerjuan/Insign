@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/server";
 import styles from "./styles.module.css";
+import Foto from "@/components/Foto";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,7 @@ export default async function Progreso() {
           </div>
 
           <div className={styles.profileImagePlaceholder}>
-            <span>foto.{user.name}</span>
+            <Foto user={user} />
           </div>
         </header>
 

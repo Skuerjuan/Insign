@@ -13,6 +13,7 @@ export async function signInWithEmail(
     });
 
     if (error) {
+        console.error(error);
         return { error: error.message || 'Failed to sign in. Try again' };
     }
 

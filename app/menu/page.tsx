@@ -2,6 +2,10 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import { auth } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
+import { useTheme } from "@neondatabase/auth/react";
+import Foto from "@/components/Foto"
+import { getProfile } from "../actions";
+import BotonJugar from "@/components/BotonJugar"
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +17,11 @@ export default async function Menu() {
   }
 
   const { user } = session;
+
+    const { puntos, racha } = await getProfile(user.id);  
+
+    //pasar racha de Date a texto
+    const rachaTexto = "2 días"
 
   return (
     <div className={styles.fondo}>
@@ -55,7 +64,7 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Star.png" alt="" className={styles.starIcon} />
               <div>
-                <strong>0</strong>
+                <strong>{puntos}</strong>
                 <span>Puntos</span>
               </div>
             </div>
@@ -63,14 +72,14 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Fire.png" alt="" className={styles.fireIcon} />
               <div>
-                <strong>0</strong>
+                <strong>{rachaTexto}</strong>
                 <span>Racha</span>
               </div>
             </div>
           </div>
 
-          <div className={styles.profilePlaceholder}>
-            <span>Foto {user.name}</span>
+          <div className={styles.profilePlaceholder} >
+            <Foto user={user}  />
           </div>
         </header>
 
@@ -88,11 +97,7 @@ export default async function Menu() {
                 <div className={styles.progressBar} />
               </div>
             </div>
-
-            <Link href="/juego-eleccion" className={styles.playButton}>
-              <span className={styles.playIcon} aria-hidden="true" />
-              Jugar
-            </Link>
+            <BotonJugar styleButton={styles.playButton} styleIcon={styles.playIcon} userId={user.id} juego={"/juego-eleccion"} />
           </section>
 
           <section className={styles.levelCard}>

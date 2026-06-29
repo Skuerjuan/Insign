@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/server";
 import styles from "./styles.module.css";
+import Foto from "@/components/Foto";
+import { getProfile } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +58,7 @@ export default async function Entrenamiento() {
           </div>
 
           <div className={styles.profileImagePlaceholder}>
-            <span>foto.{user.name}</span>
+            <Foto user={user}></Foto>
           </div>
         </header>
 

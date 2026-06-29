@@ -2,18 +2,26 @@ import styles from "./style.module.css";
 import Link from "next/link";
 import { auth } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
+import EditButton from "@/components/EditButton";
+import Foto from "@/components/Foto";
+import { getProfile } from "../actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Perfil() {
   const { data: session } = await auth.getSession();
 
+  
   if (!session?.user) {
     redirect("/auth/sign-in");
   }
-
+  
   const { user } = session;
+  const { puntos, racha, premios } = await getProfile(user.id);
 
+  // pasar racha de Date a texto (?)
+  const rachaTexto = "2 días";
+  
   return (
     <div className={styles.fondo}>
       <aside className={styles.aside}>
@@ -57,7 +65,7 @@ export default async function Perfil() {
             <div className={styles.statItem}>
               <img src="/Star.png" alt="" className={styles.starIcon} />
               <div>
-                <strong>0</strong>
+                <strong>{puntos}</strong>
                 <span>Puntos</span>
               </div>
             </div>
@@ -65,24 +73,24 @@ export default async function Perfil() {
             <div className={styles.statItem}>
               <img src="/Fire.png" alt="" className={styles.fireIcon} />
               <div>
-                <strong>0</strong>
+                <strong>{rachaTexto}</strong>
                 <span>Racha</span>
               </div>
             </div>
           </div>
 
           <div className={styles.profilePhotoSmall}>
-            <span>Foto {user.name}</span>
+            <Foto user={user} />
           </div>
         </header>
 
         <main className={styles.profileMain}>
           <section className={styles.userCard}>
-            <button className={styles.editButton} aria-label="Editar perfil">
-              <span aria-hidden="true">✎</span>
-            </button>
+            <EditButton style={styles.editButton} />
 
-            <div className={styles.userAvatar}>Foto {user.name}</div>
+            <div className={styles.userAvatar}>
+              <Foto user={user} />
+            </div>
 
             <div className={styles.userInfo}>
               <h1>{user.name}</h1>
@@ -92,19 +100,19 @@ export default async function Perfil() {
             <div className={styles.profileStats}>
               <div className={styles.profileStat}>
                 <img src="/Star.png" alt="" />
-                <strong>0</strong>
+                <strong>{puntos}</strong>
                 <span>Puntos</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
                 <img src="/Fire.png" alt="" />
-                <strong>0</strong>
+                <strong>{rachaTexto}</strong>
                 <span>Racha</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
                 <img src="/cupdorada.png" alt="" />
-                <strong>0</strong>
+                <strong>{premios}</strong>
                 <span>Premios</span>
               </div>
             </div>
