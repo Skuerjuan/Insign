@@ -1,4 +1,4 @@
-import PhaserGame from "@/src/juegos/JuegoEleccion";
+import PhaserGame from "@/src/juegos/JuegoAdivinar";
 export default function Home() {
   return (
     <main>
