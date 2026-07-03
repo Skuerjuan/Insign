@@ -48,7 +48,7 @@ export default async function Progreso() {
             <img src="/userwhite.png" alt="" className={styles.navIcon} />
             Perfil
           </Link>
-          <Link href="/menu" className={styles.source}>
+          <Link href="/configuracion" className={styles.source}>
             <img src="/ajustes.png" alt="" className={styles.navIcon} />
             Configuración
           </Link>

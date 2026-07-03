@@ -17,7 +17,7 @@ export default async function Perfil() {
   }
   
   const { user } = session;
-  const { puntos, racha, premios } = await getProfile(user.id);
+  const { puntos, premios } = await getProfile(user.id);
 
   // pasar racha de Date a texto (?)
   const rachaTexto = "2 días";
@@ -46,7 +46,7 @@ export default async function Perfil() {
           <img src="/userwhite.png" alt="" className={styles.userwhite} />
           Perfil
         </Link>
-        <Link href="/menu" className={styles.source}>
+        <Link href="/configuracion" className={styles.source}>
           <img src="/ajustes.png" alt="" className={styles.ajustes} />
           Configuracion
         </Link>
@@ -58,25 +58,7 @@ export default async function Perfil() {
             <div className={styles.profileTitleIcon}>
               <img src="/user.png" alt="" />
             </div>
-            <h2>{user.name}</h2>
-          </div>
-
-          <div className={styles.statsCard}>
-            <div className={styles.statItem}>
-              <img src="/Star.png" alt="" className={styles.starIcon} />
-              <div>
-                <strong>{puntos}</strong>
-                <span>Puntos</span>
-              </div>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.statItem}>
-              <img src="/Fire.png" alt="" className={styles.fireIcon} />
-              <div>
-                <strong>{rachaTexto}</strong>
-                <span>Racha</span>
-              </div>
-            </div>
+            <h2>Perfil</h2>
           </div>
 
           <div className={styles.profilePhotoSmall}>

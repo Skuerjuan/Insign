@@ -2,7 +2,6 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import { auth } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
-import { useTheme } from "@neondatabase/auth/react";
 import Foto from "@/components/Foto"
 import { getProfile } from "../actions";
 import BotonJugar from "@/components/BotonJugar"
@@ -18,7 +17,7 @@ export default async function Menu() {
 
   const { user } = session;
 
-    const { puntos, racha } = await getProfile(user.id);  
+    const { puntos } = await getProfile(user.id);  
 
     //pasar racha de Date a texto
     const rachaTexto = "2 días"
@@ -47,7 +46,7 @@ export default async function Menu() {
           <img src="/userwhite.png" alt="" className={styles.userwhite} />
           Perfil
         </Link>
-        <Link href="/menu" className={styles.source}>
+        <Link href="/configuracion" className={styles.source}>
           <img src="/ajustes.png" alt="" className={styles.ajustes} />
           Configuracion
         </Link>
@@ -56,7 +55,7 @@ export default async function Menu() {
       <div className={styles.mainContent}>
         <header className={styles.header}>
           <div className={styles.greeting}>
-            <h2>Hola {user.name}!</h2>
+            <h2>Hola, {user.name}!</h2>
             <p>Que juego quieres jugar hoy?</p>
           </div>
 

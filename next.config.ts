@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "imgs.search.brave.com"
+      },
+      {
+        protocol: "https",
+        hostname: "dcdn-us.mitiendanube.com"
       }
     ]
   }
