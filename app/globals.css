@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-geist-sans: "Geist", Arial, Helvetica, sans-serif;
+  --font-geist-mono: "Geist Mono", Consolas, monospace;
+  --font-rubik-one: "Rubik", Arial, sans-serif;
+  --font-baloo: "Baloo 2", Arial, sans-serif;
 }
 
  @theme inline {

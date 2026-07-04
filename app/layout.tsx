@@ -1,33 +1,29 @@
 import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Rubik,
-  Baloo_2,
-} from "next/font/google";
-
+import "@fontsource/geist/latin-100.css";
+import "@fontsource/geist/latin-200.css";
+import "@fontsource/geist/latin-300.css";
+import "@fontsource/geist/latin-400.css";
+import "@fontsource/geist/latin-500.css";
+import "@fontsource/geist/latin-600.css";
+import "@fontsource/geist/latin-700.css";
+import "@fontsource/geist/latin-800.css";
+import "@fontsource/geist/latin-900.css";
+import "@fontsource/geist-mono/latin-100.css";
+import "@fontsource/geist-mono/latin-200.css";
+import "@fontsource/geist-mono/latin-300.css";
+import "@fontsource/geist-mono/latin-400.css";
+import "@fontsource/geist-mono/latin-500.css";
+import "@fontsource/geist-mono/latin-600.css";
+import "@fontsource/geist-mono/latin-700.css";
+import "@fontsource/geist-mono/latin-800.css";
+import "@fontsource/geist-mono/latin-900.css";
+import "@fontsource/rubik/latin-900.css";
+import "@fontsource/baloo-2/latin-400.css";
+import "@fontsource/baloo-2/latin-500.css";
+import "@fontsource/baloo-2/latin-600.css";
+import "@fontsource/baloo-2/latin-700.css";
+import "@fontsource/baloo-2/latin-800.css";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const rubikOne = Rubik({
-  variable: "--font-rubik-one",
-  subsets: ["latin"],
-  weight: "900",
-});
-
-const baloo = Baloo_2({
-  variable: "--font-baloo",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "InSign",
@@ -40,16 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`
-        ${geistSans.variable}
-        ${geistMono.variable}
-        ${rubikOne.variable}
-        ${baloo.variable}
-        h-full antialiased
-      `}
-    >
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {children}
       </body>
