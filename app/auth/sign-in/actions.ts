@@ -19,3 +19,21 @@ export async function signInWithEmail(
 
     redirect('/menu');
 }
+
+export async function signInWithGoogle() {
+    const { data, error } = await auth.signIn.social({
+        provider: 'google',
+        callbackURL: '/menu',
+    });
+
+    if (error) {
+        console.error(error);
+        throw new Error(error.message || 'Failed to sign in with Google');
+    }
+
+    if (data?.url) {
+        redirect(data.url);
+    }
+
+    redirect('/menu');
+}
