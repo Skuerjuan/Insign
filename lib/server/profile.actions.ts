@@ -1,7 +1,18 @@
 "use server"
 
 import { prisma } from "@/db"
-     
+import { auth } from "@/lib/auth/server"
+import { redirect } from "next/navigation";
+
+export async function getSession(){
+    const { data: session } = await auth.getSession();
+    
+    if (!session?.user) {
+        redirect("/auth/sign-in");
+    }
+    return session.user;
+}
+
 export async function getProfile(userId: string){
     let profile = await prisma.profiles.findUnique({
         where: {

@@ -1,7 +1,7 @@
 "use client"
 
-import { authClient } from "@/lib/auth/client"
-
+import updateNombre from "@/lib/client/updateNombre";
+import updateFoto from "@/lib/client/updateFoto";
 
 export default function EditButton({ style }){
 
@@ -10,13 +10,8 @@ export default function EditButton({ style }){
     async function modificar(){
         let nombreNuevo = prompt("Cual querés que sea tu nombre nuevo?");
         let fotoNueva = prompt("Cual querés que sea tu foto nueva?");
-        const { error } = await authClient.updateUser({
-            name: nombreNuevo,
-            image: fotoNueva,
-        });
-        if(error){
-            console.error(error);
-        }
+        updateNombre(nombreNuevo);
+        updateFoto(fotoNueva);
     }
 
     return(

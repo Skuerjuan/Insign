@@ -2,7 +2,7 @@
 
 import styles from "./styles.module.css";
 import Link from "next/link";
-import Input from "../../../components/input";
+import Input from "../../../components/Input";
 
 import { useActionState } from 'react';
 import { signInWithEmail } from './actions';

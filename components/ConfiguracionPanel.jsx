@@ -2,18 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth/client";
 import styles from "@/app/configuracion/styles.module.css";
+import cerrarSesion from "@/lib/client/cerrarSesion";
 
 export default function ConfiguracionPanel() {
-  const router = useRouter();
   const [tema, setTema] = useState("claro");
-
-  async function cerrarSesion() {
-    await authClient.signOut();
-    router.push("/auth/sign-in");
-    router.refresh();
-  }
+  const router = useRouter();
 
   return (
     <main className={styles.settingsMain}>
@@ -38,7 +32,7 @@ export default function ConfiguracionPanel() {
         <b aria-hidden="true">›</b>
       </button>
 
-      <button type="button" className={styles.logout} onClick={cerrarSesion}>
+      <button type="button" className={styles.logout} onClick={() => cerrarSesion(router)}>
         <span aria-hidden="true">⇥</span>
         <span><strong>Cerrar sesión</strong><small>Salir de tu cuenta</small></span>
       </button>

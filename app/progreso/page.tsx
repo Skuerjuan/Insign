@@ -1,19 +1,13 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/server";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
+import { getSession } from "@/lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Progreso() {
-  const { data: session } = await auth.getSession();
+  const user = await getSession();
 
-  if (!session?.user) {
-    redirect("/auth/sign-in");
-  }
-
-  const { user } = session;
   const userProgress = user as typeof user & {
     puntos?: string | number | null;
     aprendidas?: string | number | null;
