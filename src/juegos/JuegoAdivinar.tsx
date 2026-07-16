@@ -231,11 +231,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           const centroX = width / 2;
           const centroY = height * 0.42;
 
-          // SE ELIMINÓ:this.add.image(centroX, centroY, "fondoFicha")... 
-          // Ahora el GIF flota directamente sobre el mapa, libre de fondos.
-
           const elementoImg = document.createElement("img");
-          // Ocupa el 100% de su contenedor ya que no tiene bordes amarillos que cuidar
           elementoImg.style.width = `${Math.round(panelWidth)}px`;
           elementoImg.style.height = `${Math.round(panelHeight)}px`;
           elementoImg.style.objectFit = "contain";
@@ -252,14 +248,14 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
-          const botonWidth = Phaser.Math.Clamp(width * 0.30, 140 * escalaUi, 250 * escalaUi);
-          const botonHeight = 50 * escalaUi;
+          const botonWidth = Phaser.Math.Clamp(width * 0.25, 145 * escalaUi, 230 * escalaUi);
+          const botonHeight = 52 * escalaUi;
           
           const centroX = width / 2;
-          const inicioY = height * 0.72; 
+          const inicioY = height * 0.70; 
           
-          const difX = botonWidth + (16 * escalaUi); 
-          const difY = botonHeight + (8 * escalaUi); 
+          const difX = botonWidth + (18 * escalaUi); 
+          const difY = botonHeight + (10 * escalaUi); 
 
           const posiciones = [
             { x: centroX - difX, y: inicioY }, 
@@ -281,10 +277,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
-            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 12 * escalaUi);
+            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 14 * escalaUi);
 
             const textoBoton = this.add.text(0, 0, palabraOpcion, {
-              fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 12, 18)}px`,
+              fontSize: `${Phaser.Math.Clamp(18 * escalaUi, 14, 21)}px`,
               fontFamily,
               color: "#05215b",
               fontStyle: "800",
@@ -298,6 +294,34 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               this.validarRespuesta(contenedorBoton, backgroundBoton, botonWidth, botonHeight, escalaUi)
             );
           });
+        }
+
+        lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
+          
+          for (let i = 0; i < 35; i++) {
+            const color = Phaser.Utils.Array.GetRandom(colores);
+            const size = Phaser.Math.Between(6 * escalaUi, 12 * escalaUi);
+            
+            const papelito = this.add.rectangle(origenX, origenY, size, size, color);
+            papelito.setAngle(Phaser.Math.Between(0, 360));
+
+            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0); 
+            const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad;
+            const targetY = origenY + Math.sin(angulo) * velocidad + 150; 
+
+            this.tweens.add({
+              targets: papelito,
+              x: targetX,
+              y: targetY,
+              angle: papelito.angle + Phaser.Math.Between(360, 720),
+              alpha: 0,
+              duration: Phaser.Math.Between(1000, 1600),
+              ease: "Cubic.easeOut",
+              onComplete: () => papelito.destroy()
+            });
+          }
         }
 
         validarRespuesta(
@@ -314,9 +338,20 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             graficoBg.clear();
-            graficoBg.fillStyle(0x4be06d, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
+            graficoBg.fillStyle(0x58cc02, 1);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
             
+            this.tweens.add({
+              targets: contenedor,
+              scaleX: 1.15,
+              scaleY: 1.15,
+              duration: 100,
+              yoyo: true,
+              ease: "Quad.easeOut"
+            });
+
+            this.lanzarConfeti(contenedor.x, contenedor.y, escalaUi);
+
             this.aciertos++;
             if (this.textoMarcador) this.textoMarcador.setText(`Aciertos: ${this.aciertos}/5`);
 
@@ -324,9 +359,9 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(800, () => {
+            this.time.delayedCall(3500, () => {
               if (this.aciertos >= 5) {
-                this.scene.start("PantallaFin");
+                window.history.back();
               } else {
                 this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
               }
@@ -335,7 +370,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           } else {
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
             
             this.intentosFallidos++;
             if (this.textoVidas) {
@@ -351,7 +386,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               onComplete: () => {
                 graficoBg.clear();
                 graficoBg.fillStyle(0xffd32a, 1);
-                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
+                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
@@ -363,53 +398,6 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               }
             });
           }
-        }
-      }
-
-      class PantallaFin extends Phaser.Scene {
-        constructor() {
-          super("PantallaFin");
-        }
-
-        create() {
-          const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.15);
-
-          this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
-
-          const panelWidth = Phaser.Math.Clamp(width * 0.68, 240 * escalaUi, 380 * escalaUi);
-          const panelHeight = 150 * escalaUi;
-          const panelX = width / 2 - panelWidth / 2;
-          const panelY = height / 2 - panelHeight / 2;
-          
-          const panel = this.add.graphics();
-          panel.fillStyle(0xffd32a, 1);
-          panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
-          panel.lineStyle(5 * escalaUi, 0x06398a, 1);
-          panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
-
-          this.add
-            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nCompletaste la trivia.", {
-              fontSize: `${24 * escalaUi}px`,
-              fontFamily,
-              color: "#003895",
-              align: "center",
-              fontStyle: "bold",
-            })
-            .setOrigin(0.5);
-
-          const botonFinal = this.add
-            .text(width / 2, height / 2 + 48 * escalaUi, "Volver", {
-              fontSize: `${18 * escalaUi}px`,
-              fontFamily,
-              color: "#ffffff",
-              backgroundColor: "#1e78ff",
-              padding: { x: 22, y: 8 },
-            })
-            .setOrigin(0.5);
-
-          botonFinal.setInteractive({ useHandCursor: true });
-          botonFinal.on("pointerdown", () => window.history.back());
         }
       }
 
@@ -425,7 +413,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           height: "100%",
         },
         backgroundColor: "#87CEEB",
-        scene: [AdivinarScene, PantallaFin],
+        scene: [AdivinarScene],
       };
 
       const game = new Phaser.Game(config);
