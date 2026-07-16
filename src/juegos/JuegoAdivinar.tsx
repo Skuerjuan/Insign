@@ -101,7 +101,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.78, 1.35);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.15);
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
@@ -139,34 +139,34 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           flecha.lineTo(66 * escalaUi, topY - 3 * escalaUi);
           flecha.strokePath();
 
-          const titleWidth = Phaser.Math.Clamp(width * 0.25, 260 * escalaUi, 460 * escalaUi);
+          const titleWidth = Phaser.Math.Clamp(width * 0.25, 240 * escalaUi, 380 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 62 * escalaUi, 10 * escalaUi);
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 52 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 41 * escalaUi, "Elección", {
-              fontSize: `${Phaser.Math.Clamp(48 * escalaUi, 36, 58)}px`,
+            .text(width / 2, 36 * escalaUi, "Elección", {
+              fontSize: `${Phaser.Math.Clamp(40 * escalaUi, 30, 48)}px`,
               fontFamily,
               color: "#ffffff",
               stroke: "#d28b00",
-              strokeThickness: 6 * escalaUi,
+              strokeThickness: 5 * escalaUi,
               fontStyle: "800",
             })
             .setOrigin(0.5);
 
           const puntosTexto = `${userName} puntos`;
-          const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
+          const scoreWidth = Phaser.Math.Clamp(100 * escalaUi + puntosTexto.length * 7 * escalaUi, 140 * escalaUi, 280 * escalaUi);
           const scoreX = width - scoreWidth - 38 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
+          scoreBg.fillRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
           scoreBg.lineStyle(3 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
-          this.add.star(scoreX + 26 * escalaUi, 36 * escalaUi, 5, 11 * escalaUi, 22 * escalaUi, amarillo);
+          scoreBg.strokeRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
+          this.add.star(scoreX + 22 * escalaUi, 33 * escalaUi, 5, 9 * escalaUi, 18 * escalaUi, amarillo);
           this.add
-            .text(scoreX + 54 * escalaUi, 36 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
+            .text(scoreX + 46 * escalaUi, 33 * escalaUi, puntosTexto, {
+              fontSize: `${Phaser.Math.Clamp(18 * escalaUi, 14, 22)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
@@ -174,30 +174,30 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             .setOrigin(0, 0.5);
 
           this.add
-            .text(width / 2, 102 * escalaUi, "Adivina esta seña", {
-              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 20, 34)}px`,
+            .text(width / 2, 105 * escalaUi, "Adivina esta seña", {
+              fontSize: `${Phaser.Math.Clamp(24 * escalaUi, 18, 28)}px`,
               fontFamily,
               color: "#ffffff",
               fontStyle: "800",
             })
             .setOrigin(0.5)
-            .setStroke("#0042AD", 6 * escalaUi);
+            .setStroke("#0042AD", 5 * escalaUi);
 
-          this.textoMarcador = this.add.text(46 * escalaUi, height - 35 * escalaUi, `Aciertos: ${this.aciertos}/5`, {
-            fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 15, 26)}px`,
+          this.textoMarcador = this.add.text(35 * escalaUi, height - 30 * escalaUi, `Aciertos: ${this.aciertos}/5`, {
+            fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 13, 20)}px`,
             fontFamily,
             color: "#ffffff",
             backgroundColor: "#2ed573",
-            padding: { x: 12, y: 5 },
+            padding: { x: 10, y: 4 },
           }).setOrigin(0, 0.5);
           this.textoMarcador.setStroke("#0042AD", 4 * escalaUi);
 
-          this.textoVidas = this.add.text(width - 46 * escalaUi, height - 35 * escalaUi, `Intentos: ${3 - this.intentosFallidos} ❤️`, {
-            fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 15, 26)}px`,
+          this.textoVidas = this.add.text(width - 35 * escalaUi, height - 30 * escalaUi, `Intentos: ${3 - this.intentosFallidos} ❤️`, {
+            fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 13, 20)}px`,
             fontFamily,
             color: "#ffffff",
             backgroundColor: "#ff4757",
-            padding: { x: 12, y: 5 },
+            padding: { x: 10, y: 4 },
           }).setOrigin(1, 0.5);
           this.textoVidas.setStroke("#0042AD", 4 * escalaUi);
         }
@@ -216,7 +216,6 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          // Ahora buscamos 5 distractores para rellenar las 6 opciones (2 columnas x 3 filas)
           const distractores = this.mazoJuego.filter(p => p !== this.palabraObjetivo);
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 5);
 
@@ -226,18 +225,19 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           this.dibujarBotoneraColumnas(width, height, escalaUi);
         }
 
-        // El GIF centrado pero un toque más arriba para dar espacio a las 3 filas
         dibujarPanelGifPrincipal(width: number, height: number, escalaUi: number) {
-          const panelWidth = Phaser.Math.Clamp(width * 0.38, 220 * escalaUi, 340 * escalaUi);
+          const panelWidth = Phaser.Math.Clamp(width * 0.32, 210 * escalaUi, 300 * escalaUi);
           const panelHeight = panelWidth * 0.70;
           const centroX = width / 2;
-          const centroY = height * 0.33;
+          const centroY = height * 0.42;
 
-          this.add.image(centroX, centroY, "fondoFicha").setDisplaySize(panelWidth, panelHeight);
+          // SE ELIMINÓ:this.add.image(centroX, centroY, "fondoFicha")... 
+          // Ahora el GIF flota directamente sobre el mapa, libre de fondos.
 
           const elementoImg = document.createElement("img");
-          elementoImg.style.width = `${Math.round(panelWidth * 0.92)}px`;
-          elementoImg.style.height = `${Math.round(panelHeight * 0.86)}px`;
+          // Ocupa el 100% de su contenedor ya que no tiene bordes amarillos que cuidar
+          elementoImg.style.width = `${Math.round(panelWidth)}px`;
+          elementoImg.style.height = `${Math.round(panelHeight)}px`;
           elementoImg.style.objectFit = "contain";
           elementoImg.style.borderRadius = "12px";
           elementoImg.style.pointerEvents = "none";
@@ -251,20 +251,24 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           this.add.dom(centroX, centroY, elementoImg);
         }
 
-        // GRILLA DE 2 COLUMNAS POR 3 FILAS (6 botones en total)
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
-          const botonWidth = Phaser.Math.Clamp(width * 0.32, 160 * escalaUi, 280 * escalaUi);
-          const botonHeight = 46 * escalaUi;
+          const botonWidth = Phaser.Math.Clamp(width * 0.30, 140 * escalaUi, 250 * escalaUi);
+          const botonHeight = 50 * escalaUi;
           
           const centroX = width / 2;
-          const inicioY = height * 0.58; // Comienza abajo del GIF
-          const difX = botonWidth / 2 + (15 * escalaUi); // Separación entre columna izquierda y derecha
-          const difY = botonHeight + (12 * escalaUi);   // Separación vertical entre filas
+          const inicioY = height * 0.72; 
+          
+          const difX = botonWidth + (16 * escalaUi); 
+          const difY = botonHeight + (8 * escalaUi); 
 
-          // Armamos el mapeo de coordenadas (Fila 1, Fila 2, Fila 3) en 2 Columnas
           const posiciones = [
-            { x: centroX - difX, y: inicioY },                  { x: centroX, y: inicioY }, { x: centroX + difX, y: inicioY },
-            { x: centroX - difX, y: inicioY + difY }, { x: centroX, y: inicioY + difY }, { x: centroX + difX, y: inicioY + difY }
+            { x: centroX - difX, y: inicioY }, 
+            { x: centroX,        y: inicioY }, 
+            { x: centroX + difX, y: inicioY },
+            
+            { x: centroX - difX, y: inicioY + difY }, 
+            { x: centroX,        y: inicioY + difY }, 
+            { x: centroX + difX, y: inicioY + difY }
           ];
 
           this.opciones.forEach((palabraOpcion, index) => {
@@ -277,10 +281,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
-            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 14 * escalaUi);
+            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 12 * escalaUi);
 
             const textoBoton = this.add.text(0, 0, palabraOpcion, {
-              fontSize: `${Phaser.Math.Clamp(18 * escalaUi, 14, 24)}px`,
+              fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 12, 18)}px`,
               fontFamily,
               color: "#05215b",
               fontStyle: "800",
@@ -311,7 +315,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           if (respuestaSeleccionada === this.palabraObjetivo) {
             graficoBg.clear();
             graficoBg.fillStyle(0x4be06d, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
             
             this.aciertos++;
             if (this.textoMarcador) this.textoMarcador.setText(`Aciertos: ${this.aciertos}/5`);
@@ -331,7 +335,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           } else {
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
             
             this.intentosFallidos++;
             if (this.textoVidas) {
@@ -347,7 +351,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               onComplete: () => {
                 graficoBg.clear();
                 graficoBg.fillStyle(0xffd32a, 1);
-                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 12 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
@@ -369,7 +373,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.15);
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
@@ -386,7 +390,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
           this.add
             .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nCompletaste la trivia.", {
-              fontSize: `${26 * escalaUi}px`,
+              fontSize: `${24 * escalaUi}px`,
               fontFamily,
               color: "#003895",
               align: "center",
@@ -396,7 +400,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
           const botonFinal = this.add
             .text(width / 2, height / 2 + 48 * escalaUi, "Volver", {
-              fontSize: `${20 * escalaUi}px`,
+              fontSize: `${18 * escalaUi}px`,
               fontFamily,
               color: "#ffffff",
               backgroundColor: "#1e78ff",
