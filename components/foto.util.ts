@@ -5,6 +5,7 @@ const FOTO_POR_DEFECTO = "/user.png";
 export default function obtenerFoto(image: string) {
     if (!image) return FOTO_POR_DEFECTO;
     if (image.startsWith("/")) return image;
+    if (image.startsWith("data:image/")) return image;
 
     try {
         const url = new URL(image);

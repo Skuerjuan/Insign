@@ -59,7 +59,10 @@ export default async function Perfil() {
 
         <main className={styles.profileMain}>
           <section className={styles.userCard}>
-            <EditButton style={styles.editButton} />
+            <EditButton
+              className={styles.editButton}
+              user={{ name: user.name, image: user.image }}
+            />
 
             <div className={styles.userAvatar}>
               <Foto user={user} />

@@ -270,6 +270,8 @@ flex: 0 0 auto;
   font-weight: 900;
   line-height: 1.05;
   flex: 0 0 auto;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .profileMain {
@@ -322,6 +324,12 @@ flex: 0 0 auto;
   cursor: pointer;
 }
 
+.editButton svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
 .userAvatar {
   width: 104px;
   height: 104px;
@@ -337,8 +345,9 @@ flex: 0 0 auto;
   font-size: 16px;
   font-weight: 900;
   line-height: 1.05;
-  padding: 8px;
+  padding: 0;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .userInfo h1 {
@@ -348,6 +357,15 @@ flex: 0 0 auto;
   font-size: clamp(32px, 5vw, 42px);
   font-weight: 900;
   line-height: 0.95;
+}
+
+.userInfo {
+  width: 100%;
+  display: flex;
+  align-self: end;
+  align-items: flex-start;
+  flex-direction: column;
+  text-align: left;
 }
 
 .userInfo p {
@@ -527,6 +545,13 @@ flex: 0 0 auto;
     justify-items: center;
     text-align: center;
     row-gap: 14px;
+  }
+
+  .userInfo {
+    width: auto;
+    align-self: auto;
+    align-items: center;
+    text-align: center;
   }
 
   .userAvatar {
