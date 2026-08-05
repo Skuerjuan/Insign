@@ -1,18 +1,13 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/server";
 import Foto from "@/components/Foto";
 import ConfiguracionPanel from "@/components/ConfiguracionPanel";
 import styles from "./styles.module.css";
+import { getSession } from "@/lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Configuracion() {
-  const { data: session } = await auth.getSession();
-
-  if (!session?.user) redirect("/auth/sign-in");
-
-  const { user } = session;
+  const user = await getSession();
 
   return (
     <div className={styles.fondo}>

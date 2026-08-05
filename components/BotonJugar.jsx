@@ -1,6 +1,6 @@
 "use client";
 
-import { addPoints } from "@/app/actions";
+import { addPoints } from "@/lib/server/profile.actions";
 import Link from "next/link";
 
 export default function BotonJugar({ styleButton, styleIcon, userId, juego }) {

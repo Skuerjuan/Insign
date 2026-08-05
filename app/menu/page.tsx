@@ -1,21 +1,13 @@
 import styles from "./styles.module.css";
 import Link from "next/link";
-import { auth } from "@/lib/auth/server";
-import { redirect } from "next/navigation";
 import Foto from "@/components/Foto"
-import { getProfile } from "../actions";
+import { getProfile, getSession } from "../../lib/server/profile.actions";
 import BotonJugar from "@/components/BotonJugar"
 
 export const dynamic = "force-dynamic";
 
 export default async function Menu() {
-  const { data: session } = await auth.getSession();
-
-  if (!session?.user) {
-    redirect("/auth/sign-in");
-  }
-
-  const { user } = session;
+  const user = await getSession();
 
     const { puntos } = await getProfile(user.id);  
 

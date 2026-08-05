@@ -1,22 +1,13 @@
 import styles from "./style.module.css";
 import Link from "next/link";
-import { auth } from "@/lib/auth/server";
-import { redirect } from "next/navigation";
 import EditButton from "@/components/EditButton";
 import Foto from "@/components/Foto";
-import { getProfile } from "../actions";
+import { getProfile, getSession } from "../../lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Perfil() {
-  const { data: session } = await auth.getSession();
-
-  
-  if (!session?.user) {
-    redirect("/auth/sign-in");
-  }
-  
-  const { user } = session;
+  const user = await getSession();
   const { puntos, premios } = await getProfile(user.id);
 
   // pasar racha de Date a texto (?)
@@ -68,7 +59,10 @@ export default async function Perfil() {
 
         <main className={styles.profileMain}>
           <section className={styles.userCard}>
-            <EditButton style={styles.editButton} />
+            <EditButton
+              className={styles.editButton}
+              user={{ name: user.name, image: user.image }}
+            />
 
             <div className={styles.userAvatar}>
               <Foto user={user} />

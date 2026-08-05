@@ -2,13 +2,17 @@
 
 import styles from "./styles.module.css";
 import Link from "next/link";
-import Input from "../../../components/input";
+import Input from "@/components/Input";
 
 import { useActionState } from 'react';
 import { signInWithEmail } from './actions';
+import { useRouter } from "next/navigation";
+import signInWithGoogle from '@/lib/client/signInWithGoogle';
+
 
 export default function SignIn() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
+    const router = useRouter();
 
     return (
     <div className={styles.fondo}>
@@ -68,19 +72,17 @@ export default function SignIn() {
           <div className={styles.linea}></div>
         </div>
 
-        <button className={styles.googleBtn}>
+        <button
+          type="button"
+          onClick={signInWithGoogle}
+          className={styles.googleBtn}
+        >
           <img
             src="/google.png"
             className={styles.googleIcon}
             />
 
-
-          <Link
-            href="/"
-            className={styles.googleLink}
-          >
-            Google
-          </Link>
+          <span className={styles.googleLink}>Google</span>
         </button>
 
         <div className={styles.registro}>
