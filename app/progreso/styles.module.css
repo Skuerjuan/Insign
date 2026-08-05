@@ -1,0 +1,504 @@
+.fondo {
+  width: 100%;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  overflow: hidden;
+  background-color: #72cff4;
+  background-image: url("/FondoInicioSesion.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: var(--font-baloo);
+}
+
+.aside {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 25px 24px;
+  box-sizing: border-box;
+  background-color: #126cff;
+  background-image: url("/asidevector.svg");
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin: 0 0 28px;
+  font-family: var(--font-rubik-one);
+  font-size: clamp(54px, 5.5vw, 80px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+  -webkit-text-stroke: 4px #000;
+  paint-order: stroke fill;
+}
+
+.blanco {
+  color: #fff;
+}
+
+.amarillo {
+  margin-left: 5px;
+  color: #ffd32a;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inicio,
+.train,
+.progreso,
+.usuario,
+.source {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  color: #fff;
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.progreso,
+.inicio:hover,
+.train:hover,
+.progreso:hover,
+.usuario:hover,
+.source:hover {
+  color: #126cff;
+  background: #facc15;
+}
+
+.navIcon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.mainContent {
+  min-width: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.header {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px clamp(20px, 4vw, 42px);
+  box-sizing: border-box;
+  border-bottom: 8px solid #29afe6;
+  background: #cde0ff;
+}
+
+.pageTitle {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pageTitle h1 {
+  margin: 0;
+  color: #0f59d7;
+  font-size: clamp(38px, 5vw, 54px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.profileImagePlaceholder,
+.levelImagePlaceholder,
+.chartPlaceholder,
+.summaryImagePlaceholder {
+  border: 2px dashed #86a5d3;
+  background: #f7faff;
+  color: #607ca8;
+}
+
+.smallImagePlaceholder {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.smallImagePlaceholder img {
+  width: 42px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+}
+
+.profileImagePlaceholder {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  border: 5px solid #000;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ffd735;
+  color: #8b6a00;
+  text-align: center;
+  font-family: var(--font-baloo);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.progressMain {
+  height: calc(100dvh - 96px);
+  display: grid;
+  grid-template-rows: minmax(0, 1.08fr) minmax(0, 0.96fr) minmax(0, 0.76fr);
+  gap: 8px;
+  padding: 8px clamp(16px, 3vw, 28px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.levelSection,
+.learnedSection,
+.summarySection {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 26px;
+  background: #fff;
+}
+
+.levelSection {
+  min-height: 0;
+  padding: 10px 28px 12px;
+}
+
+.learnedSection {
+  min-height: 0;
+  padding: 8px 24px 10px;
+}
+
+.summarySection {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 24px 10px;
+  overflow: hidden;
+}
+
+.levelSection h2,
+.learnedSection h2,
+.summarySection h2 {
+  margin: 0;
+  color: #052c79;
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.levelContent {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 5vw, 48px);
+  margin-top: 4px;
+  padding-left: clamp(10px, 4vw, 30px);
+}
+
+.levelImagePlaceholder {
+  width: clamp(82px, 12vh, 108px);
+  height: clamp(82px, 12vh, 108px);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.levelInformation {
+  width: min(100%, 360px);
+  color: #052c79;
+}
+
+.levelInformation h3 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.levelName {
+  margin: 2px 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.progressBar {
+  width: 100%;
+  height: 17px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #d5d5d5;
+}
+
+.progressBar span {
+  width: 10%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: #46c500;
+}
+
+.points {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.learnedContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(32px, 8vw, 76px);
+  margin-top: 4px;
+}
+
+.chartPlaceholder {
+  width: 126px;
+  height: clamp(82px, 11vh, 104px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.chartPlaceholder strong {
+  color: #052c79;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.chartPlaceholder span {
+  max-width: 100px;
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.legend {
+  min-width: min(100%, 300px);
+  display: grid;
+  gap: 16px;
+}
+
+.legendRow {
+  display: grid;
+  grid-template-columns: 20px minmax(115px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  color: #052c79;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.legendDot {
+  width: 20px;
+  height: 20px;
+  display: block;
+  border-radius: 50%;
+}
+
+.learnedDot {
+  background: #37a900;
+}
+
+.pendingDot {
+  background: #bdbdbd;
+}
+
+.summaryGrid {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 18px;
+  padding: 0;
+}
+
+.summaryItem {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #052c79;
+  text-align: center;
+}
+
+.summaryIcon {
+  width: clamp(52px, 6.5vh, 64px);
+  height: clamp(40px, 5.5vh, 48px);
+  display: block;
+  object-fit: contain;
+  transform: translateY(-6px);
+}
+
+.summaryItem strong {
+  max-width: 100%;
+  margin-top: -5px;
+  overflow-wrap: anywhere;
+  font-size: clamp(21px, 2vw, 26px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.summaryItem span {
+  margin-top: 2px;
+  font-size: clamp(13px, 1.35vw, 16px);
+  line-height: 0.1;
+}
+
+@media (max-height: 760px) and (min-width: 701px) {
+  .summaryIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .summaryItem strong {
+    font-size: 21px;
+  }
+
+  .summaryItem span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 700px) {
+  .fondo {
+    display: block;
+    overflow: auto;
+  }
+
+  .aside {
+    min-height: auto;
+    padding: 18px 14px;
+  }
+
+  .logo {
+    margin-bottom: 18px;
+  }
+
+  .navigation {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mainContent {
+    height: auto;
+    overflow: visible;
+  }
+
+  .header {
+    height: auto;
+    min-height: 94px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .progressMain {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .levelContent,
+  .learnedContent {
+    flex-direction: column;
+    padding-left: 0;
+  }
+
+  .levelInformation {
+    text-align: center;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 18px 0;
+  }
+
+  .summarySection {
+    overflow: visible;
+  }
+
+  .summaryIcon {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+@media (max-width: 420px) {
+  .navigation {
+    grid-template-columns: 1fr;
+  }
+
+  .pageTitle h1 {
+    font-size: 34px;
+  }
+
+  .smallImagePlaceholder {
+    width: 48px;
+    height: 48px;
+  }
+
+  .smallImagePlaceholder img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profileImagePlaceholder {
+    width: 70px;
+    height: 70px;
+  }
+
+  .levelSection,
+  .learnedSection,
+  .summarySection {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .legendRow {
+    grid-template-columns: 18px minmax(100px, 1fr) auto;
+    gap: 8px;
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,444 @@
+.fondo {
+  width: 100%;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  overflow: hidden;
+  background-color: #72cff4;
+  background-image: url("/FondoInicioSesion.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: var(--font-baloo);
+}
+
+.aside {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 25px 24px;
+  background-color: #126cff;
+  background-image: url("/asidevector.svg");
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin: 0 0 28px;
+  font-family: var(--font-rubik-one);
+  font-size: clamp(54px, 5.5vw, 80px);
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+  -webkit-text-stroke: 4px #000;
+  paint-order: stroke fill;
+}
+
+.blanco {
+  color: #fff;
+}
+
+.amarillo {
+  margin-left: 5px;
+  color: #ffd32a;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inicio,
+.train,
+.progreso,
+.usuario,
+.source {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0 20px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.train,
+.inicio:hover,
+.train:hover,
+.progreso:hover,
+.usuario:hover,
+.source:hover {
+  color: #126cff;
+  background: #facc15;
+}
+
+.navIcon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.mainContent {
+  min-width: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.header {
+  width: 100%;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px clamp(20px, 4vw, 42px);
+  border-bottom: 8px solid #29afe6;
+  background: #cde0ff;
+}
+
+.pageTitle {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pageTitle h1 {
+  margin: 0;
+  overflow: hidden;
+  color: #0f59d7;
+  font-size: clamp(38px, 5vw, 54px);
+  font-weight: 900;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleIcon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.titleIcon img {
+  width: 42px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(33%) sepia(99%) saturate(3623%) hue-rotate(214deg) brightness(101%) contrast(104%);
+}
+
+.profileImagePlaceholder {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 5px solid #000;
+  border-radius: 50%;
+  background: #ffd735;
+  color: #8b6a00;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.trainingMain {
+  height: calc(100dvh - 96px);
+  display: grid;
+  grid-template-rows: minmax(0, 1.55fr) minmax(112px, 0.85fr);
+  gap: 12px;
+  padding: 16px clamp(14px, 4vw, 30px) 24px;
+  overflow: hidden;
+}
+
+.practiceSection,
+.streakPanel {
+  width: min(100%, 900px);
+  min-height: 0;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.practiceSection {
+  padding: 20px clamp(18px, 4vw, 38px) 26px;
+}
+
+.practiceSection h2,
+.streakPanel h2 {
+  margin: 0;
+  color: #052c79;
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.practiceGrid {
+  height: calc(100% - 30px);
+  min-height: 150px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.practiceCard {
+  min-width: 0;
+  min-height: 148px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 28px;
+  color: #fff;
+}
+
+.alphabetCard {
+  background: #126cff;
+}
+
+.practiceCardGreen {
+  background: #5aea00;
+  color: #052c79;
+}
+
+.levelImageSlot {
+  width: clamp(92px, 10vw, 138px);
+  height: 100%;
+  min-height: 112px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 2px dashed rgba(255, 255, 255, 0.78);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 10px;
+  text-align: center;
+}
+
+.levelImageSlot span {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.greenImageSlot {
+  border-color: rgba(5, 44, 121, 0.5);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.greenImageSlot span {
+  color: rgba(5, 44, 121, 0.75);
+}
+
+.levelImageSlot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.cardText {
+  min-width: 0;
+  flex: 1;
+}
+
+.cardText h3 {
+  margin: 0;
+  font-size: clamp(23px, 2.8vw, 32px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.cardText p {
+  margin: 8px 0 0;
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.cardButton {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.cardButton span {
+  display: block;
+  transform: translateY(-2px);
+  font-family: Arial, sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.cardButton:hover,
+.cardButton:focus-visible {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.18);
+  outline: none;
+}
+
+.greenButton {
+  border-color: #052c79;
+  color: #052c79;
+}
+
+.streakPanel {
+  min-height: 112px;
+  padding: 18px 28px;
+}
+
+@media (max-width: 980px) {
+  .fondo {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .aside {
+    height: auto;
+    min-height: auto;
+    background-size: cover;
+  }
+
+  .logo {
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .navigation {
+    width: min(100%, 520px);
+    margin: 0 auto;
+  }
+
+  .mainContent,
+  .trainingMain {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .trainingMain {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .practiceSection,
+  .streakPanel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .aside {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .navigation {
+    gap: 12px;
+  }
+
+  .header {
+    height: auto;
+    min-height: 94px;
+    flex-wrap: wrap;
+  }
+
+  .practiceGrid {
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .practiceCard {
+    min-height: 156px;
+  }
+
+  .levelImageSlot {
+    width: clamp(88px, 28vw, 126px);
+  }
+}
+
+@media (max-width: 420px) {
+  .header {
+    gap: 14px;
+    padding-inline: 16px;
+  }
+
+  .pageTitle {
+    gap: 12px;
+  }
+
+  .pageTitle h1 {
+    font-size: 31px;
+  }
+
+  .titleIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .titleIcon img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profileImagePlaceholder {
+    width: 70px;
+    height: 70px;
+    font-size: 11px;
+  }
+
+  .practiceSection,
+  .streakPanel {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .practiceCard {
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .levelImageSlot {
+    width: 100%;
+    height: 130px;
+    min-height: 130px;
+  }
+
+  .cardButton {
+    width: 44px;
+    height: 44px;
+  }
+}

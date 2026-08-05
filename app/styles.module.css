@@ -1,0 +1,79 @@
+.fondo {
+    background-image: url("/FondoInicioSesion.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 4vw, 34px);
+    padding: 32px 20px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.logo {
+  font-family: var(--font-rubik-one);
+  font-size: clamp(62px, 11vw, 110px);
+  font-weight: 900;
+  line-height: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.blanco,
+.amarillo {
+  display: inline-block;
+ -webkit-text-stroke: 4px #000;  /* borde negro */
+  paint-order: stroke fill;
+  text-shadow: none; /* sacamos la sombra */
+}
+
+.blanco {
+  color: #ffffff;
+}
+
+.amarillo {
+  color: #ffd32a;
+  margin-left: 5px;
+}
+
+ .subtitulo { 
+  color: #0042AD;
+  font-family: var(--font-baloo);
+  font-size: clamp(30px, 6vw, 54px);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0;
+ }
+
+ .play {
+    background-color: #0042AD;
+    color: #ffffff;
+    font-family: var(--font-baloo);
+    font-size: clamp(34px, 5vw, 50px);
+    width: min(280px, 80vw);
+    min-height: 86px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    text-decoration: none;
+ }
+
+@media (max-width: 480px) {
+  .blanco,
+  .amarillo {
+    -webkit-text-stroke: 3px #000;
+  }
+
+  .play {
+    min-height: 74px;
+  }
+}

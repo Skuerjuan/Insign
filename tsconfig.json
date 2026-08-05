@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "database/schema.prisma", "components/EditButton.jsx"  ],
   "exclude": ["node_modules"]
 }

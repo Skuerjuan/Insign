@@ -3,14 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource/baloo-2": "^5.2.7",
+    "@fontsource/geist": "^5.2.9",
+    "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/rubik": "^5.2.8",
+    "@neondatabase/auth": "^0.4.1-beta",
+    "@prisma/adapter-neon": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "dotenv": "^17.4.2",
     "next": "16.2.6",
+    "pg": "^8.20.0",
     "phaser": "^4.1.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -18,10 +27,12 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
