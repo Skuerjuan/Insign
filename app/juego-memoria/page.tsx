@@ -1,4 +1,4 @@
-import JuegoMemoria from "@/src/juegos/memoria/JuegoMemoria";
+import JuegoMemoria from "@/src/juegos/JuegoMemoria";
 import { auth } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
 

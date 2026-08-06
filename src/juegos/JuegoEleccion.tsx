@@ -244,8 +244,14 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
             { x: inicioX + separacionX, y: inicioY + separacionY }
           ];
 
-          const cardWidth = Phaser.Math.Clamp(separacionX * 0.88, 140, 240);
-          const cardHeight = cardWidth * 0.74;
+          const baseWidth = Phaser.Math.Clamp(separacionX * 0.90, 140, 240);
+          const baseHeight = baseWidth * 0.78;
+
+          const gifWidth = Math.round(baseWidth * 0.88);
+          const gifHeight = Math.round(baseHeight * 0.82);
+
+          const cardWidth = gifWidth + 10;
+          const cardHeight = gifHeight + 8;
 
           this.opciones.forEach((palabraOpicion, index) => {
             const pos = posiciones[index];
@@ -257,8 +263,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
             const fondoObj = this.add.image(0, 0, "fondoFicha").setDisplaySize(cardWidth, cardHeight);
             
             const elementoImg = document.createElement("img");
-            elementoImg.style.width = `${Math.round(cardWidth * 0.88)}px`;
-            elementoImg.style.height = `${Math.round(cardHeight * 0.82)}px`;
+            elementoImg.style.width = `${gifWidth}px`;
+            elementoImg.style.height = `${gifHeight}px`;
             elementoImg.style.objectFit = "contain";
             elementoImg.style.borderRadius = "8px";
             elementoImg.style.pointerEvents = "none";
