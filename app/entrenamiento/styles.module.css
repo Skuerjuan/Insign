@@ -228,10 +228,10 @@
   place-items: center;
   flex: 0 0 auto;
   overflow: hidden;
-  border: 2px dashed rgba(255, 255, 255, 0.78);
+  border: 0;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.18);
-  padding: 10px;
+  background: transparent;
+  padding: 0;
   text-align: center;
 }
 
@@ -243,8 +243,7 @@
 }
 
 .greenImageSlot {
-  border-color: rgba(5, 44, 121, 0.5);
-  background: rgba(255, 255, 255, 0.3);
+  background: transparent;
 }
 
 .greenImageSlot span {

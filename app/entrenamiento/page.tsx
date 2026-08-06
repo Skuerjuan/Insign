@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
 import { getProfile, getSession } from "../../lib/server/profile.actions";
@@ -64,7 +65,12 @@ export default async function Entrenamiento() {
                   className={styles.levelImageSlot}
                   aria-label="Imagen correspondiente al nivel Abecedario"
                 >
-                  <span>Imagen del nivel</span>
+                  <Image
+                    src="/mono-abecedario.png"
+                    alt="Mono saludando"
+                    width={208}
+                    height={275}
+                  />
                 </div>
 
                 <div className={styles.cardText}>
@@ -85,7 +91,12 @@ export default async function Entrenamiento() {
                   className={`${styles.levelImageSlot} ${styles.greenImageSlot}`}
                   aria-label="Imagen correspondiente al nivel Practicar"
                 >
-                  <span>Imagen del nivel</span>
+                  <Image
+                    src="/mono-practicar.png"
+                    alt="Mono cargando un tronco"
+                    width={236}
+                    height={236}
+                  />
                 </div>
 
                 <div className={styles.cardText}>
