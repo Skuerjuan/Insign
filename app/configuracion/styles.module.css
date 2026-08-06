@@ -163,6 +163,42 @@
     line-height:1.05; 
     text-align:center; 
 }
+.settingsIcon {
+    --icon-background:#126cff;
+    position:relative;
+    isolation:isolate;
+    width:72px;
+    height:72px;
+    display:grid;
+    place-items:center;
+    flex:0 0 auto;
+    overflow:hidden;
+    box-sizing:border-box;
+    border-radius:50%;
+    background-color:var(--icon-background);
+}
+.settingsIcon::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    background:rgba(255,255,255,.58);
+}
+.settingsIcon img {
+    width:58px;
+    height:58px;
+    object-fit:contain;
+}
+.appearanceIcon {
+    --icon-background:#bd00a4;
+}
+.parentalIcon {
+    --icon-background:#ff8112;
+}
+.passwordIcon {
+    --icon-background:#1216ff;
+}
+
 .cardContent { 
     width:100%; 
 }
