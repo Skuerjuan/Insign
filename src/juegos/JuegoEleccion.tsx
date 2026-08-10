@@ -81,6 +81,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
         private bloqueado = false;
         private mazoJuego: string[] = [];
         private palabrasUsadas: string[] = [];
+        private escalaUiGlobal = 1;
 
         private textoPalabra: Phaser.GameObjects.Text | null = null;
         private textoMarcador: Phaser.GameObjects.Text | null = null;
@@ -105,6 +106,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
         create() {
           const { width, height } = this.scale;
           const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.78, 1.35);
+          this.escalaUiGlobal = escalaUi;
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
@@ -283,6 +285,36 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
           });
         }
 
+        lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6, 0x00d2d3];
+          
+          for (let i = 0; i < 90; i++) {
+            const color = Phaser.Utils.Array.GetRandom(colores);
+            const ancho = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
+            const alto = Phaser.Math.Between(8 * escalaUi, 18 * escalaUi);
+            
+            const papelito = this.add.rectangle(origenX, origenY, ancho, alto, color);
+            papelito.setAngle(Phaser.Math.Between(0, 360));
+
+            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1); 
+            const velocidad = Phaser.Math.Between(200 * escalaUi, 550 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-80, 80);
+            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(150, 300); 
+
+            this.tweens.add({
+              targets: papelito,
+              x: targetX,
+              y: targetY,
+              angle: papelito.angle + Phaser.Math.Between(720, 1440),
+              scaleX: { from: 1, to: Phaser.Math.FloatBetween(0.2, 0.8) },
+              alpha: { from: 1, to: 0 },
+              duration: Phaser.Math.Between(1400, 2200),
+              ease: "Cubic.easeOut",
+              onComplete: () => papelito.destroy()
+            });
+          }
+        }
+
         validarRespuesta(ficha: Phaser.GameObjects.Container, fondoObj: CardBack) {
           if (this.bloqueado) return;
           this.bloqueado = true;
@@ -293,6 +325,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
             fondoObj.setTint(0x4be06d); 
             this.aciertos++;
 
+            this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
+
             if (this.textoMarcador) {
               this.textoMarcador.setText(`Aciertos: ${this.aciertos}/5`);
             }
@@ -301,7 +335,10 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(800, () => {
+            // Aumentado a 2.5 segundos de pausa para poder memorizar la seña seleccionada
+            const tiempoEspera = this.aciertos >= 5 ? 5000 : 5000;
+
+            this.time.delayedCall(tiempoEspera, () => {
               if (this.aciertos >= 5) {
                 this.scene.start("PantallaFin");
               } else {
@@ -344,11 +381,46 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
           super("PantallaFin");
         }
 
+        lanzarConfetiFinal(width: number, height: number, escalaUi: number) {
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6, 0x00d2d3];
+          
+          for (let i = 0; i < 150; i++) {
+            const color = Phaser.Utils.Array.GetRandom(colores);
+            const origenX = Phaser.Math.Between(width * 0.1, width * 0.9);
+            const origenY = Phaser.Math.Between(height * 0.2, height * 0.5);
+            const ancho = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
+            const alto = Phaser.Math.Between(8 * escalaUi, 18 * escalaUi);
+            
+            const papelito = this.add.rectangle(origenX, origenY, ancho, alto, color);
+            papelito.setAngle(Phaser.Math.Between(0, 360));
+
+            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0); 
+            const velocidad = Phaser.Math.Between(150 * escalaUi, 450 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-100, 100);
+            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(200, 400); 
+
+            this.tweens.add({
+              targets: papelito,
+              x: targetX,
+              y: targetY,
+              angle: papelito.angle + Phaser.Math.Between(720, 1440),
+              scaleX: { from: 1, to: Phaser.Math.FloatBetween(0.2, 0.8) },
+              alpha: { from: 1, to: 0 },
+              duration: Phaser.Math.Between(1800, 2800),
+              delay: Phaser.Math.Between(0, 500),
+              ease: "Cubic.easeOut",
+              onComplete: () => papelito.destroy()
+            });
+          }
+        }
+
         create() {
           const { width, height } = this.scale;
           const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
+
+          this.lanzarConfetiFinal(width, height, escalaUi);
 
           const panelWidth = Phaser.Math.Clamp(width * 0.68, 240 * escalaUi, 380 * escalaUi);
           const panelHeight = 150 * escalaUi;

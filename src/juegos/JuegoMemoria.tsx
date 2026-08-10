@@ -136,7 +136,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
           const marcadorHeight = 48 * escalaUi;
           const marcadorY = height - marcadorHeight - 16 * escalaUi;
 
-          // Ajustes de espacio para evitar que las etiquetas tapen las cartas
           const labelsY = Math.max(120 * escalaUi, height * 0.17);
           const gapX = Phaser.Math.Clamp(width * 0.012, 10 * escalaUi, 22 * escalaUi);
           const gapY = Phaser.Math.Clamp(height * 0.025, 14 * escalaUi, 28 * escalaUi);
@@ -145,7 +144,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
           const anchoDisponible = width * 0.94;
           const cardSizePorAncho = (anchoDisponible - groupGapX - gapX * (columnasPorGrupo - 1) * 2) / (columnasPorGrupo * 2);
           
-          // Cálculo del límite vertical disponible
           const topLimite = labelsY + 30 * escalaUi;
           const altoDisponible = Math.max(200, marcadorY - topLimite - 15 * escalaUi);
           const cardSizePorAlto = (altoDisponible - gapY * (filasPorGrupo - 1)) / filasPorGrupo;
@@ -153,7 +151,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
           const cardWidth = Phaser.Math.Clamp(Math.min(230 * escalaUi, cardSizePorAncho, cardSizePorAlto), 115, 230);
           const cardHeight = cardWidth;
 
-          // Alineación vertical precisa (centro de la primera fila)
           const startY = topLimite + cardHeight / 2;
 
           const bloqueWidth = cardWidth * columnasPorGrupo + gapX * (columnasPorGrupo - 1);
@@ -334,7 +331,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
               }
               contenidoVisible = this.add.dom(0, 0, elementoImg);
             } else {
-              // Texto sin fondo blanco plano y con borde blanco sutil para legibilidad
               contenidoVisible = this.add
                 .text(0, 0, item, {
                   fontSize: `${Math.max(20, 26 * layout.escalaUi)}px`,
@@ -361,27 +357,29 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
         }
 
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
-          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6, 0x00d2d3];
           
-          for (let i = 0; i < 35; i++) {
+          for (let i = 0; i < 90; i++) {
             const color = Phaser.Utils.Array.GetRandom(colores);
-            const size = Phaser.Math.Between(6 * escalaUi, 12 * escalaUi);
+            const ancho = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
+            const alto = Phaser.Math.Between(8 * escalaUi, 18 * escalaUi);
             
-            const papelito = this.add.rectangle(origenX, origenY, size, size, color);
+            const papelito = this.add.rectangle(origenX, origenY, ancho, alto, color);
             papelito.setAngle(Phaser.Math.Between(0, 360));
 
-            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0); 
-            const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
-            const targetX = origenX + Math.cos(angulo) * velocidad;
-            const targetY = origenY + Math.sin(angulo) * velocidad + 150; 
+            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1); 
+            const velocidad = Phaser.Math.Between(200 * escalaUi, 550 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-80, 80);
+            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(150, 300); 
 
             this.tweens.add({
               targets: papelito,
               x: targetX,
               y: targetY,
-              angle: papelito.angle + Phaser.Math.Between(360, 720),
-              alpha: 0,
-              duration: Phaser.Math.Between(1000, 1600),
+              angle: papelito.angle + Phaser.Math.Between(720, 1440),
+              scaleX: { from: 1, to: Phaser.Math.FloatBetween(0.2, 0.8) },
+              alpha: { from: 1, to: 0 },
+              duration: Phaser.Math.Between(1400, 2200),
               ease: "Cubic.easeOut",
               onComplete: () => papelito.destroy()
             });

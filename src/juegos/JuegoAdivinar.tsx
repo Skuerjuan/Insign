@@ -248,14 +248,14 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
-          const botonWidth = Phaser.Math.Clamp(width * 0.25, 145 * escalaUi, 230 * escalaUi);
-          const botonHeight = 52 * escalaUi;
+          const botonWidth = Phaser.Math.Clamp(width * 0.26, 160 * escalaUi, 260 * escalaUi);
+          const botonHeight = 65 * escalaUi;
           
           const centroX = width / 2;
-          const inicioY = height * 0.70; 
+          const inicioY = height * 0.67; 
           
-          const difX = botonWidth + (18 * escalaUi); 
-          const difY = botonHeight + (10 * escalaUi); 
+          const difX = botonWidth + (28 * escalaUi); 
+          const difY = botonHeight + (20 * escalaUi); 
 
           const posiciones = [
             { x: centroX - difX, y: inicioY }, 
@@ -277,10 +277,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
-            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 14 * escalaUi);
+            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 18 * escalaUi);
 
             const textoBoton = this.add.text(0, 0, palabraOpcion, {
-              fontSize: `${Phaser.Math.Clamp(18 * escalaUi, 14, 21)}px`,
+              fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
               fontFamily,
               color: "#05215b",
               fontStyle: "800",
