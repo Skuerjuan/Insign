@@ -115,7 +115,7 @@ export default async function Entrenamiento() {
           </section>
 
           <section className={styles.streakPanel}>
-            <h2>Rachas de días</h2>
+            <h2>Racha</h2>
           </section>
         </main>
       </div>

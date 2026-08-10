@@ -1,12 +1,13 @@
 import Link from "next/link";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
-import { getSession } from "@/lib/server/profile.actions";
+import { getProfile, getSession } from "@/lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Progreso() {
   const user = await getSession();
+  const profile = await getProfile(user.id);
 
   const userProgress = user as typeof user & {
     puntos?: string | number | null;
@@ -87,7 +88,7 @@ export default async function Progreso() {
                   <span />
                 </div>
 
-                <p className={styles.points}>{userProgress.puntos ?? 0}</p>
+                <p className={styles.points}>{profile.puntos ?? 0}</p>
               </div>
             </div>
           </section>

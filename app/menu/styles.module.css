@@ -312,7 +312,16 @@ flex: 0 0 auto;
   font-weight: 900;
   line-height: 1.05;
   flex: 0 0 auto;
+  overflow: hidden;
   transition: width 180ms ease, height 180ms ease, margin-left 180ms ease, font-size 180ms ease;
+}
+
+.levelImage {
+  width: 92%;
+  height: 92%;
+  display: block;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 .levelCard:hover .levelImagePlaceholder {

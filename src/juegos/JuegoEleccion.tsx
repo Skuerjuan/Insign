@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { completeGame } from "@/lib/server/profile.actions";
 import fondoCartas from "./memoria/fondo.png";
 import fondo from "./memoria/fondoP.png";
 
@@ -43,15 +44,16 @@ const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 interface JuegoEleccionProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
-  userName?: string;
+  points?: number;
 }
 
-export default function JuegoEleccion({ palabras, onRondaGanada, userName = "user" }: JuegoEleccionProps) {
+export default function JuegoEleccion({ palabras, onRondaGanada, points = 0 }: JuegoEleccionProps) {
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
     let cancelado = false;
+    let resultadoGuardado = false;
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -90,10 +92,10 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
           super("EleccionScene");
         }
 
-        init(data: { aciertos?: number; palabrasUsadas?: string[] }) {
+        init(data: { aciertos?: number; palabrasUsadas?: string[]; intentosFallidos?: number }) {
           this.aciertos = data.aciertos || 0;
           this.palabrasUsadas = data.palabrasUsadas || [];
-          this.intentosFallidos = 0; 
+          this.intentosFallidos = data.intentosFallidos || 0;
           this.bloqueado = false;
         }
 
@@ -158,7 +160,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
             })
             .setOrigin(0.5);
 
-          const puntosTexto = `${userName} puntos`;
+          const puntosTexto = `${points} puntos`;
           const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
           const scoreX = width - scoreWidth - 38 * escalaUi;
           const scoreBg = this.add.graphics();
@@ -297,9 +299,13 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
 
             this.time.delayedCall(800, () => {
               if (this.aciertos >= 5) {
-                this.scene.start("PantallaFin");
+                this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
-                this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+                this.scene.restart({
+                  aciertos: this.aciertos,
+                  palabrasUsadas: this.palabrasUsadas,
+                  intentosFallidos: this.intentosFallidos,
+                });
               }
             });
 
@@ -322,7 +328,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
-                    this.scene.restart({ aciertos: 0, palabrasUsadas: [] });
+                    this.scene.start("PantallaFin", { errores: this.intentosFallidos });
                   });
                 } else {
                   this.bloqueado = false;
@@ -334,8 +340,14 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
       }
 
       class PantallaFin extends Phaser.Scene {
+        private errores = 0;
+
         constructor() {
           super("PantallaFin");
+        }
+
+        init(data: { errores?: number }) {
+          this.errores = data.errores || 0;
         }
 
         create() {
@@ -355,8 +367,11 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
           panel.lineStyle(5 * escalaUi, 0x06398a, 1);
           panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
 
-          this.add
-            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nCompletaste la trivia.", {
+          const mensaje = this.errores >= 3
+            ? "¡A seguir practicando!\nEsta vez obtuviste 0 puntos."
+            : "¡Excelente trabajo!\nGuardando tus puntos...";
+          const resultadoTexto = this.add
+            .text(width / 2, height / 2 - 28 * escalaUi, mensaje, {
               fontSize: `${26 * escalaUi}px`,
               fontFamily,
               color: "#003895",
@@ -366,17 +381,39 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
             .setOrigin(0.5);
 
           const botonFinal = this.add
-            .text(width / 2, height / 2 + 48 * escalaUi, "Volver", {
+            .text(width / 2, height / 2 + 48 * escalaUi, "Guardando...", {
               fontSize: `${20 * escalaUi}px`,
               fontFamily,
               color: "#ffffff",
-              backgroundColor: "#1e78ff",
+              backgroundColor: "#7f8c8d",
               padding: { x: 22, y: 8 },
             })
             .setOrigin(0.5);
 
-          botonFinal.setInteractive({ useHandCursor: true });
-          botonFinal.on("pointerdown", () => window.history.back());
+          const guardarResultado = () => {
+            resultadoGuardado = true;
+            completeGame("eleccion", this.errores)
+              .then((resultado) => {
+                resultadoTexto.setText(
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
+                );
+                botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => window.history.back());
+              })
+              .catch(() => {
+                resultadoGuardado = false;
+                resultadoTexto.setText("No pudimos guardar el resultado.\nInténtalo nuevamente.");
+                botonFinal.setText("Reintentar").setBackgroundColor("#e67e22");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  botonFinal.disableInteractive().setText("Guardando...").setBackgroundColor("#7f8c8d");
+                  guardarResultado();
+                });
+              });
+          };
+
+          if (!resultadoGuardado) guardarResultado();
         }
       }
 
@@ -409,7 +446,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, userName = "use
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, userName]);
+  }, [palabras, onRondaGanada, points]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

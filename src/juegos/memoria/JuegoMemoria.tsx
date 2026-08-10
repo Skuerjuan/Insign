@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { completeGame } from "@/lib/server/profile.actions";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
@@ -43,15 +44,16 @@ const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 interface JuegoMemoriaProps {
   palabras?: string[];
   onParAdivinado?: (actuales: number) => void;
-  userName?: string;
+  points?: number;
 }
 
-export default function JuegoMemoria({ palabras, onParAdivinado, userName = "user" }: JuegoMemoriaProps) {
+export default function JuegoMemoria({ palabras, onParAdivinado, points = 0 }: JuegoMemoriaProps) {
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
     let cancelado = false;
+    let resultadoGuardado = false;
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -219,7 +221,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
             })
             .setOrigin(0.5);
 
-          const puntosTexto = `${userName} puntos`;
+          const puntosTexto = `${points} puntos`;
           const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
           const scoreX = width - scoreWidth - 38 * escalaUi;
           const scoreBg = this.add.graphics();
@@ -466,8 +468,8 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
           panel.lineStyle(5 * escalaUi, 0x06398a, 1);
           panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
 
-          this.add
-            .text(width / 2, height / 2 - 28 * escalaUi, "Excelente trabajo!\nCompletaste el juego.", {
+          const resultadoTexto = this.add
+            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
               fontSize: `${26 * escalaUi}px`,
               fontFamily,
               color: "#003895",
@@ -477,17 +479,39 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
             .setOrigin(0.5);
 
           const botonFinal = this.add
-            .text(width / 2, height / 2 + 48 * escalaUi, "Volver", {
+            .text(width / 2, height / 2 + 48 * escalaUi, "Guardando...", {
               fontSize: `${20 * escalaUi}px`,
               fontFamily,
               color: "#ffffff",
-              backgroundColor: "#1e78ff",
+              backgroundColor: "#7f8c8d",
               padding: { x: 22, y: 8 },
             })
             .setOrigin(0.5);
 
-          botonFinal.setInteractive({ useHandCursor: true });
-          botonFinal.on("pointerdown", () => window.history.back());
+          const guardarResultado = () => {
+            resultadoGuardado = true;
+            completeGame("memoria")
+              .then((resultado) => {
+                resultadoTexto.setText(
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
+                );
+                botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => window.history.back());
+              })
+              .catch(() => {
+                resultadoGuardado = false;
+                resultadoTexto.setText("No pudimos guardar el resultado.\nInténtalo nuevamente.");
+                botonFinal.setText("Reintentar").setBackgroundColor("#e67e22");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  botonFinal.disableInteractive().setText("Guardando...").setBackgroundColor("#7f8c8d");
+                  guardarResultado();
+                });
+              });
+          };
+
+          if (!resultadoGuardado) guardarResultado();
         }
       }
 
@@ -520,7 +544,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, userName = "use
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onParAdivinado, userName]);
+  }, [palabras, onParAdivinado, points]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }
