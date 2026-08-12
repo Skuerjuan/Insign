@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { completeGame } from "@/lib/server/profile.actions";
+import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
@@ -45,9 +45,10 @@ interface JuegoMemoriaProps {
   palabras?: string[];
   onParAdivinado?: (actuales: number) => void;
   points?: number;
+  origin?: GameOrigin;
 }
 
-export default function JuegoMemoria({ palabras, onParAdivinado, points = 0 }: JuegoMemoriaProps) {
+export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, origin = "menu" }: JuegoMemoriaProps) {
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -490,7 +491,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0 }: J
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("memoria")
+            completeGame("memoria", 0, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
@@ -544,7 +545,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0 }: J
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onParAdivinado, points]);
+  }, [palabras, onParAdivinado, points, origin]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

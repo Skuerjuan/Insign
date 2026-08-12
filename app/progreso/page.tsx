@@ -10,13 +10,10 @@ export default async function Progreso() {
   const profile = await getProfile(user.id);
 
   const userProgress = user as typeof user & {
-    puntos?: string | number | null;
     aprendidas?: string | number | null;
     poraprender?: string | number | null;
-    juego?: string | number | null;
-    tiempo?: string | number | null;
-    dias?: string | number | null;
   };
+  const totalMinutes = Math.floor(profile.tiempo_total_segundos / 60);
 
   return (
     <div className={styles.fondo}>
@@ -66,7 +63,7 @@ export default async function Progreso() {
 
         <main className={styles.progressMain}>
           <section className={styles.levelSection}>
-            <h2>Tu nivel actual</h2>
+            <h2>Experiencia</h2>
 
             <div className={styles.levelContent}>
               <div className={styles.levelImagePlaceholder}>
@@ -126,7 +123,7 @@ export default async function Progreso() {
                   alt="Joystick"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.juego ?? 0}</strong>
+                <strong>{profile.juegos_jugados}</strong>
                 <span>Juegos jugados</span>
               </article>
 
@@ -136,7 +133,7 @@ export default async function Progreso() {
                   alt="Reloj"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.tiempo ?? 0}</strong>
+                <strong>{totalMinutes} min</strong>
                 <span>Tiempo de juego</span>
               </article>
 
@@ -146,7 +143,7 @@ export default async function Progreso() {
                   alt="Calendario"
                   className={styles.summaryIcon}
                 />
-                <strong>{userProgress.dias ?? 0}</strong>
+                <strong>{profile.dias_activos}</strong>
                 <span>Días activos</span>
               </article>
             </div>

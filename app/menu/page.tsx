@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Foto from "@/components/Foto"
 import { getProfile, getSession } from "../../lib/server/profile.actions";
-import { decodeStreak } from "../../lib/server/streak";
+import { getWeeklyActivity } from "../../lib/server/streak";
 import BotonJugar from "@/components/BotonJugar"
 
 export const dynamic = "force-dynamic";
@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 export default async function Menu() {
   const user = await getSession();
 
-    const { puntos, racha } = await getProfile(user.id);
-    const rachaActual = decodeStreak(racha).count;
+    const { puntos, racha, ultimo_dia_activo } = await getProfile(user.id);
+    const rachaActual = getWeeklyActivity(racha, ultimo_dia_activo).count;
 
   return (
     <div className={styles.fondo}>

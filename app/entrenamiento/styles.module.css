@@ -316,6 +316,32 @@
   padding: 18px 28px;
 }
 
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(52px, 1fr));
+  align-items: center;
+  gap: clamp(8px, 2vw, 22px);
+  margin-top: 14px;
+}
+
+.weekDay {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #052c79;
+  font-size: clamp(13px, 1.4vw, 17px);
+  font-weight: 900;
+}
+
+.weekDay img {
+  width: clamp(44px, 6vw, 64px);
+  height: clamp(44px, 6vw, 64px);
+  display: block;
+  object-fit: contain;
+}
+
 @media (max-width: 980px) {
   .fondo {
     grid-template-columns: 1fr;
@@ -386,6 +412,11 @@
   .levelImageSlot {
     width: clamp(88px, 28vw, 126px);
   }
+
+  .weekGrid {
+    grid-template-columns: repeat(4, minmax(52px, 1fr));
+    gap: 16px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -439,5 +470,9 @@
   .cardButton {
     width: 44px;
     height: 44px;
+  }
+
+  .weekGrid {
+    grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }

@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function JuegoMemoriaPage() {
+export default async function JuegoMemoriaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ origen?: string }>;
+}) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user) {
@@ -13,10 +17,14 @@ export default async function JuegoMemoriaPage() {
   }
 
   const profile = await getProfile(session.user.id);
+  const { origen } = await searchParams;
 
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <JuegoMemoria points={profile.puntos ?? 0} />
+      <JuegoMemoria
+        points={profile.puntos ?? 0}
+        origin={origen === "entrenamiento" ? "training" : "menu"}
+      />
     </main>
   );
 }

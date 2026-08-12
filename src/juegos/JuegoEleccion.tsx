@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { completeGame } from "@/lib/server/profile.actions";
+import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import fondoCartas from "./memoria/fondo.png";
 import fondo from "./memoria/fondoP.png";
 
@@ -45,9 +45,10 @@ interface JuegoEleccionProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   points?: number;
+  origin?: GameOrigin;
 }
 
-export default function JuegoEleccion({ palabras, onRondaGanada, points = 0 }: JuegoEleccionProps) {
+export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu" }: JuegoEleccionProps) {
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -392,7 +393,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0 }: J
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("eleccion", this.errores)
+            completeGame("eleccion", this.errores, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
@@ -446,7 +447,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0 }: J
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points]);
+  }, [palabras, onRondaGanada, points, origin]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

@@ -1,13 +1,16 @@
-const DAY_MODULUS = 32_768;
 const MILLISECONDS_PER_DAY = 86_400_000;
-const MAX_STREAK = Math.floor((MILLISECONDS_PER_DAY - 1) / DAY_MODULUS);
 
 export const APP_TIME_ZONE = "America/Argentina/Buenos_Aires";
 
 export type StreakState = {
   count: number;
-  lastActiveDay: number | null;
 };
+
+const DAYS_PER_WEEK = 7;
+const WEEK_MASK = 0b1111111;
+const TRAINING_SHIFT = 7;
+
+export type ActivityKind = "game" | "training";
 
 export function getLocalDayNumber(
   date = new Date(),
@@ -27,47 +30,90 @@ export function getLocalDayNumber(
   return Math.floor(Date.UTC(year, month - 1, day) / MILLISECONDS_PER_DAY);
 }
 
-export function decodeStreak(value: Date | null): StreakState {
-  if (!value) return { count: 0, lastActiveDay: null };
+export function decodeStreak(value: number | null): StreakState {
+  const mask = Math.max(0, Math.trunc(value ?? 0)) & WEEK_MASK;
+  let count = 0;
 
-  const encoded =
-    value.getUTCHours() * 3_600_000 +
-    value.getUTCMinutes() * 60_000 +
-    value.getUTCSeconds() * 1_000 +
-    value.getUTCMilliseconds();
-
-  const count = Math.floor(encoded / DAY_MODULUS);
-  const lastActiveDay = encoded % DAY_MODULUS;
-
-  if (count < 1 || count > MAX_STREAK) {
-    return { count: 0, lastActiveDay: null };
+  for (let index = 0; index < DAYS_PER_WEEK; index++) {
+    if ((mask & (1 << index)) !== 0) count++;
   }
 
-  return { count, lastActiveDay };
+  return { count };
 }
 
-export function encodeStreak(count: number, activeDay: number) {
-  const safeCount = Math.min(Math.max(Math.trunc(count), 1), MAX_STREAK);
-  const encoded = safeCount * DAY_MODULUS + (activeDay % DAY_MODULUS);
-
-  return new Date(encoded);
+export function getWeekdayIndex(dayNumber: number) {
+  return (dayNumber + 3) % DAYS_PER_WEEK;
 }
 
-export function registerActiveDay(value: Date | null, today: number) {
-  const current = decodeStreak(value);
-  const todayModulo = today % DAY_MODULUS;
+export function getWeekStartDay(dayNumber: number) {
+  return dayNumber - getWeekdayIndex(dayNumber);
+}
 
-  if (current.lastActiveDay === todayModulo) {
-    return { count: current.count, value, changed: false };
+export function getWeeklyActivity(
+  value: number | null,
+  lastActiveDay: number | null,
+  today = getLocalDayNumber(),
+  kind: ActivityKind = "game",
+) {
+  const isCurrentWeek =
+    lastActiveDay !== null &&
+    getWeekStartDay(lastActiveDay) === getWeekStartDay(today);
+  const encodedValue = Math.max(0, Math.trunc(value ?? 0));
+  const shift = kind === "training" ? TRAINING_SHIFT : 0;
+  let mask = isCurrentWeek ? (encodedValue >> shift) & WEEK_MASK : 0;
+
+  if (isCurrentWeek && lastActiveDay !== null) {
+    const lastActiveIndex = getWeekdayIndex(lastActiveDay);
+    const lastActiveBit = 1 << lastActiveIndex;
+
+    // Convierte automáticamente la racha numérica anterior al formato semanal.
+    if (kind === "game" && encodedValue <= 7 && mask !== 0 && (mask & lastActiveBit) === 0) {
+      const legacyCount = Math.min(Math.max(Math.trunc(value ?? 1), 1), 7);
+      mask = 0;
+
+      for (let offset = 0; offset < legacyCount; offset++) {
+        const index = lastActiveIndex - offset;
+        if (index >= 0) mask |= 1 << index;
+      }
+    }
   }
-
-  const yesterdayModulo = (todayModulo - 1 + DAY_MODULUS) % DAY_MODULUS;
-  const nextCount =
-    current.lastActiveDay === yesterdayModulo ? current.count + 1 : 1;
 
   return {
-    count: Math.min(nextCount, MAX_STREAK),
-    value: encodeStreak(nextCount, today),
+    mask,
+    count: decodeStreak(mask).count,
+    days: Array.from(
+      { length: DAYS_PER_WEEK },
+      (_, index) => (mask & (1 << index)) !== 0,
+    ),
+  };
+}
+
+export function registerActiveDay(
+  currentValue: number,
+  lastActiveDay: number | null,
+  today: number,
+  fromTraining = false,
+) {
+  const gameActivity = getWeeklyActivity(currentValue, lastActiveDay, today, "game");
+  const trainingActivity = getWeeklyActivity(currentValue, lastActiveDay, today, "training");
+  const todayBit = 1 << getWeekdayIndex(today);
+  const gameMask = gameActivity.mask | todayBit;
+  const trainingMask = fromTraining
+    ? trainingActivity.mask | todayBit
+    : trainingActivity.mask;
+  const value = gameMask | (trainingMask << TRAINING_SHIFT);
+
+  if (lastActiveDay === today) {
+    return {
+      count: decodeStreak(gameMask).count,
+      value,
+      changed: value !== currentValue,
+    };
+  }
+
+  return {
+    count: decodeStreak(gameMask).count,
+    value,
     changed: true,
   };
 }

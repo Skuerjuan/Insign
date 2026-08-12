@@ -40,23 +40,24 @@ model palabras {
 }
 
 model user {
-  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
-  email         String       @unique
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime     @default(now()) @db.Timestamptz(6)
-  role          String?
-  banned        Boolean?
-  banReason     String?
-  banExpires    DateTime?    @db.Timestamptz(6)
-  account       account[]
-  invitation    invitation[]
-  member        member[]
-  session       session[]
-  completado    completado[]
-  profiles      profiles?
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                    String
+  email                   String                    @unique
+  emailVerified           Boolean
+  image                   String?
+  createdAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  role                    String?
+  banned                  Boolean?
+  banReason               String?
+  banExpires              DateTime?                 @db.Timestamptz(6)
+  account                 account[]
+  invitation              invitation[]
+  member                  member[]
+  session                 session[]
+  completado              completado[]
+  profiles                profiles?
+  sesiones_contabilizadas sesiones_contabilizadas[]
 
   @@schema("neon_auth")
 }
@@ -73,14 +74,28 @@ model completado {
 }
 
 model profiles {
-  user_id        String    @id @db.Uuid
-  cumpleanos     DateTime? @db.Date
-  color_favorito String?
-  puntos         Int?
-  racha          DateTime? @db.Time(6)
-  premios        Int?
-  user           user      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user")
+  user_id               String @id @db.Uuid
+  puntos                Int?
+  premios               Int?
+  racha                 Int    @default(0)
+  juegos_jugados        Int    @default(0)
+  dias_activos          Int    @default(0)
+  ultimo_dia_activo     Int?
+  tiempo_total_segundos Int    @default(0)
+  user                  user   @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user")
 
+  @@schema("public")
+}
+
+model sesiones_contabilizadas {
+  session_id String   @id @db.Uuid
+  usuario_id String   @db.Uuid
+  inicio     DateTime @db.Timestamptz(6)
+  fin        DateTime @db.Timestamptz(6)
+  segundos   Int
+  user       user     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "sesion_usuario")
+
+  @@index([usuario_id])
   @@schema("public")
 }
 
