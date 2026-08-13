@@ -43,7 +43,7 @@ const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 interface JuegoEleccionProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
-  onJuegoTerminado?: (puntos: number, aciertos: number) => void; // Para redirigir a la pantalla final externa
+  onJuegoTerminado?: (puntos: number, aciertos: number) => void;
   userName?: string;
 }
 
@@ -308,9 +308,6 @@ export default function JuegoEleccion({
           const cardWidth = Math.round(Phaser.Math.Clamp(width * 0.36, 160 * escalaUi, 230 * escalaUi));
           const cardHeight = Math.round(cardWidth * 0.70);
 
-          const gifWidth = Math.round(cardWidth * 0.94);
-          const gifHeight = Math.round(cardHeight * 0.92);
-
           const gapX = cardWidth + 20 * escalaUi;
           const gapY = cardHeight + 14 * escalaUi;
 
@@ -331,17 +328,12 @@ export default function JuegoEleccion({
             ficha.setSize(cardWidth, cardHeight);
             ficha.setInteractive({ useHandCursor: true });
 
-            const cardBg = this.add.graphics();
-            cardBg.fillStyle(0xffffff, 1);
-            cardBg.fillRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14 * escalaUi);
-            cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
-            cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14 * escalaUi);
-
+            // GIF a pantalla completa de la carta
             const elementoImg = document.createElement("img");
-            elementoImg.style.width = `${gifWidth}px`;
-            elementoImg.style.height = `${gifHeight}px`;
-            elementoImg.style.objectFit = "contain";
-            elementoImg.style.borderRadius = "8px";
+            elementoImg.style.width = `${cardWidth}px`;
+            elementoImg.style.height = `${cardHeight}px`;
+            elementoImg.style.objectFit = "cover"; // Llena toda la carta sin bordes blancos
+            elementoImg.style.borderRadius = `${Math.round(14 * escalaUi)}px`; // Bordes redondeados ajustados
             elementoImg.style.pointerEvents = "none";
 
             const archivoImportado = diccionarioGifs[palabraOpcion];
@@ -351,7 +343,13 @@ export default function JuegoEleccion({
             }
 
             const domGif = this.add.dom(0, 0, elementoImg);
-            ficha.add([cardBg, domGif]);
+
+            // Trazado del borde arriba del GIF
+            const cardBg = this.add.graphics();
+            cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
+            cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14 * escalaUi);
+
+            ficha.add([domGif, cardBg]);
 
             ficha.setData("valor", palabraOpcion);
             ficha.setData("graphics", cardBg);
@@ -406,9 +404,7 @@ export default function JuegoEleccion({
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
-            cardBg.fillStyle(0xe8fae8, 1);
-            cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
-            cardBg.lineStyle(5 * escalaUi, 0x2ed573, 1);
+            cardBg.lineStyle(6 * escalaUi, 0x2ed573, 1);
             cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
 
             this.aciertos++;
@@ -422,9 +418,8 @@ export default function JuegoEleccion({
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(2000, () => {
+            this.time.delayedCall(4500, () => {
               if (this.aciertos >= 5) {
-                // Al llegar a 5 aciertos, invoca la pantalla final compartida/externa
                 if (typeof onJuegoTerminado === "function") {
                   onJuegoTerminado(this.aciertos * 10, this.aciertos);
                 } else {
@@ -436,9 +431,7 @@ export default function JuegoEleccion({
             });
           } else {
             cardBg.clear();
-            cardBg.fillStyle(0xffebeb, 1);
-            cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
-            cardBg.lineStyle(5 * escalaUi, 0xff4757, 1);
+            cardBg.lineStyle(6 * escalaUi, 0xff4757, 1);
             cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
 
             this.intentosFallidos++;
@@ -455,14 +448,11 @@ export default function JuegoEleccion({
               repeat: 2,
               onComplete: () => {
                 cardBg.clear();
-                cardBg.fillStyle(0xffffff, 1);
-                cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
                 cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
                 cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(500, () => {
-                    // Si pierde las vidas, redirige también a la pantalla final
                     if (typeof onJuegoTerminado === "function") {
                       onJuegoTerminado(this.aciertos * 10, this.aciertos);
                     } else {
