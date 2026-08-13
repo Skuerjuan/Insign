@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import fondo from "./fondoP.png"; // Ajusta la ruta a tu fondo
+import fondo from "./fondoP.png";
 
 type GifImport = string | { src: string };
 type WebpackRequire = NodeJS.Require & {
@@ -39,12 +39,13 @@ try {
 const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
-// Función para normalizar texto (quitar tildes y pasar a mayúsculas)
+// Normaliza texto: quita tildes, convierte a mayúsculas y ELIMINA ESPACIOS para armar las fichas
 const normalizarTexto = (texto: string) => {
   return texto
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "") // Elimina espacios intermedios (ej: "POR FAVOR" -> "PORFAVOR")
     .toUpperCase();
 };
 
@@ -154,6 +155,7 @@ export default function JuegoCompletarCeldas({
 
       class CompletarScene extends Phaser.Scene {
         private palabraObjetivo = "";
+        private palabraObjetivoNormalizada = "";
         private aciertos = 0;
         private bloqueado = false;
         private mazoJuego: string[] = [];
@@ -165,7 +167,6 @@ export default function JuegoCompletarCeldas({
         private inputtedChars: { char: string; originalId: number }[] = [];
         private inputSlots: Phaser.GameObjects.Container[] = [];
         private keyboardTiles: Phaser.GameObjects.Container[] = [];
-        private lettersPreguntaText: Phaser.GameObjects.Text | null = null;
         private gifGraphics: Phaser.GameObjects.Graphics | null = null;
 
         constructor() {
@@ -206,6 +207,14 @@ export default function JuegoCompletarCeldas({
             this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
           });
 
+          // Recuperar foco al hacer clic en cualquier lado
+          this.input.on("pointerdown", () => {
+            if (this.game.canvas) {
+              this.game.canvas.focus();
+            }
+          });
+
+          // Capturar eventos de teclado físico
           this.input.keyboard.on("keydown", this.alPresionarTecla, this);
         }
 
@@ -286,6 +295,7 @@ export default function JuegoCompletarCeldas({
 
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
+          this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo);
           this.palabrasUsadas.push(this.palabraObjetivo);
 
           // Título descriptivo
@@ -326,8 +336,8 @@ export default function JuegoCompletarCeldas({
           cardBg.strokeRoundedRect(centroX - gifWidth / 2, centroY - gifHeight / 2, gifWidth, gifHeight, 18 * escalaUi);
           this.gifGraphics = cardBg;
 
-          // Preparar letras para anagrama
-          const chars = this.palabraObjetivo.split("").map((c) => normalizarTexto(c));
+          // Preparar letras limpias
+          const chars = this.palabraObjetivoNormalizada.split("");
           this.availableChars = Phaser.Utils.Array.Shuffle([...chars]).map((c, i) => ({
             char: c,
             active: true,
@@ -339,10 +349,13 @@ export default function JuegoCompletarCeldas({
         }
 
         crearGrillasDeLetras(width: number, height: number, escalaUi: number, gapY: number) {
-          const cellSize = Math.round(Phaser.Math.Clamp(60 * escalaUi, 45, 80));
-          const cellSpacing = Math.round(Phaser.Math.Clamp(10 * escalaUi, 6, 15));
-          const targetLength = this.palabraObjetivo.length;
+          const targetLength = this.palabraObjetivoNormalizada.length;
           const availableLength = this.availableChars.length;
+
+          // Adaptar dinámicamente el tamaño de celda según la cantidad de letras
+          const baseCellSize = targetLength > 8 ? 45 : 60;
+          const cellSize = Math.round(Phaser.Math.Clamp(baseCellSize * escalaUi, 35, 75));
+          const cellSpacing = Math.round(Phaser.Math.Clamp(8 * escalaUi, 4, 12));
 
           // Slots Blancos (arriba)
           const inputGridWidth = targetLength * cellSize + (targetLength - 1) * cellSpacing;
@@ -405,7 +418,7 @@ export default function JuegoCompletarCeldas({
           }
 
           const graphics = this.add.graphics();
-          const radius = Math.round(14 * escalaUi);
+          const radius = Math.round(12 * escalaUi);
           graphics.fillStyle(bgColor, 1);
           graphics.fillRoundedRect(-size / 2, -size / 2, size, size, radius);
           graphics.lineStyle(Math.round(4 * escalaUi), borderColor, 1);
@@ -413,7 +426,7 @@ export default function JuegoCompletarCeldas({
           container.add(graphics);
           container.setData("graphics", graphics);
 
-          const fontSizePx = Math.round(Phaser.Math.Clamp(36 * escalaUi, 28, 56));
+          const fontSizePx = Math.round(Phaser.Math.Clamp(size * 0.6, 20, 48));
           const text = this.add
             .text(0, 0, char, {
               fontSize: `${fontSizePx}px`,
@@ -446,7 +459,7 @@ export default function JuegoCompletarCeldas({
           if (!data.active) return;
 
           const currentLen = this.inputtedChars.length;
-          if (currentLen >= this.palabraObjetivo.length) return;
+          if (currentLen >= this.palabraObjetivoNormalizada.length) return;
 
           // Mover letra al primer slot vacío
           const slotText = this.inputSlots[currentLen].getData("text") as Phaser.GameObjects.Text;
@@ -455,7 +468,7 @@ export default function JuegoCompletarCeldas({
 
           // Desactivar visualmente la tecla
           data.active = false;
-          tile.setAlpha(0.4);
+          tile.setAlpha(0.3);
 
           // Tween de escala en el slot
           this.tweens.add({
@@ -465,7 +478,7 @@ export default function JuegoCompletarCeldas({
             ease: "Back.easeOut",
           });
 
-          if (this.inputtedChars.length === this.palabraObjetivo.length) {
+          if (this.inputtedChars.length === this.palabraObjetivoNormalizada.length) {
             this.validarRespuestaConDelay();
           }
         }
@@ -498,6 +511,16 @@ export default function JuegoCompletarCeldas({
 
         alPresionarTecla(event: KeyboardEvent) {
           if (this.bloqueado) return;
+
+          // Soporte para tecla Backspace (Borrar)
+          if (event.key === "Backspace") {
+            if (this.inputtedChars.length > 0) {
+              const lastIndex = this.inputtedChars.length - 1;
+              this.alHacerClicEnSlot(this.inputSlots[lastIndex], lastIndex);
+            }
+            return;
+          }
+
           const pressedChar = event.key.toUpperCase();
 
           // Buscar coincidencia activa en availableChars
@@ -519,10 +542,9 @@ export default function JuegoCompletarCeldas({
           this.bloqueado = true;
 
           const wordFormed = this.inputtedChars.map((c) => c.char).join("");
-          const normalObjetivo = normalizarTexto(this.palabraObjetivo);
 
-          if (wordFormed === normalObjetivo) {
-            // Acierto: slots verde brillante, Tween escala, confeti
+          if (wordFormed === this.palabraObjetivoNormalizada) {
+            // Acierto
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
 
@@ -555,7 +577,7 @@ export default function JuegoCompletarCeldas({
               }
             });
           } else {
-            // Error: slots rojo, sacudida, limpiar
+            // Error
             this.tweens.add({
               targets: this.inputSlots,
               x: "+=8",
@@ -576,16 +598,16 @@ export default function JuegoCompletarCeldas({
         }
 
         setSlotsVisualFeedback(color: number, isWin: boolean = false, bgColor: number = isWin ? 0xe8fae8 : 0xffffff) {
-            this.inputSlots.forEach(slot => {
-                const graphics = slot.getData("graphics") as Phaser.GameObjects.Graphics;
-                const size = slot.getData("size") as number;
-                const radius = Math.round(14 * this.escalaUiGlobal);
-                graphics.clear();
-                graphics.fillStyle(bgColor, 1);
-                graphics.fillRoundedRect(-size / 2, -size / 2, size, size, radius);
-                graphics.lineStyle(Math.round(4 * this.escalaUiGlobal), color, 1);
-                graphics.strokeRoundedRect(-size / 2, -size / 2, size, size, radius);
-            });
+          this.inputSlots.forEach((slot) => {
+            const graphics = slot.getData("graphics") as Phaser.GameObjects.Graphics;
+            const size = slot.getData("size") as number;
+            const radius = Math.round(12 * this.escalaUiGlobal);
+            graphics.clear();
+            graphics.fillStyle(bgColor, 1);
+            graphics.fillRoundedRect(-size / 2, -size / 2, size, size, radius);
+            graphics.lineStyle(Math.round(4 * this.escalaUiGlobal), color, 1);
+            graphics.strokeRoundedRect(-size / 2, -size / 2, size, size, radius);
+          });
         }
 
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
