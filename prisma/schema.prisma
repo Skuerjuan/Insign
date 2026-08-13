@@ -82,6 +82,8 @@ model profiles {
   dias_activos          Int    @default(0)
   ultimo_dia_activo     Int?
   tiempo_total_segundos Int    @default(0)
+  experiencia           Int    @default(0)
+  nivel                 Int    @default(1)
   user                  user   @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user")
 
   @@schema("public")

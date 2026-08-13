@@ -20,7 +20,7 @@ type WebpackRequire = NodeJS.Require & {
 const diccionarioGifs: Record<string, GifImport> = {};
 
 try {
-  const contextoGifs = (require as WebpackRequire).context("../../../public/gifs", false, /\.gif$/);
+  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
 
   contextoGifs.keys().forEach((rutaArchivo: string) => {
     const moduloGif = contextoGifs(rutaArchivo);
@@ -99,6 +99,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
         private bloqueado = false;
         private aciertos = 0;
         private totalPares = 0;
+        private escalaUiGlobal = 1;
         private textoMarcador: Phaser.GameObjects.Text | null = null;
 
         constructor() {
@@ -131,22 +132,30 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
           const significados = Phaser.Utils.Array.Shuffle([...pares]);
 
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.78, 1.35);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.3);
+          this.escalaUiGlobal = escalaUi;
           const columnasPorGrupo = 4;
           const filasPorGrupo = Math.max(Math.ceil(pares.length / columnasPorGrupo), 1);
           const marcadorHeight = 48 * escalaUi;
           const marcadorY = height - marcadorHeight - 16 * escalaUi;
-          const labelsY = Math.max(132 * escalaUi, height * 0.18);
-          const startY = labelsY + 86 * escalaUi;
-          const gapX = Phaser.Math.Clamp(width * 0.012, 12 * escalaUi, 26 * escalaUi);
-          const gapY = Phaser.Math.Clamp(height * 0.045, 24 * escalaUi, 46 * escalaUi);
-          const groupGapX = Phaser.Math.Clamp(width * 0.06, 82 * escalaUi, 160 * escalaUi);
-          const anchoDisponible = width * 0.92;
+
+          const labelsY = Math.max(120 * escalaUi, height * 0.17);
+          const gapX = Phaser.Math.Clamp(width * 0.012, 10 * escalaUi, 22 * escalaUi);
+          const gapY = Phaser.Math.Clamp(height * 0.025, 14 * escalaUi, 28 * escalaUi);
+          const groupGapX = Phaser.Math.Clamp(width * 0.04, 40 * escalaUi, 90 * escalaUi);
+
+          const anchoDisponible = width * 0.94;
           const cardSizePorAncho = (anchoDisponible - groupGapX - gapX * (columnasPorGrupo - 1) * 2) / (columnasPorGrupo * 2);
-          const altoDisponible = Math.max(220, marcadorY - startY - 42 * escalaUi);
+
+          const topLimite = labelsY + 30 * escalaUi;
+          const altoDisponible = Math.max(200, marcadorY - topLimite - 15 * escalaUi);
           const cardSizePorAlto = (altoDisponible - gapY * (filasPorGrupo - 1)) / filasPorGrupo;
-          const cardWidth = Phaser.Math.Clamp(Math.min(205 * escalaUi, cardSizePorAncho, cardSizePorAlto), 110, 218);
+
+          const cardWidth = Phaser.Math.Clamp(Math.min(230 * escalaUi, cardSizePorAncho, cardSizePorAlto), 115, 230);
           const cardHeight = cardWidth;
+
+          const startY = topLimite + cardHeight / 2;
+
           const bloqueWidth = cardWidth * columnasPorGrupo + gapX * (columnasPorGrupo - 1);
           const totalGridWidth = bloqueWidth * 2 + groupGapX;
           const significadosLeft = width / 2 - totalGridWidth / 2;
@@ -190,7 +199,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const azul = 0x1e78ff;
           const amarillo = 0xffd32a;
           const azulTexto = "#05215b";
-          const topY = Math.max(34 * escalaUi, height * 0.09);
+          const topY = Math.max(34 * escalaUi, height * 0.08);
 
           const botonVolver = this.add.circle(46 * escalaUi, topY - 3 * escalaUi, 20 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
@@ -209,15 +218,15 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const titleWidth = Phaser.Math.Clamp(width * 0.25, 260 * escalaUi, 460 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 62 * escalaUi, 10 * escalaUi);
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 58 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 41 * escalaUi, "Memoria", {
-              fontSize: `${Phaser.Math.Clamp(48 * escalaUi, 36, 58)}px`,
+            .text(width / 2, 39 * escalaUi, "Memoria", {
+              fontSize: `${Phaser.Math.Clamp(44 * escalaUi, 32, 54)}px`,
               fontFamily,
               color: "#ffffff",
               stroke: "#d28b00",
-              strokeThickness: 6 * escalaUi,
+              strokeThickness: 5 * escalaUi,
               fontStyle: "800",
             })
             .setOrigin(0.5);
@@ -241,14 +250,14 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             .setOrigin(0, 0.5);
 
           this.add
-            .text(width / 2, 100 * escalaUi, "Encuentra los pares", {
-              fontSize: `${Phaser.Math.Clamp(30 * escalaUi, 24, 38)}px`,
+            .text(width / 2, 92 * escalaUi, "Encuentra los pares", {
+              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 22, 36)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
             })
             .setOrigin(0.5)
-            .setStroke("#ffffff", 7 * escalaUi);
+            .setStroke("#ffffff", 6 * escalaUi);
 
           const marcadorWidth = Phaser.Math.Clamp(width * 0.24, 210 * escalaUi, 390 * escalaUi);
           const marcadorBg = this.add.graphics();
@@ -312,10 +321,10 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
 
             if (tipo === "senia") {
               const elementoImg = document.createElement("img");
-              elementoImg.style.width = `${Math.round(layout.cardWidth * 0.86)}px`;
-              elementoImg.style.height = `${Math.round(layout.cardHeight * 0.78)}px`;
+              elementoImg.style.width = `${Math.round(layout.cardWidth * 0.96)}px`;
+              elementoImg.style.height = `${Math.round(layout.cardHeight * 0.96)}px`;
               elementoImg.style.objectFit = "contain";
-              elementoImg.style.borderRadius = "8px";
+              elementoImg.style.borderRadius = "12px";
               elementoImg.style.pointerEvents = "none";
 
               const archivoImportado = diccionarioGifs[item];
@@ -327,12 +336,13 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             } else {
               contenidoVisible = this.add
                 .text(0, 0, item, {
-                  fontSize: `${Math.max(18, 24 * layout.escalaUi)}px`,
+                  fontSize: `${Math.max(20, 26 * layout.escalaUi)}px`,
                   fontFamily,
                   color: "#003895",
-                  backgroundColor: "#ffffff",
-                  padding: { x: 10, y: 6 },
-                  wordWrap: { width: layout.cardWidth * 0.9 },
+                  stroke: "#ffffff",
+                  strokeThickness: 3 * layout.escalaUi,
+                  fontStyle: "800",
+                  wordWrap: { width: layout.cardWidth * 0.85 },
                   align: "center",
                 })
                 .setOrigin(0.5);
@@ -347,6 +357,36 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
 
             carta.on("pointerdown", () => this.voltearCarta(carta, fondoObj, contenidoVisible));
           });
+        }
+
+        lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6, 0x00d2d3];
+
+          for (let i = 0; i < 90; i++) {
+            const color = Phaser.Utils.Array.GetRandom(colores);
+            const ancho = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
+            const alto = Phaser.Math.Between(8 * escalaUi, 18 * escalaUi);
+
+            const papelito = this.add.rectangle(origenX, origenY, ancho, alto, color);
+            papelito.setAngle(Phaser.Math.Between(0, 360));
+
+            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1);
+            const velocidad = Phaser.Math.Between(200 * escalaUi, 550 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-80, 80);
+            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(150, 300);
+
+            this.tweens.add({
+              targets: papelito,
+              x: targetX,
+              y: targetY,
+              angle: papelito.angle + Phaser.Math.Between(720, 1440),
+              scaleX: { from: 1, to: Phaser.Math.FloatBetween(0.2, 0.8) },
+              alpha: { from: 1, to: 0 },
+              duration: Phaser.Math.Between(1400, 2200),
+              ease: "Cubic.easeOut",
+              onComplete: () => papelito.destroy()
+            });
+          }
         }
 
         voltearCarta(
@@ -393,6 +433,9 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             const valor2 = this.segundaCarta.carta.getData("valor");
 
             if (valor1 === valor2) {
+              this.lanzarConfeti(this.primeraCarta.carta.x, this.primeraCarta.carta.y, this.escalaUiGlobal);
+              this.lanzarConfeti(this.segundaCarta.carta.x, this.segundaCarta.carta.y, this.escalaUiGlobal);
+
               this.time.delayedCall(500, () => {
                 if (!this.primeraCarta || !this.segundaCarta) return;
 
@@ -410,7 +453,9 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
                 }
 
                 if (this.aciertos === this.totalPares) {
-                  this.scene.start("PantallaFin");
+                  this.time.delayedCall(7000, () => {
+                    window.history.back();
+                  });
                 } else {
                   this.resetSeleccion();
                 }

@@ -118,14 +118,14 @@ export default async function Menu() {
 
             <div className={styles.levelInfo}>
               <h3>Nivel 3</h3>
-              <p>Categoria: Velocidad</p>
+              <p>Categoria: Adivinar</p>
               <div className={styles.progressWrap}>
                 <img src="/Star.png" alt="" className={styles.progressStar} />
                 <div className={styles.progressBar} />
               </div>
             </div>
 
-            <Link href="./" className={styles.playButton}>
+            <Link href="/Juego-adivinar" className={styles.playButton}>
               <span className={styles.playIcon} aria-hidden="true" />
               Jugar
             </Link>
@@ -138,14 +138,14 @@ export default async function Menu() {
 
             <div className={styles.levelInfo}>
               <h3>Nivel 4</h3>
-              <p>Categoria: Desafio</p>
+              <p>Categoria: Palabras</p>
               <div className={styles.progressWrap}>
                 <img src="/Star.png" alt="" className={styles.progressStar} />
                 <div className={styles.progressBar} />
               </div>
             </div>
 
-            <Link href="./" className={styles.playButton}>
+            <Link href="/Juego-palabra" className={styles.playButton}>
               <span className={styles.playIcon} aria-hidden="true" />
               Jugar
             </Link>
