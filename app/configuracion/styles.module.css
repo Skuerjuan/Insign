@@ -39,17 +39,21 @@
     gap:20px; 
 }
 .navigation a { 
-    min-height:50px; 
+    width:100%;
+    min-width:0;
+    min-height:clamp(54px,6.5vh,72px);
     display:flex; 
     align-items:center;
-     gap:16px; 
-     padding:0 20px; 
+     gap:clamp(10px,1vw,16px);
+     padding:0 clamp(12px,1.25vw,20px);
      border-radius:5px; 
      color:#fff; 
      font-family:var(--font-baloo); 
-     font-size:clamp(20px,2vw,25px); 
+     font-size:clamp(22px,1.6vw,30px);
      font-weight:700; 
-     text-decoration:none; 
+     text-decoration:none;
+     white-space:nowrap;
+     overflow:visible;
     }
 .navigation a img { 
     width:40px; 
@@ -282,8 +286,8 @@
             margin-bottom:22px; 
         } 
         .navigation a { 
-            width:min(100%,520px); 
-            margin:auto; 
+            width:100%;
+            margin:0;
             box-sizing:border-box; } 
             .mainContent { 
                 height:auto; 

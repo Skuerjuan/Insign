@@ -60,13 +60,15 @@
   grid-column: 1;
   grid-row: 1;
   align-self: center;
-  justify-self: center;
-  width: min(38vw, 65dvh, 760px);
+  justify-self: start;
+  width: min(40vw, 70dvh, 760px);
   min-width: 300px;
   aspect-ratio: 1;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  margin-left: clamp(20px, 4vw, 90px);
+  transform: translate(-13%, 7%);
 }
 
 .container {
@@ -237,6 +239,7 @@
 
   .gorilaSaludando {
     display: none;
+    transform: none;
   }
 
   .container {
