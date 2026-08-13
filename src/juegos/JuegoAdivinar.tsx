@@ -192,7 +192,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           const azulTexto = "#05215b";
           const topY = Math.max(34 * escalaUi, height * 0.09);
 
-          const botonVolver = this.add.circle(46 * escalaUi, topY - 3 * escalaUi, 20 * escalaUi, azul);
+          const botonVolver = this.add.circle(50 * escalaUi, topY - 3 * escalaUi, 20 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
           botonVolver.on("pointerdown", () => window.history.back());
 
