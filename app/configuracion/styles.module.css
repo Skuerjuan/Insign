@@ -2,7 +2,7 @@
     width:100%; 
     height:100dvh; 
     display:grid; 
-    grid-template-columns:320px minmax(0,1fr); 
+    grid-template-columns:clamp(280px,19vw,360px) minmax(0,1fr);
     overflow:hidden; 
     background:#72cff4 url("/FondoInicioSesion.png") center/cover no-repeat; 
     font-family:var(--font-baloo); 
@@ -119,7 +119,10 @@
 }
 .settingsMain { 
     height:calc(100dvh - 96px); 
-    max-width:900px; display:flex; 
+    width:100%;
+    min-width:0;
+    max-width:none;
+    display:flex;
     flex-direction:column; 
     gap:14px; 
     padding:24px clamp(18px,4vw,52px); 

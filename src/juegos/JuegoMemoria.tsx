@@ -84,6 +84,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
         contenidoVisible: CardContent;
       };
       type GridLayout = {
+        columns: number;
         cardWidth: number;
         cardHeight: number;
         startY: number;
@@ -132,17 +133,17 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
           const significados = Phaser.Utils.Array.Shuffle([...pares]);
 
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.3);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.72, 2.4);
           this.escalaUiGlobal = escalaUi;
-          const columnasPorGrupo = 4;
+          const columnasPorGrupo = width < 700 ? 2 : width < 1200 ? 3 : 4;
           const filasPorGrupo = Math.max(Math.ceil(pares.length / columnasPorGrupo), 1);
           const marcadorHeight = 48 * escalaUi;
           const marcadorY = height - marcadorHeight - 16 * escalaUi;
 
           const labelsY = Math.max(120 * escalaUi, height * 0.17);
-          const gapX = Phaser.Math.Clamp(width * 0.012, 10 * escalaUi, 22 * escalaUi);
-          const gapY = Phaser.Math.Clamp(height * 0.025, 14 * escalaUi, 28 * escalaUi);
-          const groupGapX = Phaser.Math.Clamp(width * 0.04, 40 * escalaUi, 90 * escalaUi);
+          const gapX = Phaser.Math.Clamp(width * 0.012, 8 * escalaUi, 34 * escalaUi);
+          const gapY = Phaser.Math.Clamp(height * 0.025, 10 * escalaUi, 32 * escalaUi);
+          const groupGapX = Phaser.Math.Clamp(width * 0.04, 24 * escalaUi, 72 * escalaUi);
 
           const anchoDisponible = width * 0.94;
           const cardSizePorAncho = (anchoDisponible - groupGapX - gapX * (columnasPorGrupo - 1) * 2) / (columnasPorGrupo * 2);
@@ -151,7 +152,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const altoDisponible = Math.max(200, marcadorY - topLimite - 15 * escalaUi);
           const cardSizePorAlto = (altoDisponible - gapY * (filasPorGrupo - 1)) / filasPorGrupo;
 
-          const cardWidth = Phaser.Math.Clamp(Math.min(230 * escalaUi, cardSizePorAncho, cardSizePorAlto), 115, 230);
+          const cardWidth = Phaser.Math.Clamp(Math.min(300 * escalaUi, cardSizePorAncho, cardSizePorAlto), 64, 460);
           const cardHeight = cardWidth;
 
           const startY = topLimite + cardHeight / 2;
@@ -164,6 +165,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const xSenias = seniasLeft + bloqueWidth / 2;
 
           this.crearGrupo(significados, "significado", {
+            columns: columnasPorGrupo,
             cardWidth,
             cardHeight,
             startY,
@@ -173,6 +175,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             escalaUi,
           });
           this.crearGrupo(senias, "senia", {
+            columns: columnasPorGrupo,
             cardWidth,
             cardHeight,
             startY,
@@ -301,7 +304,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
         }
 
         crearGrupo(items: string[], tipo: string, layout: GridLayout) {
-          const columnas = 4;
+          const columnas = layout.columns;
           const bloqueWidth = layout.cardWidth * columnas + layout.gapX * (columnas - 1);
           const startX = layout.centerX - bloqueWidth / 2 + layout.cardWidth / 2;
 

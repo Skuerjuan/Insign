@@ -5,9 +5,10 @@ export default function JuegoPalabra() {
     <main
       style={{
         minHeight: "100dvh",
+        width: "100%",
         display: "grid",
         placeItems: "center",
-        padding: "24px",
+        padding: "clamp(16px, 4vw, 64px)",
         textAlign: "center",
         background: "url('/FondoInicioSesion.png') center / cover no-repeat",
         fontFamily: "var(--font-baloo)",
@@ -15,8 +16,8 @@ export default function JuegoPalabra() {
     >
       <section
         style={{
-          width: "min(520px, 100%)",
-          padding: "40px 28px",
+          width: "min(760px, 100%)",
+          padding: "clamp(28px, 5vw, 72px) clamp(20px, 5vw, 64px)",
           border: "4px solid #06398a",
           borderRadius: "24px",
           background: "rgba(255, 255, 255, 0.94)",

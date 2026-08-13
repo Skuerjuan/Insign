@@ -10,14 +10,14 @@
     align-items: center;
     justify-content: center;
     gap: clamp(18px, 4vw, 34px);
-    padding: 32px 20px;
+    padding: clamp(24px, 5vw, 72px) 20px;
     overflow: hidden;
     text-align: center;
 }
 
 .logo {
   font-family: var(--font-rubik-one);
-  font-size: clamp(62px, 11vw, 110px);
+  font-size: clamp(62px, 11vw, 150px);
   font-weight: 900;
   line-height: 0.9;
   display: flex;
@@ -47,7 +47,7 @@
  .subtitulo { 
   color: #0042AD;
   font-family: var(--font-baloo);
-  font-size: clamp(30px, 6vw, 54px);
+  font-size: clamp(30px, 5vw, 72px);
   font-weight: 700;
   line-height: 1.05;
   margin: 0;
@@ -57,9 +57,9 @@
     background-color: #0042AD;
     color: #ffffff;
     font-family: var(--font-baloo);
-    font-size: clamp(34px, 5vw, 50px);
-    width: min(280px, 80vw);
-    min-height: 86px;
+    font-size: clamp(34px, 4vw, 58px);
+    width: min(360px, 80vw);
+    min-height: clamp(74px, 8vh, 104px);
     display: flex;
     justify-content: center;
     align-items: center;

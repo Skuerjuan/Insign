@@ -20,7 +20,7 @@ export default async function JuegoMemoriaPage({
   const { origen } = await searchParams;
 
   return (
-    <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <main style={{ width: "100%", minWidth: 320, height: "100dvh", overflow: "hidden" }}>
       <JuegoMemoria
         points={profile.puntos ?? 0}
         origin={origen === "entrenamiento" ? "training" : "menu"}

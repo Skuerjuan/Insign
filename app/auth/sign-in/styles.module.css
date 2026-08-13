@@ -4,31 +4,38 @@
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  height: 100dvh;
-  position: relative;
-  overflow: hidden;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(280px, 1.15fr) minmax(380px, 0.85fr);
+  align-items: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: clamp(28px, 4vw, 76px);
 }
 
 .fondo form {
-  width: clamp(460px, 30vw, 560px);
+  grid-column: 2;
+  grid-row: 1;
+  width: min(100%, 620px);
   min-width: 0;
-  position: absolute;
-  top: clamp(42px, 7vh, 68px);
-  right: clamp(70px, 6vw, 130px);
+  justify-self: center;
+  z-index: 1;
 }
 
 .logo {
   font-family: var(--font-rubik-one);
-  font-size: clamp(88px, 7vw, 112px);
+  font-size: clamp(72px, 7vw, 132px);
   font-weight: 900;
   line-height: 0.9;
   display: flex;
   align-items: center;
   letter-spacing: 0;
-  position: absolute;
-  top: clamp(42px, 7vh, 68px);
-  left: clamp(105px, 10vw, 190px);
-  margin: 0;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  z-index: 1;
+  margin: 0 0 0 clamp(10px, 4vw, 90px);
 }
 
 .blanco,
@@ -50,14 +57,16 @@
 
 .gorilaSaludando {
   background-image: url("/Gorilainicio.png");
-  width: clamp(500px, 31vw, 620px);
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  width: min(38vw, 65dvh, 760px);
+  min-width: 300px;
   aspect-ratio: 1;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  position: absolute;
-  left: clamp(30px, 5vw, 95px);
-  top: clamp(105px, 15vh, 135px);
 }
 
 .container {
@@ -96,7 +105,7 @@
   font-size: clamp(24px, 4vw, 30px);
   font-weight: bold;
   border-radius: 5px;
-  width: min(350px, 100%);
+  width: 100%;
   height: 48px;
   display: flex;
   justify-content: center;
@@ -146,7 +155,7 @@
 }
 
 .googleBtn {
-  width: 150px;
+  width: min(220px, 100%);
   height: 46px;
   border-radius: 12px;
   border: 2px solid #d9d9d9;
@@ -195,11 +204,13 @@
   text-decoration: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .fondo {
     height: auto;
     min-height: 100dvh;
     display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
     justify-items: center;
     align-content: start;
     padding: 22px 16px 32px;
@@ -207,6 +218,8 @@
   }
 
   .fondo form {
+    grid-column: 1;
+    grid-row: auto;
     width: min(100%, 500px);
     min-width: 0;
     position: static;
@@ -214,9 +227,12 @@
   }
 
   .logo {
+    grid-column: 1;
+    grid-row: auto;
     position: static;
     transform: none;
     font-size: clamp(58px, 16vw, 76px);
+    margin: 0;
   }
 
   .gorilaSaludando {
