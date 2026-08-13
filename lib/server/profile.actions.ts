@@ -26,6 +26,8 @@ export async function getProfile(userId: string){
                 user_id: userId,
                 puntos: 0,
                 premios: 0,
+                dias_activos: 0,
+                racha: 0,
             }
         })
     }
@@ -42,6 +44,29 @@ export async function addPoints(newPoints: number, userId: string){
         },
         data:{
             puntos: puntos+newPoints
+        }
+    });
+
+    return updatedProfile;
+
+}
+
+export async function addXp(newXp: number, userId: string){
+    let { experiencia, nivel } = await getProfile(userId);
+    if(experiencia == null) experiencia = 0;
+    if(nivel == null) nivel = 1;
+    let xpSumada = experiencia+newXp;
+    if(xpSumada >= 100){
+        nivel++;
+        xpSumada -= 100;
+    }
+    const updatedProfile = await prisma.profiles.update({
+        where:{
+            user_id: userId,
+        },
+        data:{
+            experiencia: xpSumada,
+            nivel: nivel,
         }
     });
 
