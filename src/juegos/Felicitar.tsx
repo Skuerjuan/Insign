@@ -7,7 +7,7 @@ interface ModalVictoriaProps {
   onVolverInicio: () => void;
   onSiguienteNivel: () => void;
   // Prop reservada para las estrellas futuras
-  estrellas?: number; 
+  estrellas?: number;
 }
 
 export default function ModalVictoria({
@@ -17,27 +17,27 @@ export default function ModalVictoria({
 }: ModalVictoriaProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
-      <div 
+      <div
         className="relative w-full max-w-lg rounded-3xl p-6 text-center shadow-2xl flex flex-col items-center overflow-hidden border-4 border-yellow-400 bg-cover bg-center"
         style={{ backgroundImage: "url('/fondoP.png')" }} // Usamos el fondo de la selva
       >
         {/* Título Principal */}
-        <h1 
+        <h1
           className="text-4xl sm:text-5xl font-black text-amber-400 tracking-wide drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
           style={{ WebkitTextStroke: "2px #b45309" }}
         >
           ¡Felicidades!
         </h1>
-        
+
         <p className="text-xl sm:text-2xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mt-1 mb-2">
           Completaste el nivel
         </p>
 
         {/* Personaje Centrado */}
         <div className="my-2 relative w-40 h-40 flex items-center justify-center">
-          <img 
+          <img
             src="/mono.png" // Reemplaza por la ruta de tu imagen de mono
-            alt="Mono victorioso" 
+            alt="Mono victorioso"
             className="w-full h-full object-contain drop-shadow-lg"
           />
         </div>

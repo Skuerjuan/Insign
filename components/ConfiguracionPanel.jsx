@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import styles from "@/app/configuracion/styles.module.css";
 import cerrarSesion from "@/lib/client/cerrarSesion";
 
@@ -12,7 +13,9 @@ export default function ConfiguracionPanel() {
   return (
     <main className={styles.settingsMain}>
       <section className={styles.card}>
-        <div className={styles.photoPlaceholder}>Foto de apariencia</div>
+        <div className={`${styles.settingsIcon} ${styles.appearanceIcon}`}>
+          <Image src="/apariencia.png" alt="" width={58} height={58} aria-hidden="true" />
+        </div>
         <div className={styles.cardContent}>
           <h2>Apariencia</h2>
           <label>Claro <input type="radio" name="tema" checked={tema === "claro"} onChange={() => setTema("claro")} /></label>
@@ -21,13 +24,17 @@ export default function ConfiguracionPanel() {
       </section>
 
       <button type="button" className={styles.optionCard}>
-        <span className={styles.photoPlaceholder}>Foto de control parental</span>
+        <span className={`${styles.settingsIcon} ${styles.parentalIcon}`}>
+          <Image src="/control-parental.png" alt="" width={58} height={58} aria-hidden="true" />
+        </span>
         <span><strong>Control parental</strong><small>Gestioná el tiempo y el contenido</small></span>
         <b aria-hidden="true">›</b>
       </button>
 
       <button type="button" className={styles.optionCard}>
-        <span className={styles.photoPlaceholder}>Foto de contraseña</span>
+        <span className={`${styles.settingsIcon} ${styles.passwordIcon}`}>
+          <Image src="/contrasena.png" alt="" width={58} height={58} aria-hidden="true" />
+        </span>
         <span><strong>Contraseña</strong><small>Cambiá la contraseña de tu cuenta</small></span>
         <b aria-hidden="true">›</b>
       </button>

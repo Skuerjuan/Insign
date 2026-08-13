@@ -1,7 +1,9 @@
 import styles from "./styles.module.css";
 import Link from "next/link";
+import Image from "next/image";
 import Foto from "@/components/Foto"
 import { getProfile, getSession } from "../../lib/server/profile.actions";
+import { getWeeklyActivity } from "../../lib/server/streak";
 import BotonJugar from "@/components/BotonJugar"
 
 export const dynamic = "force-dynamic";
@@ -9,10 +11,8 @@ export const dynamic = "force-dynamic";
 export default async function Menu() {
   const user = await getSession();
 
-    const { puntos } = await getProfile(user.id);  
-
-    //pasar racha de Date a texto
-    const rachaTexto = "2 días"
+    const { puntos, racha, ultimo_dia_activo } = await getProfile(user.id);
+    const rachaActual = getWeeklyActivity(racha, ultimo_dia_activo).count;
 
   return (
     <div className={styles.fondo}>
@@ -55,7 +55,7 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Star.png" alt="" className={styles.starIcon} />
               <div>
-                <strong>{puntos}</strong>
+                <strong>{puntos ?? 0}</strong>
                 <span>Puntos</span>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default async function Menu() {
             <div className={styles.statItem}>
               <img src="/Fire.png" alt="" className={styles.fireIcon} />
               <div>
-                <strong>{rachaTexto}</strong>
+                <strong>{rachaActual}</strong>
                 <span>Racha</span>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default async function Menu() {
         <main className={styles.levels}>
           <section className={styles.levelCard}>
             <div className={styles.levelImagePlaceholder}>
-              <span>Foto nivel 1</span>
+              <Image src="/gorila-niveles.png" alt="Explorador de nivel 1" width={436} height={475} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
@@ -88,12 +88,12 @@ export default async function Menu() {
                 <div className={styles.progressBar} />
               </div>
             </div>
-            <BotonJugar styleButton={styles.playButton} styleIcon={styles.playIcon} userId={user.id} juego={"/juego-eleccion"} />
+            <BotonJugar styleButton={styles.playButton} styleIcon={styles.playIcon} juego={"/juego-eleccion"} />
           </section>
 
           <section className={styles.levelCard}>
             <div className={styles.levelImagePlaceholder}>
-              <span>Foto nivel 2</span>
+              <Image src="/gorila-niveles.png" alt="Explorador de nivel 2" width={436} height={475} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
@@ -113,7 +113,7 @@ export default async function Menu() {
 
           <section className={styles.levelCard}>
             <div className={styles.levelImagePlaceholder}>
-              <span>Foto nivel 3</span>
+              <Image src="/gorila-niveles.png" alt="Explorador de nivel 3" width={436} height={475} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
@@ -133,7 +133,7 @@ export default async function Menu() {
 
           <section className={styles.levelCard}>
             <div className={styles.levelImagePlaceholder}>
-              <span>Foto nivel 4</span>
+              <Image src="/gorila-niveles.png" alt="Explorador de nivel 4" width={436} height={475} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>

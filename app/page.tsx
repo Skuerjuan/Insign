@@ -1,4 +1,3 @@
-import PhaserGame from "@/src/juegos/JuegoAdivinar";
 import Link from "next/link";
 import styles from "./styles.module.css";
 

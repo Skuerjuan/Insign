@@ -427,20 +427,47 @@ flex: 0 0 auto;
 }
 
 .panel {
-  min-height: 154px;
+  min-height: 62px;
   margin-top: 10px;
-  padding: 18px 28px;
+  padding: 20px 28px;
   transition: min-height 180ms ease;
 }
 
 .panel:has(.achievementsDetails[open]) {
-  min-height: 286px;
+  min-height: 230px;
 }
 
 .panelSmall {
-  min-height: 112px;
+  min-height: 150px;
   margin-top: 10px;
   padding: 18px 28px;
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(52px, 1fr));
+  align-items: center;
+  gap: clamp(8px, 2vw, 22px);
+  margin-top: 14px;
+}
+
+.weekDay {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #052c79;
+  font-family: var(--font-baloo);
+  font-size: clamp(13px, 1.4vw, 17px);
+  font-weight: 900;
+}
+
+.weekDay img {
+  width: clamp(44px, 6vw, 64px);
+  height: clamp(44px, 6vw, 64px);
+  display: block;
+  object-fit: contain;
 }
 
 .panelHeader {
@@ -568,6 +595,11 @@ flex: 0 0 auto;
   .profileStatDivider {
     display: none;
   }
+
+  .weekGrid {
+    grid-template-columns: repeat(4, minmax(52px, 1fr));
+    gap: 16px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -607,5 +639,9 @@ flex: 0 0 auto;
   .panelSmall {
     padding-left: 18px;
     padding-right: 18px;
+  }
+
+  .weekGrid {
+    grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }

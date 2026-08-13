@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import fondoCartas from "./fondo.png"; 
+import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
 type GifImport = string | { src: string };
@@ -75,7 +75,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         private palabraObjetivo = "";
         private opciones: string[] = [];
         private aciertos = 0;
-        private intentosFallidos = 0; 
+        private intentosFallidos = 0;
         private bloqueado = false;
         private mazoJuego: string[] = [];
         private palabrasUsadas: string[] = [];
@@ -90,7 +90,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         init(data: { aciertos?: number; palabrasUsadas?: string[] }) {
           this.aciertos = data.aciertos || 0;
           this.palabrasUsadas = data.palabrasUsadas || [];
-          this.intentosFallidos = 0; 
+          this.intentosFallidos = 0;
           this.bloqueado = false;
         }
 
@@ -250,20 +250,20 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
           const botonWidth = Phaser.Math.Clamp(width * 0.26, 160 * escalaUi, 260 * escalaUi);
           const botonHeight = 65 * escalaUi;
-          
+
           const centroX = width / 2;
-          const inicioY = height * 0.67; 
-          
-          const difX = botonWidth + (28 * escalaUi); 
-          const difY = botonHeight + (20 * escalaUi); 
+          const inicioY = height * 0.67;
+
+          const difX = botonWidth + (28 * escalaUi);
+          const difY = botonHeight + (20 * escalaUi);
 
           const posiciones = [
-            { x: centroX - difX, y: inicioY }, 
-            { x: centroX,        y: inicioY }, 
+            { x: centroX - difX, y: inicioY },
+            { x: centroX,        y: inicioY },
             { x: centroX + difX, y: inicioY },
-            
-            { x: centroX - difX, y: inicioY + difY }, 
-            { x: centroX,        y: inicioY + difY }, 
+
+            { x: centroX - difX, y: inicioY + difY },
+            { x: centroX,        y: inicioY + difY },
             { x: centroX + difX, y: inicioY + difY }
           ];
 
@@ -290,7 +290,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             contenedorBoton.add([backgroundBoton, textoBoton]);
             contenedorBoton.setData("valor", palabraOpcion);
 
-            contenedorBoton.on("pointerdown", () => 
+            contenedorBoton.on("pointerdown", () =>
               this.validarRespuesta(contenedorBoton, backgroundBoton, botonWidth, botonHeight, escalaUi)
             );
           });
@@ -298,18 +298,18 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
           const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
-          
+
           for (let i = 0; i < 35; i++) {
             const color = Phaser.Utils.Array.GetRandom(colores);
             const size = Phaser.Math.Between(6 * escalaUi, 12 * escalaUi);
-            
+
             const papelito = this.add.rectangle(origenX, origenY, size, size, color);
             papelito.setAngle(Phaser.Math.Between(0, 360));
 
-            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0); 
+            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0);
             const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
             const targetX = origenX + Math.cos(angulo) * velocidad;
-            const targetY = origenY + Math.sin(angulo) * velocidad + 150; 
+            const targetY = origenY + Math.sin(angulo) * velocidad + 150;
 
             this.tweens.add({
               targets: papelito,
@@ -325,10 +325,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         }
 
         validarRespuesta(
-          contenedor: Phaser.GameObjects.Container, 
-          graficoBg: Phaser.Graphics, 
-          bWidth: number, 
-          bHeight: number, 
+          contenedor: Phaser.GameObjects.Container,
+          graficoBg: Phaser.GameObjects.Graphics,
+          bWidth: number,
+          bHeight: number,
           escalaUi: number
         ) {
           if (this.bloqueado) return;
@@ -340,7 +340,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             graficoBg.clear();
             graficoBg.fillStyle(0x58cc02, 1);
             graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
-            
+
             this.tweens.add({
               targets: contenedor,
               scaleX: 1.15,
@@ -371,7 +371,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
             graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
-            
+
             this.intentosFallidos++;
             if (this.textoVidas) {
               this.textoVidas.setText(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)} ❤️`);
