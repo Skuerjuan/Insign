@@ -71,6 +71,73 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
 
+      const crearPillBadge = (
+        scene: Phaser.Scene,
+        x: number,
+        y: number,
+        textoLabel: string,
+        icono: string,
+        escalaUi: number,
+        isRightAligned: boolean = false
+      ) => {
+        const container = scene.add.container(x, y);
+        const fontSizePx = Math.round(Phaser.Math.Clamp(24 * escalaUi, 18, 30));
+
+        const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
+          fontSize: `${fontSizePx}px`,
+          fontFamily,
+          fontStyle: "800",
+        });
+
+        const textWidth = tempText.width;
+        tempText.destroy();
+
+        const paddingX = 22 * escalaUi;
+        const width = textWidth + paddingX * 2;
+        const height = 48 * escalaUi;
+        const radius = height / 2;
+
+        const originX = isRightAligned ? -width : 0;
+
+        const bg = scene.add.graphics();
+        bg.fillStyle(0xfbc02d, 1);
+        bg.fillRoundedRect(originX, -height / 2, width, height, radius);
+        bg.lineStyle(3 * escalaUi, 0xa0a0a0, 0.8);
+        bg.strokeRoundedRect(originX, -height / 2, width, height, radius);
+
+        const textX = isRightAligned ? -width / 2 : width / 2;
+        const mainText = scene.add
+          .text(textX, 0, textoLabel, {
+            fontSize: `${fontSizePx}px`,
+            fontFamily,
+            color: "#05215b",
+            fontStyle: "800",
+          })
+          .setOrigin(0.5);
+
+        const iconText = scene.add
+          .text(textX + mainText.width / 2 + 12 * escalaUi, 0, icono, {
+            fontSize: `${fontSizePx + 2}px`,
+            fontFamily,
+            color: "#e53935",
+          })
+          .setOrigin(0, 0.5);
+
+        mainText.setX(textX - iconText.width / 2);
+        iconText.setX(mainText.x + mainText.width / 2 + 6);
+
+        container.add([bg, mainText, iconText]);
+
+        return {
+          container,
+          actualizar: (nuevoTexto: string) => {
+            mainText.setText(nuevoTexto);
+            mainText.setX(textX - iconText.width / 2);
+            iconText.setX(mainText.x + mainText.width / 2 + 6);
+          },
+        };
+      };
+
       class AdivinarScene extends Phaser.Scene {
         private palabraObjetivo = "";
         private opciones: string[] = [];
@@ -80,8 +147,8 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         private mazoJuego: string[] = [];
         private palabrasUsadas: string[] = [];
 
-        private textoMarcador: Phaser.GameObjects.Text | null = null;
-        private textoVidas: Phaser.GameObjects.Text | null = null;
+        private badgeAciertos: ReturnType<typeof crearPillBadge> | null = null;
+        private badgeVidas: ReturnType<typeof crearPillBadge> | null = null;
 
         constructor() {
           super("AdivinarScene");
@@ -183,23 +250,26 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             .setOrigin(0.5)
             .setStroke("#0042AD", 5 * escalaUi);
 
-          this.textoMarcador = this.add.text(35 * escalaUi, height - 30 * escalaUi, `Aciertos: ${this.aciertos}/5`, {
-            fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 13, 20)}px`,
-            fontFamily,
-            color: "#ffffff",
-            backgroundColor: "#2ed573",
-            padding: { x: 10, y: 4 },
-          }).setOrigin(0, 0.5);
-          this.textoMarcador.setStroke("#0042AD", 4 * escalaUi);
+          // BADGES ESTILO PILL
+          this.badgeAciertos = crearPillBadge(
+            this,
+            40 * escalaUi,
+            height - 40 * escalaUi,
+            `Aciertos: ${this.aciertos}/5`,
+            "⭐",
+            escalaUi,
+            false
+          );
 
-          this.textoVidas = this.add.text(width - 35 * escalaUi, height - 30 * escalaUi, `Intentos: ${3 - this.intentosFallidos} ❤️`, {
-            fontSize: `${Phaser.Math.Clamp(16 * escalaUi, 13, 20)}px`,
-            fontFamily,
-            color: "#ffffff",
-            backgroundColor: "#ff4757",
-            padding: { x: 10, y: 4 },
-          }).setOrigin(1, 0.5);
-          this.textoVidas.setStroke("#0042AD", 4 * escalaUi);
+          this.badgeVidas = crearPillBadge(
+            this,
+            width - 40 * escalaUi,
+            height - 40 * escalaUi,
+            `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
+            "❤️",
+            escalaUi,
+            true
+          );
         }
 
         generarNuevaRonda(width: number, height: number, escalaUi: number) {
@@ -278,6 +348,9 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
             backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 18 * escalaUi);
+            
+            backgroundBoton.lineStyle(3 * escalaUi, 0x1e78ff, 1);
+            backgroundBoton.strokeRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 18 * escalaUi);
 
             const textoBoton = this.add.text(0, 0, palabraOpcion, {
               fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
@@ -339,7 +412,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           if (respuestaSeleccionada === this.palabraObjetivo) {
             graficoBg.clear();
             graficoBg.fillStyle(0x58cc02, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
+            
+            graficoBg.lineStyle(3 * escalaUi, 0x10ac84, 1);
+            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
             this.tweens.add({
               targets: contenedor,
@@ -353,7 +429,9 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             this.lanzarConfeti(contenedor.x, contenedor.y, escalaUi);
 
             this.aciertos++;
-            if (this.textoMarcador) this.textoMarcador.setText(`Aciertos: ${this.aciertos}/5`);
+            if (this.badgeAciertos) {
+              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
+            }
 
             if (typeof onRondaGanada === "function") {
               onRondaGanada(this.aciertos);
@@ -370,11 +448,14 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           } else {
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
+            
+            graficoBg.lineStyle(3 * escalaUi, 0xb2bec3, 1);
+            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
             this.intentosFallidos++;
-            if (this.textoVidas) {
-              this.textoVidas.setText(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)} ❤️`);
+            if (this.badgeVidas) {
+              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
             }
 
             this.tweens.add({
@@ -386,7 +467,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               onComplete: () => {
                 graficoBg.clear();
                 graficoBg.fillStyle(0xffd32a, 1);
-                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
+                
+                graficoBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
+                graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
