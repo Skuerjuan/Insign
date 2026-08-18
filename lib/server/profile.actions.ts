@@ -17,6 +17,12 @@ export async function getSession(){
     return session.user;
 }
 
+export async function isVerified(){
+    const user = await getSession();
+
+    return user.emailVerified;
+}
+
 async function getFullSession() {
     const { data } = await auth.getSession();
 
@@ -43,6 +49,7 @@ export async function getProfile(userId: string){
                 juegos_jugados: 0,
                 dias_activos: 0,
                 tiempo_total_segundos: 0,
+                racha: 0,
             }
         })
     }
@@ -156,5 +163,30 @@ export async function recordSessionEnd() {
         });
 
         return profile.tiempo_total_segundos;
+    });
+}
+
+export async function addPoints(newPoints: number, userId: string){
+    const safePoints = Math.trunc(Number(newPoints) || 0);
+    await getProfile(userId);
+
+    return prisma.profiles.update({
+        where: { user_id: userId },
+        data: { puntos: { increment: safePoints } },
+    });
+}
+
+export async function addXp(newXp: number, userId: string){
+    const { experiencia, nivel } = await getProfile(userId);
+    const safeXp = Math.max(0, Math.trunc(Number(newXp) || 0));
+    const totalXp = experiencia + safeXp;
+    const levelsGained = Math.floor(totalXp / 100);
+
+    return prisma.profiles.update({
+        where: { user_id: userId },
+        data: {
+            experiencia: totalXp % 100,
+            nivel: nivel + levelsGained,
+        },
     });
 }
