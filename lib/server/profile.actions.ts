@@ -13,6 +13,12 @@ export async function getSession(){
     return session.user;
 }
 
+export async function isVerified(){
+    const user = await getSession();
+
+    return user.emailVerified;
+}
+
 export async function getProfile(userId: string){
     let profile = await prisma.profiles.findUnique({
         where: {
