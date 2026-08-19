@@ -28,3 +28,30 @@ export default async function handleVerify(email: string, code: string){
         };
     }
 };
+
+export async function handleResend(email: string) {
+    if (!email) {
+        return {
+            success: false,
+            message: 'Enter your email address to resend the verification code.',
+        };
+    }
+
+    try {
+        const { error } = await auth.emailOtp.sendVerificationOtp({
+            email,
+            type: 'email-verification',
+        });
+        if (error) throw error;
+
+        return {
+            success: true,
+            message: 'Verification code sent! Check your inbox.',
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'An error occurred',
+        };
+    }
+}

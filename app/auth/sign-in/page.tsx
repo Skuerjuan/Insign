@@ -68,7 +68,7 @@ function SignInForm() {
           Inicia Sesión
         </button>
 
-        <Link className={styles.olvid} href="/auth/change_password">
+        <Link className={styles.olvid} href="/auth/forgot_password">
           ¿Olvidaste tu contraseña?
         </Link>
 

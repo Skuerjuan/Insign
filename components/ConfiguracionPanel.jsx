@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "@/app/configuracion/styles.module.css";
 import cerrarSesion from "@/lib/client/cerrarSesion";
+import Link from "next/link";
 
 export default function ConfiguracionPanel() {
   const [tema, setTema] = useState("claro");
@@ -31,13 +32,15 @@ export default function ConfiguracionPanel() {
         <b aria-hidden="true">›</b>
       </button>
 
-      <button type="button" className={styles.optionCard}>
-        <span className={`${styles.settingsIcon} ${styles.passwordIcon}`}>
-          <Image src="/contrasena.png" alt="" width={58} height={58} aria-hidden="true" />
-        </span>
-        <span><strong>Contraseña</strong><small>Cambiá la contraseña de tu cuenta</small></span>
-        <b aria-hidden="true">›</b>
-      </button>
+      <Link href="/auth/change_password">
+        <button type="button" className={styles.optionCard}>
+          <span className={`${styles.settingsIcon} ${styles.passwordIcon}`}>
+            <Image src="/contrasena.png" alt="" width={58} height={58} aria-hidden="true" />
+          </span>
+          <span><strong>Contraseña</strong><small>Cambiá la contraseña de tu cuenta</small></span>
+          <b aria-hidden="true">›</b>
+        </button>
+      </Link>
 
       <button type="button" className={styles.logout} onClick={() => cerrarSesion(router)}>
         <span aria-hidden="true">⇥</span>
