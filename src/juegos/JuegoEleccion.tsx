@@ -35,7 +35,7 @@ try {
     }
   });
 } catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automaticamente:", e);
+  console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
 }
 
 const palabrasd = Object.keys(diccionarioGifs);
@@ -288,7 +288,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           const azulTexto = "#05215b";
           this.textoPalabra = this.add
-            .text(width / 2, 88 * escalaUi, `¿Qué seña es "${this.palabraObjetivo.toUpperCase()}"?`, {
+            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${this.palabraObjetivo.toUpperCase()}?`, {
               fontSize: `${Phaser.Math.Clamp(26 * escalaUi, 20, 36)}px`,
               fontFamily,
               color: azulTexto,

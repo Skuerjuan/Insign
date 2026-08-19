@@ -39,7 +39,7 @@ try {
 const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
-// Normaliza texto: quita tildes, convierte a mayúsculas y Opcionalmente elimina espacios
+// Normaliza texto: elimina tildes para las teclas del juego (letras limpias)
 const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
   const normalizado = texto
     .trim()
@@ -298,7 +298,7 @@ export default function JuegoCompletarCeldas({
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           
-          // Generamos ambas versiones: con espacios para la UI y sin espacios para la lógica
+          // Ambas versiones son limpiadas de tildes para la jugabilidad general
           this.palabraObjetivoConEspacios = normalizarTexto(this.palabraObjetivo, true);
           this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo, false);
           
@@ -358,12 +358,10 @@ export default function JuegoCompletarCeldas({
           const availableLength = this.availableChars.length;
           const palabraConEspacios = this.palabraObjetivoConEspacios.split("");
 
-          // Usamos la longitud con espacios para el cálculo dinámico del tamaño
           const baseCellSize = palabraConEspacios.length > 8 ? 45 : 60; 
           const cellSize = Math.round(Phaser.Math.Clamp(baseCellSize * escalaUi, 35, 75));
           const cellSpacing = Math.round(Phaser.Math.Clamp(8 * escalaUi, 4, 12));
           
-          // Ancho que tendrá el "hueco" del espacio (ligeramente menor a una letra normal)
           const spaceWidth = cellSize * 0.6; 
 
           // --- 1. Calcular el ancho total de los Slots Blancos (arriba) ---
@@ -381,10 +379,8 @@ export default function JuegoCompletarCeldas({
           // --- 2. Dibujar Slots Blancos con el hueco intercalado ---
           palabraConEspacios.forEach((char) => {
             if (char === " ") {
-              // Si es un espacio, solo avanzamos la coordenada X sin dibujar celda
               currentX += spaceWidth + cellSpacing;
             } else {
-              // Si es una letra, dibujamos la celda normal
               const centerX = currentX + cellSize / 2;
               const container = this.crearCelda(
                 centerX,
@@ -400,11 +396,11 @@ export default function JuegoCompletarCeldas({
               this.inputSlots.push(container);
               
               currentX += cellSize + cellSpacing;
-              slotIndex++; // Solo incrementamos el slot para las letras
+              slotIndex++;
             }
           });
 
-          // --- 3. Teclas Amarillas (abajo) - Queda igual porque availableChars no tiene espacios ---
+          // --- 3. Teclas Amarillas (abajo) ---
           const keyboardGridWidth = availableLength * cellSize + (availableLength - 1) * cellSpacing;
           const keyboardStartX = width / 2 - keyboardGridWidth / 2 + cellSize / 2;
           const keyboardY = gapY + cellSize + cellSpacing * 2;
@@ -506,9 +502,9 @@ export default function JuegoCompletarCeldas({
           });
 
           if (this.inputtedChars.length === this.palabraObjetivoNormalizada.length) {
-          this.time.delayedCall(150, () => {
-          this.validarRespuestaConDelay();
-              });
+            this.time.delayedCall(150, () => {
+              this.validarRespuestaConDelay();
+            });
           }
         }
 
@@ -541,7 +537,6 @@ export default function JuegoCompletarCeldas({
         alPresionarTecla(event: KeyboardEvent) {
           if (this.bloqueado) return;
 
-          // Soporte para tecla Backspace (Borrar)
           if (event.key === "Backspace") {
             if (this.inputtedChars.length > 0) {
               const lastIndex = this.inputtedChars.length - 1;
@@ -550,9 +545,10 @@ export default function JuegoCompletarCeldas({
             return;
           }
 
-          const pressedChar = event.key.toUpperCase();
-
-          // Buscar coincidencia activa en availableChars
+          // Por si el usuario usa una tilde real en su teclado físico, la removemos
+          const quitarTildes = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const pressedChar = quitarTildes(event.key.toUpperCase());
+          
           const matchIndex = this.availableChars.findIndex(
             (c) => c.char === pressedChar && c.active
           );
@@ -573,6 +569,15 @@ export default function JuegoCompletarCeldas({
           const wordFormed = this.inputtedChars.map((c) => c.char).join("");
 
           if (wordFormed === this.palabraObjetivoNormalizada) {
+            // MAGIA: Formó la palabra correcta. Extraemos la palabra original CON tildes,
+            // le quitamos los espacios en blanco y reemplazamos los textos de cada casillero de victoria.
+            const letrasConTilde = this.palabraObjetivo.toUpperCase().replace(/\s+/g, "").split("");
+            
+            this.inputSlots.forEach((slot, index) => {
+              const slotText = slot.getData("text") as Phaser.GameObjects.Text;
+              slotText.setText(letrasConTilde[index]);
+            });
+
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
 
