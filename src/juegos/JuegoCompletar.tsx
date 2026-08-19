@@ -39,14 +39,15 @@ try {
 const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
-// Normaliza texto: quita tildes, convierte a mayúsculas y ELIMINA ESPACIOS para armar las fichas
-const normalizarTexto = (texto: string) => {
-  return texto
+// Normaliza texto: quita tildes, convierte a mayúsculas y Opcionalmente elimina espacios
+const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
+  const normalizado = texto
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "") // Elimina espacios intermedios (ej: "POR FAVOR" -> "PORFAVOR")
     .toUpperCase();
+  
+  return mantenerEspacios ? normalizado : normalizado.replace(/\s+/g, "");
 };
 
 interface JuegoCompletarProps {
@@ -156,6 +157,7 @@ export default function JuegoCompletarCeldas({
       class CompletarScene extends Phaser.Scene {
         private palabraObjetivo = "";
         private palabraObjetivoNormalizada = "";
+        private palabraObjetivoConEspacios = "";
         private aciertos = 0;
         private bloqueado = false;
         private mazoJuego: string[] = [];
@@ -295,7 +297,11 @@ export default function JuegoCompletarCeldas({
 
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
-          this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo);
+          
+          // Generamos ambas versiones: con espacios para la UI y sin espacios para la lógica
+          this.palabraObjetivoConEspacios = normalizarTexto(this.palabraObjetivo, true);
+          this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo, false);
+          
           this.palabrasUsadas.push(this.palabraObjetivo);
 
           // Título descriptivo
@@ -336,7 +342,7 @@ export default function JuegoCompletarCeldas({
           cardBg.strokeRoundedRect(centroX - gifWidth / 2, centroY - gifHeight / 2, gifWidth, gifHeight, 18 * escalaUi);
           this.gifGraphics = cardBg;
 
-          // Preparar letras limpias
+          // Preparar letras limpias (sin espacios para el teclado)
           const chars = this.palabraObjetivoNormalizada.split("");
           this.availableChars = Phaser.Utils.Array.Shuffle([...chars]).map((c, i) => ({
             char: c,
@@ -349,34 +355,56 @@ export default function JuegoCompletarCeldas({
         }
 
         crearGrillasDeLetras(width: number, height: number, escalaUi: number, gapY: number) {
-          const targetLength = this.palabraObjetivoNormalizada.length;
           const availableLength = this.availableChars.length;
+          const palabraConEspacios = this.palabraObjetivoConEspacios.split("");
 
-          // Adaptar dinámicamente el tamaño de celda según la cantidad de letras
-          const baseCellSize = targetLength > 8 ? 45 : 60;
+          // Usamos la longitud con espacios para el cálculo dinámico del tamaño
+          const baseCellSize = palabraConEspacios.length > 8 ? 45 : 60; 
           const cellSize = Math.round(Phaser.Math.Clamp(baseCellSize * escalaUi, 35, 75));
           const cellSpacing = Math.round(Phaser.Math.Clamp(8 * escalaUi, 4, 12));
+          
+          // Ancho que tendrá el "hueco" del espacio (ligeramente menor a una letra normal)
+          const spaceWidth = cellSize * 0.6; 
 
-          // Slots Blancos (arriba)
-          const inputGridWidth = targetLength * cellSize + (targetLength - 1) * cellSpacing;
-          const inputStartX = width / 2 - inputGridWidth / 2 + cellSize / 2;
+          // --- 1. Calcular el ancho total de los Slots Blancos (arriba) ---
+          let inputGridWidth = 0;
+          palabraConEspacios.forEach((char, i) => {
+            inputGridWidth += char === " " ? spaceWidth : cellSize;
+            if (i < palabraConEspacios.length - 1) {
+              inputGridWidth += cellSpacing;
+            }
+          });
 
-          for (let i = 0; i < targetLength; i++) {
-            const container = this.crearCelda(
-              inputStartX + i * (cellSize + cellSpacing),
-              gapY,
-              cellSize,
-              escalaUi,
-              0xffffff,
-              0x1e78ff,
-              true,
-              i,
-              false
-            );
-            this.inputSlots.push(container);
-          }
+          let currentX = width / 2 - inputGridWidth / 2;
+          let slotIndex = 0;
 
-          // Teclas Amarillas (abajo)
+          // --- 2. Dibujar Slots Blancos con el hueco intercalado ---
+          palabraConEspacios.forEach((char) => {
+            if (char === " ") {
+              // Si es un espacio, solo avanzamos la coordenada X sin dibujar celda
+              currentX += spaceWidth + cellSpacing;
+            } else {
+              // Si es una letra, dibujamos la celda normal
+              const centerX = currentX + cellSize / 2;
+              const container = this.crearCelda(
+                centerX,
+                gapY,
+                cellSize,
+                escalaUi,
+                0xffffff,
+                0x1e78ff,
+                true,
+                slotIndex,
+                false
+              );
+              this.inputSlots.push(container);
+              
+              currentX += cellSize + cellSpacing;
+              slotIndex++; // Solo incrementamos el slot para las letras
+            }
+          });
+
+          // --- 3. Teclas Amarillas (abajo) - Queda igual porque availableChars no tiene espacios ---
           const keyboardGridWidth = availableLength * cellSize + (availableLength - 1) * cellSpacing;
           const keyboardStartX = width / 2 - keyboardGridWidth / 2 + cellSize / 2;
           const keyboardY = gapY + cellSize + cellSpacing * 2;
@@ -470,7 +498,6 @@ export default function JuegoCompletarCeldas({
           data.active = false;
           tile.setAlpha(0.3);
 
-          // Tween de escala en el slot
           this.tweens.add({
             targets: this.inputSlots[currentLen],
             scale: { from: 0.8, to: 1 },
@@ -479,7 +506,9 @@ export default function JuegoCompletarCeldas({
           });
 
           if (this.inputtedChars.length === this.palabraObjetivoNormalizada.length) {
-            this.validarRespuestaConDelay();
+          this.time.delayedCall(150, () => {
+          this.validarRespuestaConDelay();
+              });
           }
         }
 
@@ -544,7 +573,6 @@ export default function JuegoCompletarCeldas({
           const wordFormed = this.inputtedChars.map((c) => c.char).join("");
 
           if (wordFormed === this.palabraObjetivoNormalizada) {
-            // Acierto
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
 
