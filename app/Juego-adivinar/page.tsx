@@ -12,7 +12,7 @@ export default async function JuegoAdivinarPage() {
   }
 
   return (
-    <main style={{ width: "100%", minWidth: 320, height: "100dvh", overflow: "hidden" }}>
+    <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <JuegoEleccion userName={session.user.name} />
     </main>
   );

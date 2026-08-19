@@ -2,7 +2,7 @@
   width: 100%;
   height: 100dvh;
   display: grid;
-  grid-template-columns: clamp(280px, 19vw, 360px) minmax(0, 1fr);
+  grid-template-columns: 320px minmax(0, 1fr);
   overflow: hidden;
   background-color: #72cff4;
   background-image: url("/FondoInicioSesion.png");
@@ -61,20 +61,17 @@
 .usuario,
 .source {
   width: 100%;
-  min-height: clamp(54px, 6.5vh, 72px);
-  min-width: 0;
-  overflow: visible;
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(10px, 1vw, 16px);
-  padding: 0 clamp(12px, 1.25vw, 20px);
+  gap: 16px;
+  padding: 0 20px;
   border-radius: 5px;
   color: #fff;
-  font-size: clamp(22px, 1.6vw, 30px);
+  font-size: clamp(20px, 2vw, 25px);
   font-weight: 700;
   text-decoration: none;
-  white-space: nowrap;
 }
 
 .train,
@@ -175,8 +172,7 @@
 
 .practiceSection,
 .streakPanel {
-  width: 100%;
-  max-width: none;
+  width: min(100%, 900px);
   min-height: 0;
   border-radius: 14px;
   background: #fff;
@@ -366,8 +362,8 @@
   }
 
   .navigation {
-    width: 100%;
-    margin: 0;
+    width: min(100%, 520px);
+    margin: 0 auto;
   }
 
   .mainContent,

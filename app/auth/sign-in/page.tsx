@@ -5,18 +5,14 @@ import Link from "next/link";
 import Input from "@/components/Input";
 
 import { useActionState } from 'react';
-import { Suspense } from 'react';
 import { signInWithEmail } from './actions';
+import { useRouter } from "next/navigation";
 import signInWithGoogle from '@/lib/client/signInWithGoogle';
-import { useSearchParams } from "next/navigation";
 
-function SignInForm() {
+
+export default function SignIn() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
-    const searchParams = useSearchParams();
-    const oauthError = searchParams.get('error');
-    const oauthErrorMessage = oauthError === 'account_not_linked'
-      ? 'Esta cuenta de Google no está vinculada a una cuenta existente. Inicia sesión con el método original o pide que habiliten el vínculo en Neon Auth.'
-      : null;
+    const router = useRouter();
 
     return (
     <div className={styles.fondo}>
@@ -58,19 +54,13 @@ function SignInForm() {
           </div>
         )}
 
-        {oauthErrorMessage && (
-          <div className="rounded-md px-3 py-2 text-sm text-red-500">
-          {oauthErrorMessage}
-          </div>
-        )}
-
         <button type="submit" disabled={isPending} className={styles.inicia}>
           Inicia Sesión
         </button>
 
-        <Link className={styles.olvid} href="/auth/change_password">
+        <p className={styles.olvid}>
           ¿Olvidaste tu contraseña?
-        </Link>
+        </p>
 
         <div className={styles.separador}>
           <div className={styles.linea}></div>
@@ -111,13 +101,5 @@ function SignInForm() {
       </div>
       </form>
     </div>
-    );
-}
-
-export default function SignIn() {
-    return (
-      <Suspense fallback={null}>
-        <SignInForm />
-      </Suspense>
     );
 }
