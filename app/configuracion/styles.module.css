@@ -233,6 +233,7 @@
     min-height:92px; 
     padding:16px 20px; 
     text-align:left; 
+    text-decoration:none;
     cursor:pointer; 
     font-family:inherit; 
 }
