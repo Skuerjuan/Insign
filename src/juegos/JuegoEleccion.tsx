@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import PantallaSinVidas from "./Perder"; // Asegúrate de ajustar esta ruta según la ubicación de tu perder.tsx
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
@@ -49,8 +51,10 @@ interface JuegoEleccionProps {
 }
 
 export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu" }: JuegoEleccionProps) {
+  const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
+  const [perdio, setPerdio] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
@@ -325,12 +329,11 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             ficha.setSize(cardWidth, cardHeight);
             ficha.setInteractive({ useHandCursor: true });
 
-            // GIF a pantalla completa de la carta
             const elementoImg = document.createElement("img");
             elementoImg.style.width = `${cardWidth}px`;
             elementoImg.style.height = `${cardHeight}px`;
-            elementoImg.style.objectFit = "cover"; // Llena toda la carta sin bordes blancos
-            elementoImg.style.borderRadius = `${Math.round(14 * escalaUi)}px`; // Bordes redondeados ajustados
+            elementoImg.style.objectFit = "cover";
+            elementoImg.style.borderRadius = `${Math.round(14 * escalaUi)}px`;
             elementoImg.style.pointerEvents = "none";
 
             const archivoImportado = diccionarioGifs[palabraOpcion];
@@ -341,7 +344,6 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
             const domGif = this.add.dom(0, 0, elementoImg);
 
-            // Trazado del borde arriba del GIF
             const cardBg = this.add.graphics();
             cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
             cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14 * escalaUi);
@@ -415,7 +417,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(4500, () => {
+            this.time.delayedCall(1500, () => {
               if (this.aciertos >= 5) {
                 this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
@@ -450,7 +452,10 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(500, () => {
-                    this.scene.start("PantallaFin", { errores: this.intentosFallidos });
+                    // Notifica a React para mostrar la PantallaSinVidas (perder.tsx)
+                    if (this.game.events) {
+                      this.game.events.emit("jugador-perdio");
+                    }
                   });
                 } else {
                   this.bloqueado = false;
@@ -489,12 +494,9 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           panel.lineStyle(5 * escalaUi, 0x06398a, 1);
           panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
 
-          const mensaje = this.errores >= 3
-            ? "¡A seguir practicando!\nEsta vez obtuviste 0 puntos."
-            : "¡Excelente trabajo!\nGuardando tus puntos...";
           const resultadoTexto = this.add
-            .text(width / 2, height / 2 - 28 * escalaUi, mensaje, {
-              fontSize: `${26 * escalaUi}px`,
+            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
+              fontSize: `${24 * escalaUi}px`,
               fontFamily,
               color: "#003895",
               align: "center",
@@ -503,7 +505,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             .setOrigin(0.5);
 
           const botonFinal = this.add
-            .text(width / 2, height / 2 + 48 * escalaUi, "Guardando...", {
+            .text(width / 2, height / 2 + 42 * escalaUi, "Guardando...", {
               fontSize: `${20 * escalaUi}px`,
               fontFamily,
               color: "#ffffff",
@@ -517,11 +519,16 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             completeGame("eleccion", this.errores, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
-                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
+                // Botón para volver al menú principal
+                botonFinal
+                  .setText("Volver al Menú")
+                  .setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
-                botonFinal.once("pointerdown", () => window.history.back());
+                botonFinal.once("pointerdown", () => {
+                  router.push("/");
+                });
               })
               .catch(() => {
                 resultadoGuardado = false;
@@ -556,6 +563,11 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
       const game = new Phaser.Game(config);
       gameInstanceRef.current = game;
+
+      // Escuchar cuando el usuario pierde todas las vidas
+      game.events.on("jugador-perdio", () => {
+        setPerdio(true);
+      });
     };
 
     crearJuego();
@@ -568,7 +580,20 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points, origin]);
+  }, [palabras, onRondaGanada, points, origin, router]);
 
-  return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div className="relative w-full h-full">
+      <div ref={gameRef} style={{ width: "100%", height: "100%" }} />
+
+        {perdio && (
+    <PantallaSinVidas
+      rutaEntrenamiento="/entrenamiento"
+      rutaInicio="/menu"
+      onVolverInicio={() => router.push("/menu")}
+      onIrEntrenamiento={() => router.push("/entrenamiento")}
+    />
+  )}
+    </div>
+  );
 }

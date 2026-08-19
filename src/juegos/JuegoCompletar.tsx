@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
 
 type GifImport = string | { src: string };
@@ -39,7 +42,6 @@ try {
 const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
-// Normaliza texto: elimina tildes para las teclas del juego (letras limpias)
 const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
   const normalizado = texto
     .trim()
@@ -54,20 +56,25 @@ interface JuegoCompletarProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   onJuegoTerminado?: (puntos: number, aciertos: number) => void;
-  userName?: string;
+  points?: number;
+  origin?: GameOrigin;
 }
 
 export default function JuegoCompletarCeldas({
   palabras,
   onRondaGanada,
   onJuegoTerminado,
-  userName = "user",
+  points = 0,
+  origin = "menu",
 }: JuegoCompletarProps) {
+  const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
+  const [perdio, setPerdio] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
+    let resultadoGuardado = false;
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -159,12 +166,14 @@ export default function JuegoCompletarCeldas({
         private palabraObjetivoNormalizada = "";
         private palabraObjetivoConEspacios = "";
         private aciertos = 0;
+        private intentosFallidos = 0;
         private bloqueado = false;
         private mazoJuego: string[] = [];
         private palabrasUsadas: string[] = [];
         private escalaUiGlobal = 1;
 
         private badgeAciertos: ReturnType<typeof crearPillBadge> | null = null;
+        private badgeVidas: ReturnType<typeof crearPillBadge> | null = null;
         private availableChars: { char: string; active: boolean; id: number }[] = [];
         private inputtedChars: { char: string; originalId: number }[] = [];
         private inputSlots: Phaser.GameObjects.Container[] = [];
@@ -175,9 +184,10 @@ export default function JuegoCompletarCeldas({
           super("CompletarScene");
         }
 
-        init(data: { aciertos?: number; palabrasUsadas?: string[] }) {
+        init(data: { aciertos?: number; palabrasUsadas?: string[]; intentosFallidos?: number }) {
           this.aciertos = data.aciertos || 0;
           this.palabrasUsadas = data.palabrasUsadas || [];
+          this.intentosFallidos = data.intentosFallidos || 0;
           this.bloqueado = false;
           this.inputtedChars = [];
           this.inputSlots = [];
@@ -206,17 +216,19 @@ export default function JuegoCompletarCeldas({
           this.generarNuevaRonda(width, height, escalaUi);
 
           this.scale.on("resize", () => {
-            this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+            this.scene.restart({
+              aciertos: this.aciertos,
+              palabrasUsadas: this.palabrasUsadas,
+              intentosFallidos: this.intentosFallidos,
+            });
           });
 
-          // Recuperar foco al hacer clic en cualquier lado
           this.input.on("pointerdown", () => {
             if (this.game.canvas) {
               this.game.canvas.focus();
             }
           });
 
-          // Capturar eventos de teclado físico
           this.input.keyboard.on("keydown", this.alPresionarTecla, this);
         }
 
@@ -256,7 +268,7 @@ export default function JuegoCompletarCeldas({
             })
             .setOrigin(0.5);
 
-          const puntosTexto = `${userName} puntos`;
+          const puntosTexto = `${points} puntos`;
           const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
           const scoreX = width - scoreWidth - 38 * escalaUi;
           const scoreBg = this.add.graphics();
@@ -283,6 +295,16 @@ export default function JuegoCompletarCeldas({
             escalaUi,
             false
           );
+
+          this.badgeVidas = crearPillBadge(
+            this,
+            width - 40 * escalaUi,
+            height - 40 * escalaUi,
+            `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
+            "❤️",
+            escalaUi,
+            true
+          );
         }
 
         generarNuevaRonda(width: number, height: number, escalaUi: number) {
@@ -298,13 +320,11 @@ export default function JuegoCompletarCeldas({
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           
-          // Ambas versiones son limpiadas de tildes para la jugabilidad general
           this.palabraObjetivoConEspacios = normalizarTexto(this.palabraObjetivo, true);
           this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo, false);
           
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          // Título descriptivo
           const azulTexto = "#05215b";
           const textoPregunta = this.add
             .text(width / 2, 85 * escalaUi, "Escribe la palabra correcta", {
@@ -316,7 +336,6 @@ export default function JuegoCompletarCeldas({
             .setOrigin(0.5);
           textoPregunta.setStroke("#ffffff", 6 * escalaUi);
 
-          // Contenedor principal del GIF
           const gifWidth = Math.round(Phaser.Math.Clamp(width * 0.5, 240 * escalaUi, 360 * escalaUi));
           const gifHeight = Math.round(gifWidth * 0.60);
           const centroX = width / 2;
@@ -336,13 +355,11 @@ export default function JuegoCompletarCeldas({
 
           this.add.dom(centroX, centroY, elementoImg);
 
-          // Borde del GIF
           const cardBg = this.add.graphics();
           cardBg.lineStyle(5 * escalaUi, 0x1e78ff, 1);
           cardBg.strokeRoundedRect(centroX - gifWidth / 2, centroY - gifHeight / 2, gifWidth, gifHeight, 18 * escalaUi);
           this.gifGraphics = cardBg;
 
-          // Preparar letras limpias (sin espacios para el teclado)
           const chars = this.palabraObjetivoNormalizada.split("");
           this.availableChars = Phaser.Utils.Array.Shuffle([...chars]).map((c, i) => ({
             char: c,
@@ -350,7 +367,6 @@ export default function JuegoCompletarCeldas({
             id: i,
           }));
 
-          // Crear grillas de letras
           this.crearGrillasDeLetras(width, height, escalaUi, centroY + gifHeight / 2 + 50 * escalaUi);
         }
 
@@ -364,7 +380,6 @@ export default function JuegoCompletarCeldas({
           
           const spaceWidth = cellSize * 0.6; 
 
-          // --- 1. Calcular el ancho total de los Slots Blancos (arriba) ---
           let inputGridWidth = 0;
           palabraConEspacios.forEach((char, i) => {
             inputGridWidth += char === " " ? spaceWidth : cellSize;
@@ -376,7 +391,6 @@ export default function JuegoCompletarCeldas({
           let currentX = width / 2 - inputGridWidth / 2;
           let slotIndex = 0;
 
-          // --- 2. Dibujar Slots Blancos con el hueco intercalado ---
           palabraConEspacios.forEach((char) => {
             if (char === " ") {
               currentX += spaceWidth + cellSpacing;
@@ -400,7 +414,6 @@ export default function JuegoCompletarCeldas({
             }
           });
 
-          // --- 3. Teclas Amarillas (abajo) ---
           const keyboardGridWidth = availableLength * cellSize + (availableLength - 1) * cellSpacing;
           const keyboardStartX = width / 2 - keyboardGridWidth / 2 + cellSize / 2;
           const keyboardY = gapY + cellSize + cellSpacing * 2;
@@ -485,12 +498,10 @@ export default function JuegoCompletarCeldas({
           const currentLen = this.inputtedChars.length;
           if (currentLen >= this.palabraObjetivoNormalizada.length) return;
 
-          // Mover letra al primer slot vacío
           const slotText = this.inputSlots[currentLen].getData("text") as Phaser.GameObjects.Text;
           slotText.setText(char);
           this.inputtedChars.push({ char, originalId: id });
 
-          // Desactivar visualmente la tecla
           data.active = false;
           tile.setAlpha(0.3);
 
@@ -515,11 +526,9 @@ export default function JuegoCompletarCeldas({
           const originalChar = this.inputtedChars[id];
           this.inputtedChars.splice(id, 1);
 
-          // Reactivar la tecla original
           this.availableChars[originalChar.originalId].active = true;
           this.keyboardTiles[originalChar.originalId].setAlpha(1);
 
-          // Reordenar slots secuencialmente
           this.reordenarSlots();
         }
 
@@ -545,7 +554,6 @@ export default function JuegoCompletarCeldas({
             return;
           }
 
-          // Por si el usuario usa una tilde real en su teclado físico, la removemos
           const quitarTildes = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
           const pressedChar = quitarTildes(event.key.toUpperCase());
           
@@ -569,8 +577,6 @@ export default function JuegoCompletarCeldas({
           const wordFormed = this.inputtedChars.map((c) => c.char).join("");
 
           if (wordFormed === this.palabraObjetivoNormalizada) {
-            // MAGIA: Formó la palabra correcta. Extraemos la palabra original CON tildes,
-            // le quitamos los espacios en blanco y reemplazamos los textos de cada casillero de victoria.
             const letrasConTilde = this.palabraObjetivo.toUpperCase().replace(/\s+/g, "").split("");
             
             this.inputSlots.forEach((slot, index) => {
@@ -603,14 +609,23 @@ export default function JuegoCompletarCeldas({
                 if (typeof onJuegoTerminado === "function") {
                   onJuegoTerminado(this.aciertos * 10, this.aciertos);
                 } else {
-                  window.history.back();
+                  this.scene.start("PantallaFin", { errores: this.intentosFallidos });
                 }
               } else {
-                this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+                this.scene.restart({
+                  aciertos: this.aciertos,
+                  palabrasUsadas: this.palabrasUsadas,
+                  intentosFallidos: this.intentosFallidos,
+                });
               }
             });
           } else {
-            // Error
+            this.intentosFallidos++;
+
+            if (this.badgeVidas) {
+              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
+            }
+
             this.tweens.add({
               targets: this.inputSlots,
               x: "+=8",
@@ -623,8 +638,17 @@ export default function JuegoCompletarCeldas({
                 this.availableChars.forEach((c) => (c.active = true));
                 this.keyboardTiles.forEach((tile) => tile.setAlpha(1));
                 this.reordenarSlots();
-                this.bloqueado = false;
                 this.setSlotsVisualFeedback(0x1e78ff, false, 0xffffff);
+
+                if (this.intentosFallidos >= 3) {
+                  this.time.delayedCall(500, () => {
+                    if (this.game.events) {
+                      this.game.events.emit("jugador-perdio");
+                    }
+                  });
+                } else {
+                  this.bloqueado = false;
+                }
               },
             });
           }
@@ -674,6 +698,83 @@ export default function JuegoCompletarCeldas({
         }
       }
 
+      class PantallaFin extends Phaser.Scene {
+        private errores = 0;
+
+        constructor() {
+          super("PantallaFin");
+        }
+
+        init(data: { errores?: number }) {
+          this.errores = data.errores || 0;
+        }
+
+        create() {
+          const { width, height } = this.scale;
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
+
+          this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
+
+          const panelWidth = Phaser.Math.Clamp(width * 0.68, 240 * escalaUi, 380 * escalaUi);
+          const panelHeight = 150 * escalaUi;
+          const panelX = width / 2 - panelWidth / 2;
+          const panelY = height / 2 - panelHeight / 2;
+
+          const panel = this.add.graphics();
+          panel.fillStyle(0xffd32a, 1);
+          panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
+          panel.lineStyle(5 * escalaUi, 0x06398a, 1);
+          panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
+
+          const resultadoTexto = this.add
+            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
+              fontSize: `${24 * escalaUi}px`,
+              fontFamily,
+              color: "#003895",
+              align: "center",
+              fontStyle: "bold",
+            })
+            .setOrigin(0.5);
+
+          const botonFinal = this.add
+            .text(width / 2, height / 2 + 42 * escalaUi, "Guardando...", {
+              fontSize: `${20 * escalaUi}px`,
+              fontFamily,
+              color: "#ffffff",
+              backgroundColor: "#7f8c8d",
+              padding: { x: 22, y: 8 },
+            })
+            .setOrigin(0.5);
+
+          const guardarResultado = () => {
+            resultadoGuardado = true;
+            completeGame("completar", this.errores, origin)
+              .then((resultado) => {
+                resultadoTexto.setText(
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
+                );
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  window.location.href = "/juegos/felicitar";
+                });
+              })
+              .catch(() => {
+                resultadoGuardado = false;
+                resultadoTexto.setText("No pudimos guardar el resultado.\nInténtalo nuevamente.");
+                botonFinal.setText("Reintentar").setBackgroundColor("#e67e22");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  botonFinal.disableInteractive().setText("Guardando...").setBackgroundColor("#7f8c8d");
+                  guardarResultado();
+                });
+              });
+          };
+
+          if (!resultadoGuardado) guardarResultado();
+        }
+      }
+
       const config: ConstructorParameters<typeof Phaser.Game>[0] = {
         type: Phaser.AUTO,
         dom: {
@@ -686,11 +787,15 @@ export default function JuegoCompletarCeldas({
           height: "100%",
         },
         backgroundColor: "#87CEEB",
-        scene: [CompletarScene],
+        scene: [CompletarScene, PantallaFin],
       };
 
       const game = new Phaser.Game(config);
       gameInstanceRef.current = game;
+
+      game.events.on("jugador-perdio", () => {
+        setPerdio(true);
+      });
     };
 
     crearJuego();
@@ -703,7 +808,20 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, onJuegoTerminado, userName]);
+  }, [palabras, onRondaGanada, onJuegoTerminado, points, origin, router]);
 
-  return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div className="relative w-full h-full">
+      <div ref={gameRef} style={{ width: "100%", height: "100%" }} />
+
+      {perdio && (
+        <PantallaSinVidas
+          rutaEntrenamiento="/entrenamiento"
+          rutaInicio="/menu"
+          onVolverInicio={() => router.push("/menu")}
+          onIrEntrenamiento={() => router.push("/entrenamiento")}
+        />
+      )}
+    </div>
+  );
 }

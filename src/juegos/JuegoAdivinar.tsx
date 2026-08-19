@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
@@ -34,7 +37,7 @@ try {
     }
   });
 } catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automaticamente:", e);
+  console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
 }
 
 const palabrasd = Object.keys(diccionarioGifs);
@@ -44,14 +47,25 @@ interface JuegoAdivinarProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   userName?: string;
+  points?: number;
+  origin?: GameOrigin;
 }
 
-export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "user" }: JuegoAdivinarProps) {
+export default function JuegoAdivinar({
+  palabras,
+  onRondaGanada,
+  userName = "user",
+  points = 0,
+  origin = "menu",
+}: JuegoAdivinarProps) {
+  const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
+  const [perdio, setPerdio] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
+    let resultadoGuardado = false;
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -154,10 +168,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           super("AdivinarScene");
         }
 
-        init(data: { aciertos?: number; palabrasUsadas?: string[] }) {
+        init(data: { aciertos?: number; palabrasUsadas?: string[]; intentosFallidos?: number }) {
           this.aciertos = data.aciertos || 0;
           this.palabrasUsadas = data.palabrasUsadas || [];
-          this.intentosFallidos = 0;
+          this.intentosFallidos = data.intentosFallidos || 0;
           this.bloqueado = false;
         }
 
@@ -173,16 +187,21 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          const mazoBase = palabrasd.length >= 6
-            ? palabrasd
-            : ["Hola", "Chau", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"];
+          const mazoBase =
+            palabrasd.length >= 6
+              ? palabrasd
+              : ["Hola", "Chau", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"];
           this.mazoJuego = palabras && palabras.length >= 6 ? palabras : mazoBase;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
 
           this.scale.on("resize", () => {
-            this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+            this.scene.restart({
+              aciertos: this.aciertos,
+              palabrasUsadas: this.palabrasUsadas,
+              intentosFallidos: this.intentosFallidos,
+            });
           });
         }
 
@@ -212,7 +231,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 52 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 36 * escalaUi, "Elección", {
+            .text(width / 2, 36 * escalaUi, "Adivinar", {
               fontSize: `${Phaser.Math.Clamp(40 * escalaUi, 30, 48)}px`,
               fontFamily,
               color: "#ffffff",
@@ -222,7 +241,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             })
             .setOrigin(0.5);
 
-          const puntosTexto = `${userName} puntos`;
+          const puntosTexto = `${points} puntos`;
           const scoreWidth = Phaser.Math.Clamp(100 * escalaUi + puntosTexto.length * 7 * escalaUi, 140 * escalaUi, 280 * escalaUi);
           const scoreX = width - scoreWidth - 38 * escalaUi;
           const scoreBg = this.add.graphics();
@@ -250,7 +269,6 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             .setOrigin(0.5)
             .setStroke("#0042AD", 5 * escalaUi);
 
-          // BADGES ESTILO PILL
           this.badgeAciertos = crearPillBadge(
             this,
             40 * escalaUi,
@@ -286,7 +304,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          const distractores = this.mazoJuego.filter(p => p !== this.palabraObjetivo);
+          const distractores = this.mazoJuego.filter((p) => p !== this.palabraObjetivo);
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 5);
 
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
@@ -297,7 +315,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
         dibujarPanelGifPrincipal(width: number, height: number, escalaUi: number) {
           const panelWidth = Phaser.Math.Clamp(width * 0.32, 210 * escalaUi, 300 * escalaUi);
-          const panelHeight = panelWidth * 0.70;
+          const panelHeight = panelWidth * 0.7;
           const centroX = width / 2;
           const centroY = height * 0.42;
 
@@ -324,17 +342,16 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           const centroX = width / 2;
           const inicioY = height * 0.67;
 
-          const difX = botonWidth + (28 * escalaUi);
-          const difY = botonHeight + (20 * escalaUi);
+          const difX = botonWidth + 28 * escalaUi;
+          const difY = botonHeight + 20 * escalaUi;
 
           const posiciones = [
             { x: centroX - difX, y: inicioY },
-            { x: centroX,        y: inicioY },
+            { x: centroX, y: inicioY },
             { x: centroX + difX, y: inicioY },
-
             { x: centroX - difX, y: inicioY + difY },
-            { x: centroX,        y: inicioY + difY },
-            { x: centroX + difX, y: inicioY + difY }
+            { x: centroX, y: inicioY + difY },
+            { x: centroX + difX, y: inicioY + difY },
           ];
 
           this.opciones.forEach((palabraOpcion, index) => {
@@ -348,17 +365,18 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
             backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 18 * escalaUi);
-            
             backgroundBoton.lineStyle(3 * escalaUi, 0x1e78ff, 1);
             backgroundBoton.strokeRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 18 * escalaUi);
 
-            const textoBoton = this.add.text(0, 0, palabraOpcion, {
-              fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
-              fontFamily,
-              color: "#05215b",
-              fontStyle: "800",
-              align: "center"
-            }).setOrigin(0.5);
+            const textoBoton = this.add
+              .text(0, 0, palabraOpcion, {
+                fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
+                fontFamily,
+                color: "#05215b",
+                fontStyle: "800",
+                align: "center",
+              })
+              .setOrigin(0.5);
 
             contenedorBoton.add([backgroundBoton, textoBoton]);
             contenedorBoton.setData("valor", palabraOpcion);
@@ -392,7 +410,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               alpha: 0,
               duration: Phaser.Math.Between(1000, 1600),
               ease: "Cubic.easeOut",
-              onComplete: () => papelito.destroy()
+              onComplete: () => papelito.destroy(),
             });
           }
         }
@@ -413,7 +431,6 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
             graficoBg.clear();
             graficoBg.fillStyle(0x58cc02, 1);
             graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
-            
             graficoBg.lineStyle(3 * escalaUi, 0x10ac84, 1);
             graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
@@ -423,7 +440,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               scaleY: 1.15,
               duration: 100,
               yoyo: true,
-              ease: "Quad.easeOut"
+              ease: "Quad.easeOut",
             });
 
             this.lanzarConfeti(contenedor.x, contenedor.y, escalaUi);
@@ -437,19 +454,21 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(3500, () => {
+            this.time.delayedCall(1500, () => {
               if (this.aciertos >= 5) {
-                window.history.back();
+                this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
-                this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+                this.scene.restart({
+                  aciertos: this.aciertos,
+                  palabrasUsadas: this.palabrasUsadas,
+                  intentosFallidos: this.intentosFallidos,
+                });
               }
             });
-
           } else {
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
             graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
-            
             graficoBg.lineStyle(3 * escalaUi, 0xb2bec3, 1);
             graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
@@ -468,20 +487,98 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
                 graficoBg.clear();
                 graficoBg.fillStyle(0xffd32a, 1);
                 graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
-                
                 graficoBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
                 graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 18 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
-                    this.scene.restart({ aciertos: 0, palabrasUsadas: [] });
+                    if (this.game.events) {
+                      this.game.events.emit("jugador-perdio");
+                    }
                   });
                 } else {
                   this.bloqueado = false;
                 }
-              }
+              },
             });
           }
+        }
+      }
+
+      class PantallaFin extends Phaser.Scene {
+        private errores = 0;
+
+        constructor() {
+          super("PantallaFin");
+        }
+
+        init(data: { errores?: number }) {
+          this.errores = data.errores || 0;
+        }
+
+        create() {
+          const { width, height } = this.scale;
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
+
+          this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
+
+          const panelWidth = Phaser.Math.Clamp(width * 0.68, 240 * escalaUi, 380 * escalaUi);
+          const panelHeight = 150 * escalaUi;
+          const panelX = width / 2 - panelWidth / 2;
+          const panelY = height / 2 - panelHeight / 2;
+
+          const panel = this.add.graphics();
+          panel.fillStyle(0xffd32a, 1);
+          panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
+          panel.lineStyle(5 * escalaUi, 0x06398a, 1);
+          panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
+
+          const resultadoTexto = this.add
+            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
+              fontSize: `${24 * escalaUi}px`,
+              fontFamily,
+              color: "#003895",
+              align: "center",
+              fontStyle: "bold",
+            })
+            .setOrigin(0.5);
+
+          const botonFinal = this.add
+            .text(width / 2, height / 2 + 42 * escalaUi, "Guardando...", {
+              fontSize: `${20 * escalaUi}px`,
+              fontFamily,
+              color: "#ffffff",
+              backgroundColor: "#7f8c8d",
+              padding: { x: 22, y: 8 },
+            })
+            .setOrigin(0.5);
+
+          const guardarResultado = () => {
+            resultadoGuardado = true;
+            completeGame("adivinar", this.errores, origin)
+              .then((resultado) => {
+                resultadoTexto.setText(
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
+                );
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  window.location.href = "/juegos/felicitar";
+                });
+              })
+              .catch(() => {
+                resultadoGuardado = false;
+                resultadoTexto.setText("No pudimos guardar el resultado.\nInténtalo nuevamente.");
+                botonFinal.setText("Reintentar").setBackgroundColor("#e67e22");
+                botonFinal.setInteractive({ useHandCursor: true });
+                botonFinal.once("pointerdown", () => {
+                  botonFinal.disableInteractive().setText("Guardando...").setBackgroundColor("#7f8c8d");
+                  guardarResultado();
+                });
+              });
+          };
+
+          if (!resultadoGuardado) guardarResultado();
         }
       }
 
@@ -497,11 +594,15 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
           height: "100%",
         },
         backgroundColor: "#87CEEB",
-        scene: [AdivinarScene],
+        scene: [AdivinarScene, PantallaFin],
       };
 
       const game = new Phaser.Game(config);
       gameInstanceRef.current = game;
+
+      game.events.on("jugador-perdio", () => {
+        setPerdio(true);
+      });
     };
 
     crearJuego();
@@ -514,7 +615,20 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, userName]);
+  }, [palabras, onRondaGanada, userName, points, origin]);
 
-  return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div className="relative w-full h-full">
+      <div ref={gameRef} style={{ width: "100%", height: "100%" }} />
+
+      {perdio && (
+        <PantallaSinVidas
+          rutaEntrenamiento="/entrenamiento"
+          rutaInicio="/menu"
+          onVolverInicio={() => router.push("/menu")}
+          onIrEntrenamiento={() => router.push("/entrenamiento")}
+        />
+      )}
+    </div>
+  );
 }
