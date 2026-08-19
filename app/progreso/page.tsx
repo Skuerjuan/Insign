@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Progreso() {
   const user = await getSession();
-  const profile = await getProfile(user.id);
+  const profile = await getProfile(user.id)
 
   const userProgress = user as typeof user & {
     aprendidas?: string | number | null;
