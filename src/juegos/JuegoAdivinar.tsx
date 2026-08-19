@@ -168,7 +168,7 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.15);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.72, 2.4);
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
@@ -296,10 +296,10 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         }
 
         dibujarPanelGifPrincipal(width: number, height: number, escalaUi: number) {
-          const panelWidth = Phaser.Math.Clamp(width * 0.32, 210 * escalaUi, 300 * escalaUi);
+          const panelWidth = Phaser.Math.Clamp(width * (width < 700 ? 0.48 : 0.32), 190 * escalaUi, 300 * escalaUi);
           const panelHeight = panelWidth * 0.70;
           const centroX = width / 2;
-          const centroY = height * 0.42;
+          const centroY = height * (width < 700 ? 0.36 : 0.42);
 
           const elementoImg = document.createElement("img");
           elementoImg.style.width = `${Math.round(panelWidth)}px`;
@@ -318,24 +318,27 @@ export default function JuegoAdivinar({ palabras, onRondaGanada, userName = "use
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
-          const botonWidth = Phaser.Math.Clamp(width * 0.26, 160 * escalaUi, 260 * escalaUi);
-          const botonHeight = 65 * escalaUi;
+          const esPantallaAngosta = width < 700;
+          const columnas = esPantallaAngosta ? 2 : 3;
+          const filas = Math.ceil(this.opciones.length / columnas);
+          const margenX = 22 * escalaUi;
+          const separacionX = 18 * escalaUi;
+          const anchoDisponible = width - margenX * 2 - separacionX * (columnas - 1);
+          const botonWidth = Math.min(anchoDisponible / columnas, 260 * escalaUi);
+          const botonHeight = Phaser.Math.Clamp(58 * escalaUi, 44, 110);
 
           const centroX = width / 2;
-          const inicioY = height * 0.67;
+          const inicioY = height * (esPantallaAngosta ? 0.59 : 0.67);
+          const separacionY = 16 * escalaUi;
+          const anchoGrilla = botonWidth * columnas + separacionX * (columnas - 1);
+          const altoGrilla = botonHeight * filas + separacionY * (filas - 1);
+          const inicioX = centroX - anchoGrilla / 2 + botonWidth / 2;
+          const inicioGrillaY = Math.min(inicioY, height - altoGrilla - 64 * escalaUi) + botonHeight / 2;
 
-          const difX = botonWidth + (28 * escalaUi);
-          const difY = botonHeight + (20 * escalaUi);
-
-          const posiciones = [
-            { x: centroX - difX, y: inicioY },
-            { x: centroX,        y: inicioY },
-            { x: centroX + difX, y: inicioY },
-
-            { x: centroX - difX, y: inicioY + difY },
-            { x: centroX,        y: inicioY + difY },
-            { x: centroX + difX, y: inicioY + difY }
-          ];
+          const posiciones = this.opciones.map((_, index) => ({
+            x: inicioX + (index % columnas) * (botonWidth + separacionX),
+            y: inicioGrillaY + Math.floor(index / columnas) * (botonHeight + separacionY),
+          }));
 
           this.opciones.forEach((palabraOpcion, index) => {
             if (index >= posiciones.length) return;

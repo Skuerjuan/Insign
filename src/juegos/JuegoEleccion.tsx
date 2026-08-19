@@ -173,7 +173,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.78, 1.35);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.74, 2.4);
           this.escalaUiGlobal = escalaUi;
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
@@ -302,7 +302,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         }
 
         dibujarGrillaOpciones(width: number, height: number, escalaUi: number) {
-          const cardWidth = Math.round(Phaser.Math.Clamp(width * 0.36, 160 * escalaUi, 230 * escalaUi));
+          const cardWidthTarget = width < 700 ? width * 0.36 : width * 0.2;
+          const cardWidth = Math.round(Phaser.Math.Clamp(cardWidthTarget, 130 * escalaUi, 300 * escalaUi));
           const cardHeight = Math.round(cardWidth * 0.70);
 
           const gapX = cardWidth + 20 * escalaUi;
