@@ -1,12 +1,22 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
 import { getProfile, getSession } from "../../lib/server/profile.actions";
+import { getWeeklyActivity } from "../../lib/server/streak";
 
 export const dynamic = "force-dynamic";
 
 export default async function Entrenamiento() {
   const user = await getSession();
+  const profile = await getProfile(user.id);
+  const weeklyActivity = getWeeklyActivity(
+    profile.racha,
+    profile.ultimo_dia_activo,
+    undefined,
+    "training",
+  );
+  const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
   return (
     <div className={styles.fondo}>
@@ -64,7 +74,12 @@ export default async function Entrenamiento() {
                   className={styles.levelImageSlot}
                   aria-label="Imagen correspondiente al nivel Abecedario"
                 >
-                  <span>Imagen del nivel</span>
+                  <Image
+                    src="/mono-abecedario.png"
+                    alt="Mono saludando"
+                    width={208}
+                    height={275}
+                  />
                 </div>
 
                 <div className={styles.cardText}>
@@ -72,7 +87,7 @@ export default async function Entrenamiento() {
                   <p>Aprende las letras del abecedario.</p>
                 </div>
                 <Link
-                  href="/juego-eleccion"
+                  href="/juego-eleccion?origen=entrenamiento"
                   className={styles.cardButton}
                   aria-label="Ir a Abecedario"
                 >
@@ -85,7 +100,12 @@ export default async function Entrenamiento() {
                   className={`${styles.levelImageSlot} ${styles.greenImageSlot}`}
                   aria-label="Imagen correspondiente al nivel Practicar"
                 >
-                  <span>Imagen del nivel</span>
+                  <Image
+                    src="/mono-practicar.png"
+                    alt="Mono cargando un tronco"
+                    width={236}
+                    height={236}
+                  />
                 </div>
 
                 <div className={styles.cardText}>
@@ -93,7 +113,7 @@ export default async function Entrenamiento() {
                   <p>Juega sin temor de hacerlo mal.</p>
                 </div>
                 <Link
-                  href="/juego-memoria"
+                  href="/juego-memoria?origen=entrenamiento"
                   className={`${styles.cardButton} ${styles.greenButton}`}
                   aria-label="Ir a Practicar"
                 >
@@ -104,7 +124,22 @@ export default async function Entrenamiento() {
           </section>
 
           <section className={styles.streakPanel}>
-            <h2>Rachas de días</h2>
+            <h2>Racha de entrenamiento</h2>
+            <div className={styles.weekGrid}>
+              {weekDays.map((day, index) => {
+                const trained = weeklyActivity.days[index];
+
+                return (
+                  <div className={styles.weekDay} key={day}>
+                    <img
+                      src={trained ? "/tick-racha-dia.png" : "/circulo-dia-sin-racha.png"}
+                      alt={trained ? `${day}: día entrenado` : `${day}: día sin entrenar`}
+                    />
+                    <span>{day}</span>
+                  </div>
+                );
+              })}
+            </div>
           </section>
         </main>
       </div>

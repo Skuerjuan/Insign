@@ -6,7 +6,7 @@
   width: 100%;
   height: 100dvh;
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: clamp(280px, 19vw, 360px) minmax(0, 1fr);
   overflow: hidden;
   font-family: var(--font-baloo);
 }
@@ -56,19 +56,22 @@
 .usuario,
 .source {
     width: 100%;
-    min-height: 50px;
-    font-size: clamp(20px, 2vw, 25px);
+    min-height: clamp(54px, 6.5vh, 72px);
+    min-width: 0;
+    overflow: visible;
+    font-size: clamp(22px, 1.6vw, 30px);
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 16px;
-    padding: 0 20px;
+    gap: clamp(10px, 1vw, 16px);
+    padding: 0 clamp(12px, 1.25vw, 20px);
     box-sizing: border-box;
     border-radius: 5px;
     font-family: var(--font-baloo);
     font-weight: bold;
     color: white;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .casa {
@@ -290,7 +293,8 @@ flex: 0 0 auto;
 .userCard,
 .panel,
 .panelSmall {
-  width: min(100%, 760px);
+  width: 100%;
+  max-width: none;
   border-radius: 14px;
   background: white;
   box-sizing: border-box;
@@ -427,20 +431,47 @@ flex: 0 0 auto;
 }
 
 .panel {
-  min-height: 154px;
+  min-height: 62px;
   margin-top: 10px;
-  padding: 18px 28px;
+  padding: 20px 28px;
   transition: min-height 180ms ease;
 }
 
 .panel:has(.achievementsDetails[open]) {
-  min-height: 286px;
+  min-height: 230px;
 }
 
 .panelSmall {
-  min-height: 112px;
+  min-height: 150px;
   margin-top: 10px;
   padding: 18px 28px;
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(52px, 1fr));
+  align-items: center;
+  gap: clamp(8px, 2vw, 22px);
+  margin-top: 14px;
+}
+
+.weekDay {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #052c79;
+  font-family: var(--font-baloo);
+  font-size: clamp(13px, 1.4vw, 17px);
+  font-weight: 900;
+}
+
+.weekDay img {
+  width: clamp(44px, 6vw, 64px);
+  height: clamp(44px, 6vw, 64px);
+  display: block;
+  object-fit: contain;
 }
 
 .panelHeader {
@@ -502,8 +533,8 @@ flex: 0 0 auto;
   .progreso,
   .usuario,
   .source {
-    width: min(100%, 520px);
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
   }
 
   .mainContent {
@@ -568,6 +599,11 @@ flex: 0 0 auto;
   .profileStatDivider {
     display: none;
   }
+
+  .weekGrid {
+    grid-template-columns: repeat(4, minmax(52px, 1fr));
+    gap: 16px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -607,5 +643,9 @@ flex: 0 0 auto;
   .panelSmall {
     padding-left: 18px;
     padding-right: 18px;
+  }
+
+  .weekGrid {
+    grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }

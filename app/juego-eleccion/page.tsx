@@ -1,17 +1,30 @@
 import JuegoEleccion from "@/src/juegos/JuegoEleccion";
 import { auth } from "@/lib/auth/server";
+import { getProfile } from "@/lib/server/profile.actions";
 import { redirect } from "next/navigation";
 
-export default async function JuegoEleccionPage() {
+export const dynamic = "force-dynamic";
+
+export default async function JuegoEleccionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ origen?: string }>;
+}) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user) {
     redirect("/auth/sign-in");
   }
 
+  const profile = await getProfile(session.user.id);
+  const { origen } = await searchParams;
+
   return (
-    <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <JuegoEleccion userName={session.user.name} />
+    <main style={{ width: "100%", minWidth: 320, height: "100dvh", overflow: "hidden" }}>
+      <JuegoEleccion
+        points={profile.puntos ?? 0}
+        origin={origen === "entrenamiento" ? "training" : "menu"}
+      />
     </main>
   );
 }

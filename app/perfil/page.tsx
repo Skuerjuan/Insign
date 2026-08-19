@@ -3,15 +3,16 @@ import Link from "next/link";
 import EditButton from "@/components/EditButton";
 import Foto from "@/components/Foto";
 import { getProfile, getSession } from "../../lib/server/profile.actions";
+import { getWeeklyActivity } from "../../lib/server/streak";
 
 export const dynamic = "force-dynamic";
 
 export default async function Perfil() {
   const user = await getSession();
-  const { puntos, premios } = await getProfile(user.id);
-
-  // pasar racha de Date a texto (?)
-  const rachaTexto = "2 días";
+  const { puntos, premios, racha, ultimo_dia_activo } = await getProfile(user.id);
+  const weeklyActivity = getWeeklyActivity(racha, ultimo_dia_activo);
+  const rachaActual = weeklyActivity.count;
+  const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
   
   return (
     <div className={styles.fondo}>
@@ -76,19 +77,19 @@ export default async function Perfil() {
             <div className={styles.profileStats}>
               <div className={styles.profileStat}>
                 <img src="/Star.png" alt="" />
-                <strong>{puntos}</strong>
+                <strong>{puntos ?? 0}</strong>
                 <span>Puntos</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
                 <img src="/Fire.png" alt="" />
-                <strong>{rachaTexto}</strong>
+                <strong>{rachaActual}</strong>
                 <span>Racha</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
                 <img src="/cupdorada.png" alt="" />
-                <strong>{premios}</strong>
+                <strong>{premios ?? 0}</strong>
                 <span>Premios</span>
               </div>
             </div>
@@ -104,7 +105,22 @@ export default async function Perfil() {
           </section>
 
           <section className={styles.panelSmall}>
-            <h2>Rachas de dias</h2>
+            <h2>Racha de días</h2>
+            <div className={styles.weekGrid}>
+              {weekDays.map((day, index) => {
+                const played = weeklyActivity.days[index];
+
+                return (
+                  <div className={styles.weekDay} key={day}>
+                    <img
+                      src={played ? "/tick-racha-dia.png" : "/circulo-dia-sin-racha.png"}
+                      alt={played ? `${day}: día jugado` : `${day}: día sin jugar`}
+                    />
+                    <span>{day}</span>
+                  </div>
+                );
+              })}
+            </div>
           </section>
         </main>
       </div>
