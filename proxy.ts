@@ -6,6 +6,13 @@ export default auth.middleware({
 
 export const config = {
     matcher: [
+        '/menu',
+        '/entrenamiento/:path*',
+        '/progreso/:path*',
+        '/perfil/:path*',
+        '/configuracion/:path*',
+        '/juego-eleccion/:path*',
+        '/juego-memoria/:path*',
         '/account/:path*',
     ],
 };
