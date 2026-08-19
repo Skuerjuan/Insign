@@ -68,9 +68,9 @@ function SignInForm() {
           Inicia Sesión
         </button>
 
-        <p className={styles.olvid}>
+        <Link className={styles.olvid} href="/auth/change_password">
           ¿Olvidaste tu contraseña?
-        </p>
+        </Link>
 
         <div className={styles.separador}>
           <div className={styles.linea}></div>
