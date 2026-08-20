@@ -480,3 +480,22 @@
     grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }
+
+@media (min-width: 761px) {
+  .fondo { grid-template-columns: clamp(220px, 18vw, 320px) minmax(0, 1fr); height: auto; min-height: 100dvh; overflow: visible; align-items: start; }
+  .aside { position: sticky; top: 0; height: 100dvh; padding-inline: clamp(16px, 1.5vw, 24px); }
+  .mainContent { width: 100%; min-height: 100dvh; height: auto; overflow: visible; }
+  .header { height: auto; min-height: 96px; }
+  .trainingMain { width: 100%; height: auto; min-height: calc(100dvh - 96px); grid-template-rows: auto; overflow: visible; padding-inline: clamp(12px, 2vw, 30px); }
+  .practiceSection, .streakPanel { width: 100%; max-width: none; min-height: 190px; }
+  .practiceGrid { height: auto; }
+  .levelImageSlot img { object-fit: contain; object-position: center bottom; }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .logo { font-size: clamp(46px, 5.8vw, 64px); }
+  .inicio, .train, .progreso, .usuario, .source { font-size: clamp(18px, 2vw, 24px); }
+  .header { padding-inline: 18px; }
+  .pageTitle h1 { font-size: clamp(32px, 4vw, 44px); }
+  .practiceCard { padding: 16px; gap: 12px; }
+}

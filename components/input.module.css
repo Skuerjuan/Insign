@@ -6,9 +6,13 @@
   display: flex;
   align-items: center;
   margin: 16px auto;
-  padding: 0 20px;
+  padding: 0 clamp(14px, 2vw, 20px);
   background-color: white;
   gap: 12px;
+}
+
+@media (max-height: 680px) and (min-width: 769px) {
+  .containerIni { min-height: 42px; margin-block: 8px; }
 }
 
 .input {

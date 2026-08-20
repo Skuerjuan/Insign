@@ -19,7 +19,7 @@ export default async function handleVerify(email: string, code: string){
 
         return {
             success: true,
-            message: 'Email verified! You can now sign in.',
+            message: '¡Correo verificado!',
         };
     } catch (error) {
         return {
@@ -46,7 +46,7 @@ export async function handleResend(email: string) {
 
         return {
             success: true,
-            message: 'Verification code sent! Check your inbox.',
+            message: '¡Código reenviado! Revisá tu correo.',
         };
     } catch (error) {
         return {

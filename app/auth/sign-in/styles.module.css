@@ -6,19 +6,20 @@
   width: 100%;
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: minmax(280px, 1.15fr) minmax(380px, 0.85fr);
-  align-items: center;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  align-items: end;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: clamp(28px, 4vw, 76px);
+  padding: clamp(24px, 3vw, 56px);
 }
 
 .fondo form {
   grid-column: 2;
   grid-row: 1;
-  width: min(100%, 620px);
+  width: 100%;
   min-width: 0;
-  justify-self: center;
+  justify-self: stretch;
+  align-self: end;
   z-index: 1;
 }
 
@@ -59,25 +60,34 @@
   background-image: url("/Gorilainicio.png");
   grid-column: 1;
   grid-row: 1;
-  align-self: center;
+  align-self: end;
   justify-self: start;
-  width: min(40vw, 70dvh, 760px);
+  width: min(42vw, 68dvh, 760px);
   min-width: 300px;
   aspect-ratio: 1;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   margin-left: clamp(20px, 4vw, 90px);
-  transform: translate(-13%, 7%);
+  transform: translate(-8%, 0);
 }
 
 .container {
   width: 100%;
-  min-height: auto;
+  min-height: 0;
   background-color: white;
   border-radius: 15px;
   opacity: 0.85;
   padding: clamp(22px, 3vh, 30px) clamp(30px, 3vw, 42px);
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  .fondo { padding-block: 18px; }
+  .logo { font-size: clamp(58px, 6vw, 88px); }
+  .gorilaSaludando { width: min(35vw, 61dvh, 560px); }
+  .container { padding-block: 18px; }
+  .container :global(.containerIni) { margin-block: 10px; min-height: 44px; }
+  .registro { margin-top: 10px; }
 }
 
 .titulo {
@@ -240,6 +250,7 @@
   .gorilaSaludando {
     display: none;
     transform: none;
+    background-position: center bottom;
   }
 
   .container {

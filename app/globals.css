@@ -48,6 +48,19 @@ canvas {
   max-width: 100%;
 }
 
+img {
+  height: auto;
+}
+
+main,
+section,
+aside,
+header,
+nav,
+form {
+  min-width: 0;
+}
+
 a {
   color: inherit;
 }

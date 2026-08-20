@@ -24,5 +24,5 @@ export async function signUpWithEmail(
         return { error: error.message || 'Failed to create account' };
     }
 
-    redirect('/auth/verify');
+    redirect(`/auth/verify?email=${encodeURIComponent(email)}`);
 }
