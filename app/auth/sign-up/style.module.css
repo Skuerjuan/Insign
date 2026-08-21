@@ -117,52 +117,97 @@
   text-decoration: none;
 }
 
-@media (max-width: 900px) {
+/* Escala de escritorio del diseño original (base 1920 × 880). */
+@media (min-width: 1200px) and (min-height: 761px) {
+  .fondo { padding: clamp(20px, 1.56vw, 30px) clamp(32px, 2.92vw, 56px) clamp(20px, 1.56vw, 30px); }
+  .logo { font-size: clamp(80px, 5.94vw, 114px); }
+  .gorilaSaludando { width: min(28.2vw, 61.5dvh, 541px); transform: translate(-8%, 0); }
+  .container {
+    min-height: clamp(440px, 30.24vw, 580px);
+    padding: clamp(22px, 1.56vw, 30px) clamp(42px, 3.03vw, 58px) clamp(20px, 1.36vw, 26px);
+    --auth-field-height: clamp(48px, 3.6vw, 69px);
+    --auth-field-margin: clamp(13px, 1.1vw, 21px);
+    --auth-field-padding: clamp(20px, 1.77vw, 34px);
+    --auth-input-font-size: clamp(20px, 1.56vw, 30px);
+    --auth-icon-size: clamp(26px, 1.77vw, 34px);
+  }
+  .titulo { margin-bottom: clamp(18px, 1.3vw, 25px); font-size: clamp(46px, 3.34vw, 64px); }
+  .inicia { height: clamp(52px, 3.91vw, 75px); font-size: clamp(30px, 2.2vw, 42px); }
+}
+
+@media (min-width: 651px) and (max-width: 900px) {
+  .fondo {
+    height: 100dvh;
+    min-height: 100dvh;
+    grid-template-columns: minmax(236px, .72fr) minmax(330px, 1.28fr);
+    grid-template-rows: minmax(0, 1fr);
+    column-gap: clamp(18px, 3vw, 28px);
+    align-items: stretch;
+    padding: clamp(28px, 7.8vh, 38px) clamp(28px, 5.5vw, 42px) clamp(24px, 6.5vh, 32px);
+    overflow: hidden;
+  }
+
+  .fondo form {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    min-height: 0;
+    align-self: stretch;
+  }
+
+  .logo {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    justify-self: start;
+    font-size: clamp(58px, 9.5vw, 70px);
+    margin: clamp(25px, 6.3vh, 30px) 0 0 -5px;
+  }
+
+  .gorilaSaludando {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+    justify-self: center;
+    width: min(57vw, 88dvh, 410px);
+    min-width: 340px;
+    margin: 0;
+    transform: translate(5%, -5%);
+    background-position: center bottom;
+  }
+
+  .container {
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 14px clamp(28px, 5.6vw, 40px);
+    --auth-field-height: 36px;
+    --auth-field-margin: 7px;
+    --auth-field-padding: 11px;
+    --auth-input-font-size: 14px;
+    --auth-icon-size: 21px;
+  }
+
+  .titulo { margin-bottom: 6px; font-size: 32px; }
+  .inicia { width: 100%; height: 39px; font-size: 25px; }
+}
+
+@media (max-width: 650px) {
   .fondo {
     height: auto;
     min-height: 100dvh;
-    display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
     justify-items: center;
     align-content: start;
     padding: 22px 16px 32px;
     overflow-y: auto;
   }
-
-  .fondo form {
-    grid-column: 1;
-    grid-row: auto;
-    width: min(100%, 500px);
-    min-width: 0;
-    position: static;
-    transform: none;
-  }
-
-  .logo {
-    grid-column: 1;
-    grid-row: auto;
-    position: static;
-    transform: none;
-    font-size: clamp(58px, 16vw, 76px);
-    margin: 0;
-  }
-
-  .gorilaSaludando {
-    display: none;
-    transform: none;
-    background-position: center bottom;
-  }
-
-  .container {
-    transform: none;
-    margin-top: 8px;
-    padding: 20px clamp(18px, 4vw, 32px) 26px;
-  }
-
-  .inicia {
-    width: 100%;
-  }
+  .fondo form { grid-column: 1; grid-row: auto; width: min(100%, 500px); justify-self: center; }
+  .logo { grid-column: 1; grid-row: auto; font-size: clamp(58px, 16vw, 76px); margin: 0; }
+  .gorilaSaludando { display: none; }
+  .container { margin-top: 8px; padding: 20px clamp(18px, 4vw, 32px) 26px; }
+  .inicia { width: 100%; }
 }
 
 @media (max-width: 420px) {
