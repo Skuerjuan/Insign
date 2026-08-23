@@ -1,43 +1,55 @@
 .fondo {
-  background-image: url("/FondoInicioSesion.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   width: 100%;
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
-  column-gap: clamp(18px, 2.5vw, 48px);
-  align-items: end;
+  place-items: center;
+  padding: clamp(28px, 4vw, 76px);
   overflow-x: hidden;
   overflow-y: auto;
-  padding: clamp(24px, 3vw, 56px);
+  background: url("/FondoInicioSesion.png") center / cover no-repeat;
+}
+
+.authLayout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(320px, 1.15fr) minmax(380px, 0.85fr);
+  align-items: stretch;
+  gap: clamp(24px, 4vw, 72px);
 }
 
 .fondo form {
+  width: min(100%, 620px);
+  min-width: 0;
   grid-column: 2;
   grid-row: 1;
-  width: 100%;
-  min-width: 0;
-  justify-self: stretch;
-  align-self: end;
+  justify-self: center;
   z-index: 1;
 }
 
+.leftStage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+  --left-content-offset: clamp(24px, 2.5vw, 40px);
+}
+
 .logo {
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--left-content-offset));
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  margin: 0;
   font-family: var(--font-rubik-one);
   font-size: clamp(72px, 7vw, 132px);
   font-weight: 900;
   line-height: 0.9;
-  display: flex;
-  align-items: center;
-  letter-spacing: 0;
-  grid-column: 1;
-  grid-row: 1;
-  align-self: start;
-  justify-self: start;
-  z-index: 1;
-  margin: 0 0 0 clamp(10px, 4vw, 90px);
+  letter-spacing: -4px;
 }
 
 .blanco,
@@ -45,314 +57,196 @@
   display: inline-block;
   -webkit-text-stroke: 4px #000;
   paint-order: stroke fill;
-  text-shadow: none;
 }
 
-.blanco {
-  color: #ffffff;
-}
-
-.amarillo {
-  color: #ffd32a;
-  margin-left: 5px;
-}
+.blanco { color: #fff; }
+.amarillo { margin-left: 5px; color: #ffd32a; }
 
 .gorilaSaludando {
-  background-image: url("/Gorilainicio.png");
-  grid-column: 1;
-  grid-row: 1;
-  align-self: end;
-  justify-self: start;
-  width: min(42vw, 68dvh, 760px);
+  position: absolute;
+  left: calc(50% - var(--left-content-offset));
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(44vw, 74dvh, 880px);
   min-width: 300px;
-  aspect-ratio: 1;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-left: clamp(20px, 4vw, 90px);
-  transform: translate(-8%, 0);
+  aspect-ratio: 3 / 2;
+  background: url("/Gorilainicio.png") center bottom / contain no-repeat;
 }
 
 .container {
   width: 100%;
-  min-height: 0;
-  background-color: white;
-  border-radius: 15px;
-  opacity: 0.85;
   padding: clamp(22px, 3vh, 30px) clamp(30px, 3vw, 42px);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.85);
   --auth-field-height: 52px;
   --auth-field-margin: 16px;
 }
 
-@media (min-width: 901px) and (max-height: 760px) {
-  .fondo { padding-block: 18px; }
-  .logo { font-size: clamp(58px, 6vw, 88px); }
-  .gorilaSaludando { width: min(35vw, 61dvh, 560px); }
-  .container { padding-block: 18px; }
-  .container :global(.containerIni) { margin-block: 10px; min-height: 44px; }
-  .registro { margin-top: 10px; }
-}
-
 .titulo {
-  color: #0042AD;
-  font-family: var(--font-baloo);
-  font-size: clamp(34px, 4.6vw, 48px);
-  font-weight: 700;
-  line-height: 1;
   display: flex;
   justify-content: center;
-  padding-top: 0;
   margin: 0;
+  color: #0042ad;
+  font-family: var(--font-baloo);
+  font-size: clamp(34px, 4.6vw, 50px);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
 }
 
 .adInicia {
-  color: #0042AD;
-  font-family: var(--font-baloo);
-  font-size: clamp(19px, 2.6vw, 24px);
   display: flex;
   justify-content: center;
   margin: 0;
+  color: #0042ad;
+  font-family: var(--font-baloo);
+  font-size: clamp(19px, 2vw, 25px);
+  text-align: center;
 }
 
 .inicia {
-  background-color: #126cff;
-  font-family: var(--font-baloo);
-  font-size: clamp(24px, 4vw, 30px);
-  font-weight: bold;
-  border-radius: 5px;
   width: 100%;
-  height: 48px;
+  min-height: 50px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   margin: 0 auto;
+  border-radius: 5px;
   color: white;
+  background: #126cff;
+  font-family: var(--font-baloo);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: bold;
   text-decoration: none;
 }
 
 .olvid {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   margin: 0 auto;
   padding-top: 8px;
+  color: #126cff;
   font-family: var(--font-baloo);
   font-size: 16px;
-  color: #126cff;
   font-weight: bold;
 }
 
 .separador {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: min(100%, 560px);
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 2px;
+  margin: 2px auto 0;
 }
 
 .linea {
-  flex: 1 1 auto;
-  min-width: 56px;
+  min-width: 0;
   height: 1px;
-  background-color: #7a7a7a;
+  flex: 1 1 auto;
+  background: #7a7a7a;
 }
 
 .textoSeparador {
-  font-family: var(--font-baloo);
-  color: #7a7a7a;
-  font-size: 18px;
-  margin: 0;
   flex: 0 0 auto;
+  margin: 0;
+  color: #7a7a7a;
+  font-family: var(--font-baloo);
+  font-size: 18px;
   white-space: nowrap;
 }
 
 .googleBtn {
   width: min(220px, 100%);
   height: 46px;
-  border-radius: 12px;
-  border: 2px solid #d9d9d9;
-  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+  margin: 0 auto;
+  border: 2px solid #d9d9d9;
+  border-radius: 12px;
+  color: black;
+  background: white;
   font-family: var(--font-baloo);
   font-size: 20px;
-  color: black;
   cursor: pointer;
-  margin: 0 auto;
 }
 
-.googleIcon {
-  width: 28px;
-  height: 28px;
-}
-
-.googleLink {
-  color: black;
-  text-decoration: none;
-}
+.googleIcon { width: 28px; height: 28px; }
+.googleLink { color: black; text-decoration: none; }
 
 .registro {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 18px;
   font-family: var(--font-baloo);
   font-size: 20px;
   font-weight: bold;
-  position: static;
-  flex-wrap: wrap;
 }
 
-.registroTexto {
-  color: #0047c7;
-  margin: 0;
-}
+.registroTexto { margin: 0; color: #0047c7; }
+.registroLink { color: #126cff; text-decoration: none; }
 
-.registroLink {
-  color: #126cff;
-  text-decoration: none;
-}
-
-/* Escala de escritorio del diseño original (base 1920 × 880). */
-@media (min-width: 1200px) and (min-height: 761px) {
-  .fondo { padding: clamp(20px, 1.56vw, 30px) clamp(32px, 2.92vw, 56px) clamp(18px, 1.36vw, 26px); }
-  .logo { font-size: clamp(80px, 5.94vw, 114px); }
-  .gorilaSaludando { width: min(28.2vw, 61.5dvh, 541px); transform: translate(-8%, 0); }
-  .container {
-    min-height: clamp(500px, 35.7vw, 685px);
-    padding: clamp(22px, 1.56vw, 30px) clamp(42px, 3.03vw, 58px);
-    --auth-field-height: clamp(52px, 3.6vw, 69px);
-    --auth-field-margin: clamp(14px, 1.05vw, 20px);
-    --auth-field-padding: clamp(20px, 1.77vw, 34px);
-    --auth-input-font-size: clamp(22px, 1.56vw, 30px);
-    --auth-icon-size: clamp(28px, 1.77vw, 34px);
-  }
-  .titulo { font-size: clamp(46px, 3.34vw, 64px); }
-  .adInicia { margin: clamp(6px, .42vw, 8px) 0 clamp(23px, 1.67vw, 32px); font-size: clamp(23px, 1.67vw, 32px); line-height: 1.25; }
-  .inicia { height: clamp(52px, 3.75vw, 72px); font-size: clamp(30px, 2.2vw, 42px); }
-  .olvid { padding-top: clamp(8px, .63vw, 12px); font-size: clamp(18px, 1.25vw, 24px); }
-  .separador { width: min(100%, 840px); gap: 16px; }
-  .textoSeparador { font-size: clamp(18px, 1.25vw, 24px); }
-  .googleBtn { width: clamp(235px, 17.2vw, 330px); height: clamp(48px, 3.55vw, 68px); font-size: clamp(21px, 1.56vw, 30px); }
-  .googleIcon { width: clamp(28px, 2.08vw, 40px); height: clamp(28px, 2.08vw, 40px); }
-  .registro { margin-top: clamp(24px, 1.72vw, 33px); font-size: clamp(20px, 1.46vw, 28px); }
-}
-
-/* El original conserva la composición horizontal incluso en tablets y
-   notebooks pequeños. Solo apilamos cuando realmente no caben dos columnas. */
-@media (min-width: 651px) and (max-width: 900px) {
+@media (max-width: 900px) {
   .fondo {
-    height: 100dvh;
-    min-height: 420px;
-    grid-template-columns: minmax(236px, 0.72fr) minmax(330px, 1.28fr);
-    grid-template-rows: minmax(0, 1fr);
-    column-gap: clamp(18px, 3vw, 28px);
-    align-items: stretch;
-    padding: clamp(28px, 7.8vh, 38px) clamp(28px, 5.5vw, 42px) clamp(24px, 6.5vh, 32px);
-    overflow: hidden;
+    place-items: start center;
+    padding: 22px 16px 32px;
   }
 
-  .fondo form {
-    grid-column: 2;
+  .authLayout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    align-content: start;
+    gap: 12px;
+  }
+
+  .leftStage {
+    grid-column: 1;
     grid-row: 1;
-    width: 100%;
-    align-self: stretch;
-    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 
   .logo {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: start;
-    justify-self: start;
-    font-size: clamp(58px, 9.5vw, 70px);
-    margin: clamp(25px, 6.3vh, 30px) 0 0 -5px;
+    position: static;
+    transform: none;
+    margin: 0;
+    font-size: clamp(58px, 15vw, 82px);
   }
 
   .gorilaSaludando {
-    display: block;
+    position: static;
+    transform: none;
+    width: min(62vw, 270px);
+    min-width: 0;
+  }
+
+  .fondo form {
+    width: min(100%, 500px);
     grid-column: 1;
-    grid-row: 1;
-    align-self: end;
-    justify-self: center;
-    width: min(57vw, 88dvh, 410px);
-    min-width: 340px;
-    margin: 0;
-    transform: translate(5%, -5%);
-    background-position: center bottom;
+    grid-row: 2;
   }
-
-  .container {
-    height: 100%;
-    min-height: 0;
-    margin: 0;
-    padding: 22px clamp(28px, 5.6vw, 40px) 18px;
-    --auth-field-height: 42px;
-    --auth-field-margin: 13px;
-    --auth-field-padding: 12px;
-    --auth-input-font-size: 16px;
-    --auth-icon-size: 23px;
-  }
-
-  .titulo {
-    font-size: clamp(34px, 5.7vw, 40px);
-  }
-
-  .adInicia { font-size: clamp(14px, 2.25vw, 16px); }
-
-  .inicia {
-    width: 100%;
-    height: 39px;
-    font-size: 25px;
-  }
-
-  .olvid { padding-top: 5px; font-size: 13px; }
-  .separador { gap: 9px; margin-top: 1px; }
-  .linea { width: auto; min-width: 24px; }
-  .textoSeparador { font-size: 13px; }
-  .googleBtn { width: 118px; height: 34px; border-radius: 8px; gap: 7px; font-size: 13px; }
-  .googleIcon { width: 20px; height: 20px; }
-  .registro { gap: 4px; margin-top: 23px; font-size: 13px; flex-wrap: nowrap; }
 }
 
-@media (max-width: 650px) {
-  .fondo {
-    height: auto;
-    min-height: 100dvh;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    align-content: start;
-    padding: 22px 16px 32px;
-    overflow-y: auto;
-  }
-  .fondo form { grid-column: 1; grid-row: auto; width: min(100%, 500px); justify-self: center; }
-  .logo {
-    grid-column: 1;
-    grid-row: auto;
-    font-size: clamp(58px, 16vw, 76px);
-    margin: 0;
-  }
-  .gorilaSaludando { display: none; }
-  .container { margin-top: 8px; padding: 20px clamp(18px, 4vw, 32px) 26px; }
-  .titulo { font-size: 40px; }
+@media (max-width: 520px) {
+  .gorilaSaludando { width: min(52vw, 210px); }
+  .container { padding: 20px clamp(18px, 5vw, 28px) 26px; }
+  .titulo { font-size: clamp(34px, 11vw, 42px); }
+  .adInicia { font-size: clamp(17px, 5vw, 21px); }
+  .googleBtn { width: 100%; }
 }
 
-@media (max-width: 420px) {
-  .container {
-    min-height: auto;
-  }
-
-  .adInicia {
-    text-align: center;
-  }
-
-  .googleBtn {
-    width: 100%;
-  }
+@media (max-height: 720px) and (min-width: 901px) {
+  .fondo { padding-block: 20px; }
+  .gorilaSaludando { width: min(41vw, 67dvh, 650px); }
+  .container { padding-block: 18px; --auth-field-height: 46px; --auth-field-margin: 12px; }
+  .registro { margin-top: 10px; }
 }

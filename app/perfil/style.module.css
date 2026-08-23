@@ -290,7 +290,7 @@ flex: 0 0 auto;
 .userCard,
 .panel,
 .panelSmall {
-  width: min(100%, 760px);
+  width: 100%;
   border-radius: 14px;
   background: white;
   box-sizing: border-box;

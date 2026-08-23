@@ -11,12 +11,15 @@ export default function SignUpForm() {
 
     return (
     <div className={styles.fondo}>
-      <h1 className={styles.logo}>
-        <span className={styles.blanco}>In</span>
-        <span className={styles.amarillo}>Sign</span>
-      </h1>
+      <div className={styles.authLayout}>
+      <div className={styles.leftStage}>
+        <h1 className={styles.logo}>
+          <span className={styles.blanco}>In</span>
+          <span className={styles.amarillo}>Sign</span>
+        </h1>
 
-      <div className={styles.gorilaSaludando}></div>
+        <div className={styles.gorilaSaludando}></div>
+      </div>
 
       <form action={formAction}>  
       <div className={styles.container}>
@@ -65,6 +68,7 @@ export default function SignUpForm() {
         </button>
       </div>
       </form>
+      </div>
     </div>
     );
 }

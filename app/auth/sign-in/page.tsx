@@ -20,13 +20,16 @@ function SignInForm() {
 
     return (
     <div className={styles.fondo}>
+      <div className={styles.authLayout}>
 
-      <h1 className={styles.logo}>
-        <span className={styles.blanco}>In</span>
-        <span className={styles.amarillo}>Sign</span>
-      </h1>
+      <div className={styles.leftStage}>
+        <h1 className={styles.logo}>
+          <span className={styles.blanco}>In</span>
+          <span className={styles.amarillo}>Sign</span>
+        </h1>
 
-      <div className={styles.gorilaSaludando}></div>
+        <div className={styles.gorilaSaludando}></div>
+      </div>
 
       <form action={formAction}>
       <div className={styles.container}>
@@ -110,6 +113,7 @@ function SignInForm() {
 
       </div>
       </form>
+      </div>
     </div>
     );
 }
