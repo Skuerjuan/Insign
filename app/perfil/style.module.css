@@ -128,6 +128,7 @@ flex: 0 0 auto;
 }
 
 .mainContent {
+  width: 100%;
   min-width: 0;
   height: 100dvh;
   overflow: hidden;
@@ -275,6 +276,7 @@ flex: 0 0 auto;
 }
 
 .profileMain {
+  width: 100%;
   height: calc(100dvh - 102px);
   padding: 18px clamp(14px, 4vw, 30px) 32px;
   box-sizing: border-box;

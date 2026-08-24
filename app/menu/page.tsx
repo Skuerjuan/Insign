@@ -83,10 +83,6 @@ export default async function Menu() {
             <div className={styles.levelInfo}>
               <h3>Nivel 1</h3>
               <p>Categoria: Eleccion</p>
-              <div className={styles.progressWrap}>
-                <img src="/Star.png" alt="" className={styles.progressStar} />
-                <div className={styles.progressBar} />
-              </div>
             </div>
             <BotonJugar styleButton={styles.playButton} styleIcon={styles.playIcon} juego={"/juego-eleccion"} />
           </section>
@@ -99,10 +95,6 @@ export default async function Menu() {
             <div className={styles.levelInfo}>
               <h3>Nivel 2</h3>
               <p>Categoria: Memoria</p>
-              <div className={styles.progressWrap}>
-                <img src="/Star.png" alt="" className={styles.progressStar} />
-                <div className={styles.progressBar} />
-              </div>
             </div>
 
             <Link href="/juego-memoria" className={styles.playButton}>
@@ -119,10 +111,6 @@ export default async function Menu() {
             <div className={styles.levelInfo}>
               <h3>Nivel 3</h3>
               <p>Categoria: Adivinar</p>
-              <div className={styles.progressWrap}>
-                <img src="/Star.png" alt="" className={styles.progressStar} />
-                <div className={styles.progressBar} />
-              </div>
             </div>
 
             <Link href="/Juego-adivinar" className={styles.playButton}>
@@ -139,10 +127,6 @@ export default async function Menu() {
             <div className={styles.levelInfo}>
               <h3>Nivel 4</h3>
               <p>Categoria: Palabras</p>
-              <div className={styles.progressWrap}>
-                <img src="/Star.png" alt="" className={styles.progressStar} />
-                <div className={styles.progressBar} />
-              </div>
             </div>
 
             <Link href="/Juego-palabra" className={styles.playButton}>

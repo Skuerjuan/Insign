@@ -92,6 +92,7 @@
 }
 
 .mainContent {
+  width: 100%;
   min-width: 0;
   height: 100dvh;
   overflow: hidden;
@@ -172,7 +173,7 @@
 
 .practiceSection,
 .streakPanel {
-  width: min(100%, 900px);
+  width: 100%;
   min-height: 0;
   border-radius: 14px;
   background: #fff;
