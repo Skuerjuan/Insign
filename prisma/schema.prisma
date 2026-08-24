@@ -23,6 +23,7 @@ model opciones {
   id           Int        @id @default(autoincrement())
   ejercicio_id Int
   palabra_id   Int
+  correcto     Boolean?
   ejercicios   ejercicios @relation(fields: [ejercicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ej")
   palabras     palabras   @relation(fields: [palabra_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_p")
 
@@ -75,11 +76,11 @@ model completado {
 
 model profiles {
   user_id               String @id @db.Uuid
-  puntos                Int?
-  premios               Int?
+  puntos                Int
+  premios               Int
+  dias_activos          Int    @default(0)
   racha                 Int    @default(0)
   juegos_jugados        Int    @default(0)
-  dias_activos          Int    @default(0)
   ultimo_dia_activo     Int?
   tiempo_total_segundos Int    @default(0)
   experiencia           Int    @default(0)
@@ -95,7 +96,7 @@ model sesiones_contabilizadas {
   inicio     DateTime @db.Timestamptz(6)
   fin        DateTime @db.Timestamptz(6)
   segundos   Int
-  user       user     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "sesion_usuario")
+  user       user     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "sesion_usuario")
 
   @@index([usuario_id])
   @@schema("public")

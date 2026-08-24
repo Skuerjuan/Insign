@@ -1,21 +1,25 @@
 .containerIni {
-  width: min(100%, 390px);
-  height: 52px;
+  width: 100%;
+  min-height: var(--auth-field-height, 52px);
   border: 2px solid #b5b5b5;
   border-radius: 15px;
   display: flex;
   align-items: center;
-  margin: 16px auto;
-  padding: 0 20px;
+  margin: var(--auth-field-margin, 16px) auto;
+  padding: 0 var(--auth-field-padding, clamp(14px, 2vw, 20px));
   background-color: white;
   gap: 12px;
+}
+
+@media (max-height: 680px) and (min-width: 769px) {
+  .containerIni { min-height: 42px; margin-block: 8px; }
 }
 
 .input {
   width: 100%;
   height: 100%;
   min-width: 0;
-  font-size: clamp(17px, 4vw, 22px);
+  font-size: var(--auth-input-font-size, clamp(17px, 2vw, 22px));
   font-family: var(--font-baloo);
   color: #000;
   background: transparent;
@@ -29,8 +33,8 @@
 }
 
 .icon {
-  width: 28px;
-  height: 28px;
+  width: var(--auth-icon-size, 28px);
+  height: var(--auth-icon-size, 28px);
   object-fit: contain;
   flex-shrink: 0;
 }

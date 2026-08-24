@@ -2,6 +2,7 @@
 
 import { prisma } from "@/db"
 import { auth } from "@/lib/auth/server"
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLocalDayNumber, registerActiveDay } from "./streak";
 
@@ -76,7 +77,7 @@ export async function completeGame(
 
     await getProfile(user.id);
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT user_id FROM public.profiles WHERE user_id = ${user.id}::uuid FOR UPDATE`;
 
         const profile = await tx.profiles.findUniqueOrThrow({
@@ -111,6 +112,16 @@ export async function completeGame(
             activeDays: updatedProfile.dias_activos,
         };
     });
+
+    // La navegación de regreso puede reutilizar el Router Cache de Next.js.
+    // Invalidamos todas las pantallas que muestran métricas del perfil para
+    // que el día recién registrado aparezca apenas termina la partida.
+    revalidatePath("/menu");
+    revalidatePath("/perfil");
+    revalidatePath("/entrenamiento");
+    revalidatePath("/progreso");
+
+    return result;
 }
 
 export async function recordSessionEnd() {
