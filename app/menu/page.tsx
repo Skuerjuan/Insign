@@ -126,10 +126,14 @@ export default async function Menu() {
 
             <div className={styles.levelInfo}>
               <h3>Nivel 4</h3>
-              <p>Categoria: Palabras</p>
+              <p>Categoria: Completar</p>
+              <div className={styles.progressWrap}>
+                <img src="/Star.png" alt="" className={styles.progressStar} />
+                <div className={styles.progressBar} />
+              </div>
             </div>
 
-            <Link href="/Juego-palabra" className={styles.playButton}>
+            <Link href="/Juego-completar" className={styles.playButton}>
               <span className={styles.playIcon} aria-hidden="true" />
               Jugar
             </Link>

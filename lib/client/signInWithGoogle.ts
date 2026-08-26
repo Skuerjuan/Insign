@@ -2,20 +2,15 @@
 
 import { authClient } from '@/lib/auth/client';
 
+
 export default async function signInWithGoogle() {
-    const appOrigin = window.location.origin;
+    const { error } = await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/menu',
+    });
 
-    try {
-        const { error } = await authClient.signIn.social({
-            provider: 'google',
-            callbackURL: `${appOrigin}/menu`,
-            errorCallbackURL: `${appOrigin}/auth/sign-in`,
-        });
-
-        if (error) {
-            console.error('Google sign-in error:', error);
-        }
-    } catch (error) {
-        console.error('Google sign-in error:', error);
+    if (error) {
+        console.error(error);
+        throw new Error(error.message || 'Failed to sign in with Google');
     }
 }

@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import PantallaSinVidas from "./Perder"; // Asegúrate de ajustar esta ruta según la ubicación de tu perder.tsx
-import fondoCartas from "./fondo.png";
+import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
 
 type GifImport = string | { src: string };
@@ -43,14 +42,31 @@ try {
 const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
-interface JuegoEleccionProps {
+const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
+  const normalizado = texto
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+  
+  return mantenerEspacios ? normalizado : normalizado.replace(/\s+/g, "");
+};
+
+interface JuegoCompletarProps {
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
+  onJuegoTerminado?: (puntos: number, aciertos: number) => void;
   points?: number;
   origin?: GameOrigin;
 }
 
-export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu" }: JuegoEleccionProps) {
+export default function JuegoCompletarCeldas({
+  palabras,
+  onRondaGanada,
+  onJuegoTerminado,
+  points = 0,
+  origin = "menu",
+}: JuegoCompletarProps) {
   const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
@@ -145,9 +161,10 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         };
       };
 
-      class EleccionScene extends Phaser.Scene {
+      class CompletarScene extends Phaser.Scene {
         private palabraObjetivo = "";
-        private opciones: string[] = [];
+        private palabraObjetivoNormalizada = "";
+        private palabraObjetivoConEspacios = "";
         private aciertos = 0;
         private intentosFallidos = 0;
         private bloqueado = false;
@@ -155,12 +172,16 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         private palabrasUsadas: string[] = [];
         private escalaUiGlobal = 1;
 
-        private textoPalabra: Phaser.GameObjects.Text | null = null;
         private badgeAciertos: ReturnType<typeof crearPillBadge> | null = null;
         private badgeVidas: ReturnType<typeof crearPillBadge> | null = null;
+        private availableChars: { char: string; active: boolean; id: number }[] = [];
+        private inputtedChars: { char: string; originalId: number }[] = [];
+        private inputSlots: Phaser.GameObjects.Container[] = [];
+        private keyboardTiles: Phaser.GameObjects.Container[] = [];
+        private gifGraphics: Phaser.GameObjects.Graphics | null = null;
 
         constructor() {
-          super("EleccionScene");
+          super("CompletarScene");
         }
 
         init(data: { aciertos?: number; palabrasUsadas?: string[]; intentosFallidos?: number }) {
@@ -168,10 +189,12 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           this.palabrasUsadas = data.palabrasUsadas || [];
           this.intentosFallidos = data.intentosFallidos || 0;
           this.bloqueado = false;
+          this.inputtedChars = [];
+          this.inputSlots = [];
+          this.keyboardTiles = [];
         }
 
         preload() {
-          this.load.image("fondoFicha", fondoCartas.src);
           this.load.image("fondoPantalla", fondo.src);
         }
 
@@ -193,8 +216,20 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           this.generarNuevaRonda(width, height, escalaUi);
 
           this.scale.on("resize", () => {
-            this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+            this.scene.restart({
+              aciertos: this.aciertos,
+              palabrasUsadas: this.palabrasUsadas,
+              intentosFallidos: this.intentosFallidos,
+            });
           });
+
+          this.input.on("pointerdown", () => {
+            if (this.game.canvas) {
+              this.game.canvas.focus();
+            }
+          });
+
+          this.input.keyboard.on("keydown", this.alPresionarTecla, this);
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
@@ -223,7 +258,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 54 * escalaUi, 12 * escalaUi);
 
           this.add
-            .text(width / 2, 37 * escalaUi, "Elección", {
+            .text(width / 2, 37 * escalaUi, "Completar", {
               fontSize: `${Phaser.Math.Clamp(42 * escalaUi, 30, 52)}px`,
               fontFamily,
               color: "#ffffff",
@@ -284,78 +319,351 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
+          
+          this.palabraObjetivoConEspacios = normalizarTexto(this.palabraObjetivo, true);
+          this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo, false);
+          
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          const distractores = this.mazoJuego.filter((p) => p !== this.palabraObjetivo);
-          const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 3);
-          this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
-
           const azulTexto = "#05215b";
-          this.textoPalabra = this.add
-            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${this.palabraObjetivo.toUpperCase()}?`, {
-              fontSize: `${Phaser.Math.Clamp(26 * escalaUi, 20, 36)}px`,
+          const textoPregunta = this.add
+            .text(width / 2, 85 * escalaUi, "Escribe la palabra correcta", {
+              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 22, 38)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
             })
-            .setOrigin(0.5)
-            .setDepth(10);
-          this.textoPalabra.setStroke("#ffffff", 6 * escalaUi);
+            .setOrigin(0.5);
+          textoPregunta.setStroke("#ffffff", 6 * escalaUi);
 
-          this.dibujarGrillaOpciones(width, height, escalaUi);
+          const gifWidth = Math.round(Phaser.Math.Clamp(width * 0.5, 240 * escalaUi, 360 * escalaUi));
+          const gifHeight = Math.round(gifWidth * 0.60);
+          const centroX = width / 2;
+          const centroY = height * 0.42;
+
+          const elementoImg = document.createElement("img");
+          elementoImg.style.width = `${gifWidth}px`;
+          elementoImg.style.height = `${gifHeight}px`;
+          elementoImg.style.objectFit = "cover";
+          elementoImg.style.borderRadius = `${Math.round(18 * escalaUi)}px`;
+
+          const archivoImportado = diccionarioGifs[this.palabraObjetivo];
+          if (archivoImportado) {
+            const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
+            elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
+          }
+
+          this.add.dom(centroX, centroY, elementoImg);
+
+          const cardBg = this.add.graphics();
+          cardBg.lineStyle(5 * escalaUi, 0x1e78ff, 1);
+          cardBg.strokeRoundedRect(centroX - gifWidth / 2, centroY - gifHeight / 2, gifWidth, gifHeight, 18 * escalaUi);
+          this.gifGraphics = cardBg;
+
+          const chars = this.palabraObjetivoNormalizada.split("");
+          this.availableChars = Phaser.Utils.Array.Shuffle([...chars]).map((c, i) => ({
+            char: c,
+            active: true,
+            id: i,
+          }));
+
+          this.crearGrillasDeLetras(width, height, escalaUi, centroY + gifHeight / 2 + 50 * escalaUi);
         }
 
-        dibujarGrillaOpciones(width: number, height: number, escalaUi: number) {
-          const cardWidth = Math.round(Phaser.Math.Clamp(width * 0.36, 160 * escalaUi, 230 * escalaUi));
-          const cardHeight = Math.round(cardWidth * 0.70);
+        crearGrillasDeLetras(width: number, height: number, escalaUi: number, gapY: number) {
+          const availableLength = this.availableChars.length;
+          const palabraConEspacios = this.palabraObjetivoConEspacios.split("");
 
-          const gapX = cardWidth + 20 * escalaUi;
-          const gapY = cardHeight + 14 * escalaUi;
+          const baseCellSize = palabraConEspacios.length > 8 ? 45 : 60; 
+          const cellSize = Math.round(Phaser.Math.Clamp(baseCellSize * escalaUi, 35, 75));
+          const cellSpacing = Math.round(Phaser.Math.Clamp(8 * escalaUi, 4, 12));
+          
+          const spaceWidth = cellSize * 0.6; 
 
-          const centroX = width / 2;
-          const centroY = height * 0.58;
+          let inputGridWidth = 0;
+          palabraConEspacios.forEach((char, i) => {
+            inputGridWidth += char === " " ? spaceWidth : cellSize;
+            if (i < palabraConEspacios.length - 1) {
+              inputGridWidth += cellSpacing;
+            }
+          });
 
-          const posiciones = [
-            { x: centroX - gapX / 2, y: centroY - gapY / 2 },
-            { x: centroX + gapX / 2, y: centroY - gapY / 2 },
-            { x: centroX - gapX / 2, y: centroY + gapY / 2 },
-            { x: centroX + gapX / 2, y: centroY + gapY / 2 },
-          ];
+          let currentX = width / 2 - inputGridWidth / 2;
+          let slotIndex = 0;
 
-          this.opciones.forEach((palabraOpcion, index) => {
-            const pos = posiciones[index];
+          palabraConEspacios.forEach((char) => {
+            if (char === " ") {
+              currentX += spaceWidth + cellSpacing;
+            } else {
+              const centerX = currentX + cellSize / 2;
+              const container = this.crearCelda(
+                centerX,
+                gapY,
+                cellSize,
+                escalaUi,
+                0xffffff,
+                0x1e78ff,
+                true,
+                slotIndex,
+                false
+              );
+              this.inputSlots.push(container);
+              
+              currentX += cellSize + cellSpacing;
+              slotIndex++;
+            }
+          });
 
-            const ficha = this.add.container(pos.x, pos.y);
-            ficha.setSize(cardWidth, cardHeight);
-            ficha.setInteractive({ useHandCursor: true });
+          const keyboardGridWidth = availableLength * cellSize + (availableLength - 1) * cellSpacing;
+          const keyboardStartX = width / 2 - keyboardGridWidth / 2 + cellSize / 2;
+          const keyboardY = gapY + cellSize + cellSpacing * 2;
 
-            const elementoImg = document.createElement("img");
-            elementoImg.style.width = `${cardWidth}px`;
-            elementoImg.style.height = `${cardHeight}px`;
-            elementoImg.style.objectFit = "cover";
-            elementoImg.style.borderRadius = `${Math.round(14 * escalaUi)}px`;
-            elementoImg.style.pointerEvents = "none";
+          for (let i = 0; i < availableLength; i++) {
+            const data = this.availableChars[i];
+            const container = this.crearCelda(
+              keyboardStartX + i * (cellSize + cellSpacing),
+              keyboardY,
+              cellSize,
+              escalaUi,
+              0xffd32a,
+              0xd28b00,
+              true,
+              i,
+              true,
+              data.char
+            );
+            this.keyboardTiles.push(container);
+          }
+        }
 
-            const archivoImportado = diccionarioGifs[palabraOpcion];
-            if (archivoImportado) {
-              const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
-              elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
+        crearCelda(
+          x: number,
+          y: number,
+          size: number,
+          escalaUi: number,
+          bgColor: number,
+          borderColor: number,
+          interactive: boolean,
+          id: number,
+          isKeyboard: boolean,
+          char: string = ""
+        ) {
+          const container = this.add.container(x, y);
+          container.setSize(size, size);
+          if (interactive) {
+            container.setInteractive({ useHandCursor: true });
+          }
+
+          const graphics = this.add.graphics();
+          const radius = Math.round(12 * escalaUi);
+          graphics.fillStyle(bgColor, 1);
+          graphics.fillRoundedRect(-size / 2, -size / 2, size, size, radius);
+          graphics.lineStyle(Math.round(4 * escalaUi), borderColor, 1);
+          graphics.strokeRoundedRect(-size / 2, -size / 2, size, size, radius);
+          container.add(graphics);
+          container.setData("graphics", graphics);
+
+          const fontSizePx = Math.round(Phaser.Math.Clamp(size * 0.6, 20, 48));
+          const text = this.add
+            .text(0, 0, char, {
+              fontSize: `${fontSizePx}px`,
+              fontFamily,
+              color: "#05215b",
+              fontStyle: "800",
+            })
+            .setOrigin(0.5);
+          container.add(text);
+          container.setData("text", text);
+
+          container.setData("id", id);
+          container.setData("char", char);
+          container.setData("size", size);
+
+          if (interactive) {
+            if (isKeyboard) {
+              container.on("pointerdown", () => this.alHacerClicEnTecla(container, id, char));
+            } else {
+              container.on("pointerdown", () => this.alHacerClicEnSlot(container, id));
+            }
+          }
+
+          return container;
+        }
+
+        alHacerClicEnTecla(tile: Phaser.GameObjects.Container, id: number, char: string) {
+          if (this.bloqueado) return;
+          const data = this.availableChars[id];
+          if (!data.active) return;
+
+          const currentLen = this.inputtedChars.length;
+          if (currentLen >= this.palabraObjetivoNormalizada.length) return;
+
+          const slotText = this.inputSlots[currentLen].getData("text") as Phaser.GameObjects.Text;
+          slotText.setText(char);
+          this.inputtedChars.push({ char, originalId: id });
+
+          data.active = false;
+          tile.setAlpha(0.3);
+
+          this.tweens.add({
+            targets: this.inputSlots[currentLen],
+            scale: { from: 0.8, to: 1 },
+            duration: 150,
+            ease: "Back.easeOut",
+          });
+
+          if (this.inputtedChars.length === this.palabraObjetivoNormalizada.length) {
+            this.time.delayedCall(150, () => {
+              this.validarRespuestaConDelay();
+            });
+          }
+        }
+
+        alHacerClicEnSlot(slot: Phaser.GameObjects.Container, id: number) {
+          if (this.bloqueado) return;
+          if (id >= this.inputtedChars.length) return;
+
+          const originalChar = this.inputtedChars[id];
+          this.inputtedChars.splice(id, 1);
+
+          this.availableChars[originalChar.originalId].active = true;
+          this.keyboardTiles[originalChar.originalId].setAlpha(1);
+
+          this.reordenarSlots();
+        }
+
+        reordenarSlots() {
+          for (let i = 0; i < this.inputSlots.length; i++) {
+            const slotText = this.inputSlots[i].getData("text") as Phaser.GameObjects.Text;
+            if (i < this.inputtedChars.length) {
+              slotText.setText(this.inputtedChars[i].char);
+            } else {
+              slotText.setText("");
+            }
+          }
+        }
+
+        alPresionarTecla(event: KeyboardEvent) {
+          if (this.bloqueado) return;
+
+          if (event.key === "Backspace") {
+            if (this.inputtedChars.length > 0) {
+              const lastIndex = this.inputtedChars.length - 1;
+              this.alHacerClicEnSlot(this.inputSlots[lastIndex], lastIndex);
+            }
+            return;
+          }
+
+          const quitarTildes = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const pressedChar = quitarTildes(event.key.toUpperCase());
+          
+          const matchIndex = this.availableChars.findIndex(
+            (c) => c.char === pressedChar && c.active
+          );
+
+          if (matchIndex !== -1) {
+            this.alHacerClicEnTecla(
+              this.keyboardTiles[matchIndex],
+              matchIndex,
+              pressedChar
+            );
+          }
+        }
+
+        validarRespuestaConDelay() {
+          if (this.bloqueado) return;
+          this.bloqueado = true;
+
+          const wordFormed = this.inputtedChars.map((c) => c.char).join("");
+
+          if (wordFormed === this.palabraObjetivoNormalizada) {
+            const letrasConTilde = this.palabraObjetivo.toUpperCase().replace(/\s+/g, "").split("");
+            
+            this.inputSlots.forEach((slot, index) => {
+              const slotText = slot.getData("text") as Phaser.GameObjects.Text;
+              slotText.setText(letrasConTilde[index]);
+            });
+
+            this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
+            this.aciertos++;
+
+            if (this.badgeAciertos) {
+              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
             }
 
-            const domGif = this.add.dom(0, 0, elementoImg);
+            if (typeof onRondaGanada === "function") {
+              onRondaGanada(this.aciertos);
+            }
 
-            const cardBg = this.add.graphics();
-            cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
-            cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14 * escalaUi);
+            this.tweens.add({
+              targets: this.inputSlots,
+              scale: 1.15,
+              duration: 250,
+              yoyo: true,
+              ease: "Back.easeOut",
+              onStart: () => this.setSlotsVisualFeedback(0x00ff66, true),
+            });
 
-            ficha.add([domGif, cardBg]);
+            this.time.delayedCall(2000, () => {
+              if (this.aciertos >= 5) {
+                if (typeof onJuegoTerminado === "function") {
+                  onJuegoTerminado(this.aciertos * 10, this.aciertos);
+                } else {
+                  this.scene.start("PantallaFin", { errores: this.intentosFallidos });
+                }
+              } else {
+                this.scene.restart({
+                  aciertos: this.aciertos,
+                  palabrasUsadas: this.palabrasUsadas,
+                  intentosFallidos: this.intentosFallidos,
+                });
+              }
+            });
+          } else {
+            this.intentosFallidos++;
 
-            ficha.setData("valor", palabraOpcion);
-            ficha.setData("graphics", cardBg);
-            ficha.setData("cardWidth", cardWidth);
-            ficha.setData("cardHeight", cardHeight);
+            if (this.badgeVidas) {
+              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
+            }
 
-            ficha.on("pointerdown", () => this.validarRespuesta(ficha, cardBg, cardWidth, cardHeight, escalaUi));
+            this.tweens.add({
+              targets: this.inputSlots,
+              x: "+=8",
+              duration: 60,
+              yoyo: true,
+              repeat: 3,
+              onStart: () => this.setSlotsVisualFeedback(0xff4757),
+              onComplete: () => {
+                this.inputtedChars = [];
+                this.availableChars.forEach((c) => (c.active = true));
+                this.keyboardTiles.forEach((tile) => tile.setAlpha(1));
+                this.reordenarSlots();
+                this.setSlotsVisualFeedback(0x1e78ff, false, 0xffffff);
+
+                if (this.intentosFallidos >= 3) {
+                  this.time.delayedCall(500, () => {
+                    if (this.game.events) {
+                      this.game.events.emit("jugador-perdio");
+                    }
+                  });
+                } else {
+                  this.bloqueado = false;
+                }
+              },
+            });
+          }
+        }
+
+        setSlotsVisualFeedback(color: number, isWin: boolean = false, bgColor: number = isWin ? 0xe8fae8 : 0xffffff) {
+          this.inputSlots.forEach((slot) => {
+            const graphics = slot.getData("graphics") as Phaser.GameObjects.Graphics;
+            const size = slot.getData("size") as number;
+            const radius = Math.round(12 * this.escalaUiGlobal);
+            graphics.clear();
+            graphics.fillStyle(bgColor, 1);
+            graphics.fillRoundedRect(-size / 2, -size / 2, size, size, radius);
+            graphics.lineStyle(Math.round(4 * this.escalaUiGlobal), color, 1);
+            graphics.strokeRoundedRect(-size / 2, -size / 2, size, size, radius);
           });
         }
 
@@ -385,82 +693,6 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
               duration: Phaser.Math.Between(1300, 2000),
               ease: "Cubic.easeOut",
               onComplete: () => papelito.destroy(),
-            });
-          }
-        }
-
-        validarRespuesta(
-          ficha: Phaser.GameObjects.Container,
-          cardBg: Phaser.GameObjects.Graphics,
-          w: number,
-          h: number,
-          escalaUi: number
-        ) {
-          if (this.bloqueado) return;
-          this.bloqueado = true;
-
-          const respuestaSeleccionada = ficha.getData("valor");
-
-          if (respuestaSeleccionada === this.palabraObjetivo) {
-            cardBg.clear();
-            cardBg.lineStyle(6 * escalaUi, 0x2ed573, 1);
-            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
-
-            this.aciertos++;
-            this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
-
-            if (this.badgeAciertos) {
-              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
-            }
-
-            if (typeof onRondaGanada === "function") {
-              onRondaGanada(this.aciertos);
-            }
-
-            this.time.delayedCall(1500, () => {
-              if (this.aciertos >= 5) {
-                this.scene.start("PantallaFin", { errores: this.intentosFallidos });
-              } else {
-                this.scene.restart({
-                  aciertos: this.aciertos,
-                  palabrasUsadas: this.palabrasUsadas,
-                  intentosFallidos: this.intentosFallidos,
-                });
-              }
-            });
-          } else {
-            cardBg.clear();
-            cardBg.lineStyle(6 * escalaUi, 0xff4757, 1);
-            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
-
-            this.intentosFallidos++;
-
-            if (this.badgeVidas) {
-              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
-            }
-
-            this.tweens.add({
-              targets: ficha,
-              x: ficha.x + 8,
-              duration: 50,
-              yoyo: true,
-              repeat: 2,
-              onComplete: () => {
-                cardBg.clear();
-                cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
-                cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 14 * escalaUi);
-
-                if (this.intentosFallidos >= 3) {
-                  this.time.delayedCall(500, () => {
-                    // Notifica a React para mostrar la PantallaSinVidas (perder.tsx)
-                    if (this.game.events) {
-                      this.game.events.emit("jugador-perdio");
-                    }
-                  });
-                } else {
-                  this.bloqueado = false;
-                }
-              },
             });
           }
         }
@@ -516,18 +748,15 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("eleccion", this.errores, origin)
+            completeGame("completar", this.errores, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                // Botón para volver al menú principal
-                botonFinal
-                  .setText("Volver al Menú")
-                  .setBackgroundColor("#2ed573");
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push("/");
+                  window.location.href = "/juegos/felicitar";
                 });
               })
               .catch(() => {
@@ -558,13 +787,12 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           height: "100%",
         },
         backgroundColor: "#87CEEB",
-        scene: [EleccionScene, PantallaFin],
+        scene: [CompletarScene, PantallaFin],
       };
 
       const game = new Phaser.Game(config);
       gameInstanceRef.current = game;
 
-      // Escuchar cuando el usuario pierde todas las vidas
       game.events.on("jugador-perdio", () => {
         setPerdio(true);
       });
@@ -580,20 +808,20 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points, origin, router]);
+  }, [palabras, onRondaGanada, onJuegoTerminado, points, origin, router]);
 
   return (
     <div className="relative w-full h-full">
       <div ref={gameRef} style={{ width: "100%", height: "100%" }} />
 
-        {perdio && (
-    <PantallaSinVidas
-      rutaEntrenamiento="/entrenamiento"
-      rutaInicio="/menu"
-      onVolverInicio={() => router.push("/menu")}
-      onIrEntrenamiento={() => router.push("/entrenamiento")}
-    />
-  )}
+      {perdio && (
+        <PantallaSinVidas
+          rutaEntrenamiento="/entrenamiento"
+          rutaInicio="/menu"
+          onVolverInicio={() => router.push("/menu")}
+          onIrEntrenamiento={() => router.push("/entrenamiento")}
+        />
+      )}
     </div>
   );
 }

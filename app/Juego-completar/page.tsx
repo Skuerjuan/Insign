@@ -1,11 +1,11 @@
-import JuegoEleccion from "@/src/juegos/JuegoEleccion";
+import JuegoMemoria from "@/src/juegos/JuegoCompletar";
 import { auth } from "@/lib/auth/server";
 import { getProfile } from "@/lib/server/profile.actions";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function JuegoEleccionPage({
+export default async function JuegoMemoriaPage({
   searchParams,
 }: {
   searchParams: Promise<{ origen?: string }>;
@@ -21,7 +21,7 @@ export default async function JuegoEleccionPage({
 
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <JuegoEleccion
+      <JuegoMemoria
         points={profile.puntos ?? 0}
         origin={origen === "entrenamiento" ? "training" : "menu"}
       />
