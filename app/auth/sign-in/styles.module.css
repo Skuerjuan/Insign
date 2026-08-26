@@ -30,11 +30,13 @@
 
 .leftStage {
   position: relative;
+  width: 100%;
+  height: min(100%, 620px, calc(100dvh - 96px));
   min-width: 0;
   min-height: 0;
   grid-column: 1;
   grid-row: 1;
-  align-self: stretch;
+  align-self: center;
 }
 
 .logo {
@@ -66,7 +68,7 @@
 .gorilaSaludando {
   position: absolute;
   left: 50%;
-  bottom: 0;
+  bottom: -14px;
   /* El dibujo ocupa más espacio transparente a la derecha dentro del PNG. */
   transform: translateX(-46%);
   width: min(44vw, 74dvh, 880px);
@@ -112,7 +114,7 @@
 
 .fields {
   display: grid;
-  gap: 10px;
+  gap: 4px;
 }
 
 .inicia {
@@ -224,6 +226,7 @@
 
   .leftStage {
     width: min(100%, 500px);
+    height: auto;
     grid-column: 1;
     grid-row: 1;
     display: flex;
@@ -273,7 +276,7 @@
   .gorilaSaludando { width: min(41vw, 67dvh, 650px); }
   .container { padding-block: 18px; --auth-field-height: 46px; }
   .adInicia { margin-bottom: 10px; }
-  .fields { gap: 8px; }
+  .fields { gap: 4px; }
   .inicia { margin-top: 10px; }
   .registro { margin-top: 10px; }
 }

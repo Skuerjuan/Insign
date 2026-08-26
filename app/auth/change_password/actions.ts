@@ -9,7 +9,7 @@ export default async function handleChangePassword(
     if (!currentPassword || !newPassword) {
         return {
             success: false,
-            message: "Enter your current and new password.",
+            message: "Ingresá tu contraseña actual y la nueva contraseña.",
         };
     }
 
@@ -22,12 +22,12 @@ export default async function handleChangePassword(
 
         return {
             success: true,
-            message: "Password changed successfully!",
+            message: "¡Contraseña actualizada correctamente!",
         };
     } catch (error) {
         return {
             success: false,
-            message: error instanceof Error ? error.message : "Password change failed",
+            message: error instanceof Error ? error.message : "No se pudo cambiar la contraseña.",
         };
     }
 }

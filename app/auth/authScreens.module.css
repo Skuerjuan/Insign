@@ -82,6 +82,48 @@
 
 .resetMonkey { width: min(100%, 500px); max-height: 70dvh; }
 
+.changeCard { padding-top: clamp(28px, 4vh, 46px); }
+
+.changeForm {
+  width: min(88%, 560px);
+  gap: 4px;
+  margin-inline: auto;
+}
+
+.changeField { display: block; }
+
+.passwordField {
+  position: relative;
+  display: block;
+}
+
+.changeInput {
+  padding-right: 52px !important;
+  border-color: #b8b8b8 !important;
+}
+
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.passwordToggle:hover { background: rgba(18, 108, 255, 0.1); }
+.passwordToggle:focus-visible { outline: 3px solid rgba(18, 108, 255, 0.28); }
+.passwordToggle img { width: 26px; height: 26px; }
+
+.changeButton { width: 100%; margin-top: 8px; }
+
 .forgotLayout {
   width: min(100%, 1280px);
   grid-template-columns: minmax(270px, 0.31fr) minmax(540px, 0.69fr);
@@ -266,6 +308,7 @@
   .resetMonkeyWrap { order: 1; }
   .resetMonkey { width: min(42vw, 190px); max-height: 24dvh; }
   .resetCard { order: 2; padding-top: 28px; }
+  .changeForm { width: 100%; }
   .forgotLayout { grid-template-columns: 1fr; gap: 10px; }
   .forgotMonkeyWrap { order: 1; }
   .forgotMonkey { width: min(42vw, 190px); max-height: 24dvh; }
@@ -286,6 +329,7 @@
   .resetMonkey { width: min(43vw, 170px); }
   .resetCard { padding: 24px 18px 22px; }
   .resetButton { width: 100%; }
+  .changeCard { padding-top: 24px; }
   .forgotMonkey { width: min(43vw, 170px); }
   .forgotCard { padding: 46px 18px 22px; }
 }
