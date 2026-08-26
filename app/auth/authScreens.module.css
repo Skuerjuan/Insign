@@ -74,6 +74,23 @@
 }
 .verifyMonkey { width: min(100%, 450px); transform: scaleX(-1); }
 
+.resetLayout {
+  width: min(100%, 1420px);
+  grid-template-columns: minmax(280px, 0.78fr) minmax(500px, 1.22fr);
+  margin-inline: auto;
+}
+
+.resetMonkey { width: min(100%, 500px); max-height: 70dvh; }
+
+.forgotLayout {
+  width: min(100%, 1280px);
+  grid-template-columns: minmax(270px, 0.31fr) minmax(540px, 0.69fr);
+  gap: clamp(8px, 2vw, 28px);
+  margin-inline: auto;
+}
+
+.forgotMonkey { width: min(100%, 420px); max-height: 66dvh; }
+
 .card {
   position: relative;
   width: 100%;
@@ -84,6 +101,13 @@
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 12px 28px rgba(0, 73, 115, 0.13);
   text-align: center;
+}
+
+.forgotCard {
+  min-height: min(64dvh, 500px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .iconBadge {
@@ -100,6 +124,7 @@
   background: #85b4ff;
 }
 .iconBadge svg { width: 58%; height: 58%; }
+.forgotBadge { width: clamp(72px, 7vw, 102px); }
 
 .title {
   margin: 0;
@@ -118,7 +143,10 @@
   line-height: 1.14;
 }
 
+.forgotDescription { max-width: 72%; }
+
 .authForm { display: grid; gap: 14px; width: 100%; }
+.forgotForm { width: 72%; margin-inline: auto; }
 .authLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .authInput {
   width: 100%;
@@ -138,6 +166,12 @@
 }
 .emailInput { background-image: url("/user.png") !important; }
 .authInput:focus { outline: 4px solid rgba(18, 108, 255, 0.18) !important; }
+.resetInput {
+  border-color: #b8b8b8 !important;
+  background-image: url("/lock.png"), url("/eye.png") !important;
+  background-position: 13px center, calc(100% - 14px) center !important;
+  background-size: 24px, 26px !important;
+}
 .authError { color: #b42318; font-size: 14px; text-align: left; }
 
 .primaryButton,
@@ -174,6 +208,11 @@
 .continueButton:hover { background: #ffda28 !important; transform: translateY(-1px); }
 .primaryButton:disabled,
 .continueButton:disabled { opacity: 0.65; cursor: wait; }
+
+.resetButton {
+  width: min(88%, 560px);
+  margin-inline: auto;
+}
 
 .verifyCard { padding-top: clamp(52px, 7vh, 78px); }
 .mailBadge { background: #fff; color: #86b5ff; border: 5px solid #86b5ff; }
@@ -223,6 +262,15 @@
   .monkey { width: min(56vw, 260px); max-height: 30dvh; }
   .card { order: 1; padding: 48px clamp(20px, 6vw, 38px) 28px; }
   .verifyCard { padding-top: 58px; }
+  .resetLayout { grid-template-columns: 1fr; gap: 10px; }
+  .resetMonkeyWrap { order: 1; }
+  .resetMonkey { width: min(42vw, 190px); max-height: 24dvh; }
+  .resetCard { order: 2; padding-top: 28px; }
+  .forgotLayout { grid-template-columns: 1fr; gap: 10px; }
+  .forgotMonkeyWrap { order: 1; }
+  .forgotMonkey { width: min(42vw, 190px); max-height: 24dvh; }
+  .forgotCard { order: 2; min-height: 0; padding-top: 48px; }
+  .forgotDescription, .forgotForm { width: 100%; max-width: 100%; }
 }
 
 @media (max-width: 440px) {
@@ -235,6 +283,11 @@
   .codeRow { gap: 5px; }
   .codeInput { border-radius: 5px; font-size: 24px; }
   .monkey { width: min(60vw, 220px); }
+  .resetMonkey { width: min(43vw, 170px); }
+  .resetCard { padding: 24px 18px 22px; }
+  .resetButton { width: 100%; }
+  .forgotMonkey { width: min(43vw, 170px); }
+  .forgotCard { padding: 46px 18px 22px; }
 }
 
 @media (max-height: 650px) and (min-width: 821px) {

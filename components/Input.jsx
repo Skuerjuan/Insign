@@ -8,7 +8,7 @@ export default function Input({ placeholder, type, icon, eyeIcon, idInput }) {
 
   return (
     <div className={styles.containerIni}>
-      <img src={icon} className={styles.icon} />
+      <img src={icon} className={styles.icon} alt="" />
 
       <input
         type={
@@ -30,6 +30,14 @@ export default function Input({ placeholder, type, icon, eyeIcon, idInput }) {
           src={eyeIcon}
           className={`${styles.icon} ${styles.eyeIcon}`}
           onClick={() => setShowPassword(!showPassword)}
+          alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              setShowPassword(!showPassword);
+            }
+          }}
         />
       )}
     </div>

@@ -39,21 +39,23 @@ function SignInForm() {
           Inicia sesión para seguir aprendiendo
         </p>
 
-        <Input
-          placeholder="Correo electrónico"
-          type="email"
-          icon="/user.png"
-          eyeIcon={null}
-          idInput="email"
-        />
+        <div className={styles.fields}>
+          <Input
+            placeholder="Correo electrónico"
+            type="email"
+            icon="/user.png"
+            eyeIcon={null}
+            idInput="email"
+          />
 
-        <Input
-          placeholder="Contraseña"
-          type="password"
-          icon="/lock.png"
-          eyeIcon="/eye.png"
-          idInput="password"
-        />
+          <Input
+            placeholder="Contraseña"
+            type="password"
+            icon="/lock.png"
+            eyeIcon="/eye.png"
+            idInput="password"
+          />
+        </div>
 
         {state?.error && (
           <div className="rounded-md px-3 py-2 text-sm text-red-500">
@@ -93,6 +95,7 @@ function SignInForm() {
           <img
             src="/google.png"
             className={styles.googleIcon}
+            alt=""
             />
 
           <span className={styles.googleLink}>Google</span>

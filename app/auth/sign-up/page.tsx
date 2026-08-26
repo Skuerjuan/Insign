@@ -25,37 +25,39 @@ export default function SignUpForm() {
       <div className={styles.container}>
         <h2 className={styles.titulo}>¡Crea tu cuenta!</h2>
 
-        <Input
-          placeholder="Nombre de usuario"
-          type="text"
-          icon="/user.png"
-          eyeIcon={null}
-          idInput={"name"}
-        />
+        <div className={styles.fields}>
+          <Input
+            placeholder="Nombre de usuario"
+            type="text"
+            icon="/user.png"
+            eyeIcon={null}
+            idInput={"name"}
+          />
 
-        <Input
-          placeholder="Correo electronico"
-          type="email"
-          icon="/card.png"
-          eyeIcon={null}
-          idInput={"email"}
-        />
+          <Input
+            placeholder="Correo electrónico"
+            type="email"
+            icon="/card.png"
+            eyeIcon={null}
+            idInput={"email"}
+          />
 
-        <Input
-          placeholder="Contraseña"
-          type="password"
-          icon="/lock.png"
-          eyeIcon="/eye.png"
-          idInput={"password"}
-        />
+          <Input
+            placeholder="Contraseña"
+            type="password"
+            icon="/lock.png"
+            eyeIcon="/eye.png"
+            idInput={"password"}
+          />
 
-        <Input
-          placeholder="Repetir Contraseña"
-          type="password"
-          icon="/lock.png"
-          eyeIcon="/eye.png"
-          idInput={"confirmPassword"}
-        />
+          <Input
+            placeholder="Repetir contraseña"
+            type="password"
+            icon="/lock.png"
+            eyeIcon="/eye.png"
+            idInput={"confirmPassword"}
+          />
+        </div>
 
         {state?.error && (
             <div className="rounded-md px-3 py-2 text-sm text-red-500">
