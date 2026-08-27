@@ -85,7 +85,7 @@ export default function ChangePasswordForm({ userName }: ChangePasswordFormProps
                 </svg>
             </Link>
 
-            <h1 className={styles.heading}>Una nueva <strong>contraseña</strong></h1>
+            <h1 className={`${styles.heading} ${styles.changeHeading}`}>Una nueva <strong>contraseña</strong></h1>
 
             <div className={`${styles.layout} ${styles.resetLayout}`}>
                 <div className={`${styles.monkeyWrap} ${styles.resetMonkeyWrap}`}>

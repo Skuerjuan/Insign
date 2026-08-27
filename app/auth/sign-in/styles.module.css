@@ -71,7 +71,7 @@
   bottom: -14px;
   /* El dibujo ocupa más espacio transparente a la derecha dentro del PNG. */
   transform: translateX(-46%);
-  width: min(44vw, 74dvh, 880px);
+  width: min(48vw, 82dvh, 940px);
   min-width: 300px;
   aspect-ratio: 3 / 2;
   background: url("/Gorilainicio.png") 54% bottom / contain no-repeat;
@@ -96,7 +96,7 @@
   margin: 0;
   color: #0042ad;
   font-family: var(--font-baloo);
-  font-size: clamp(34px, 4.6vw, 50px);
+  font-size: clamp(40px, 5vw, 60px);
   font-weight: 700;
   line-height: 1;
   text-align: center;
@@ -264,16 +264,16 @@
   .leftStage { gap: 8px; }
   .logo { font-size: clamp(44px, 13vw, 62px); letter-spacing: -2px; }
   .blanco, .amarillo { -webkit-text-stroke-width: 3px; }
-  .gorilaSaludando { width: clamp(135px, 36vw, 155px); }
+  .gorilaSaludando { width: clamp(145px, 40vw, 175px); }
   .container { padding: 20px clamp(18px, 5vw, 28px) 26px; }
-  .titulo { font-size: clamp(34px, 11vw, 42px); }
+  .titulo { font-size: clamp(38px, 12vw, 48px); }
   .adInicia { font-size: clamp(17px, 5vw, 21px); }
   .googleBtn { width: 100%; }
 }
 
 @media (max-height: 720px) and (min-width: 901px) {
   .fondo { padding-block: 20px; }
-  .gorilaSaludando { width: min(41vw, 67dvh, 650px); }
+  .gorilaSaludando { width: min(45vw, 73dvh, 700px); }
   .container { padding-block: 18px; --auth-field-height: 46px; }
   .adInicia { margin-bottom: 10px; }
   .fields { gap: 4px; }

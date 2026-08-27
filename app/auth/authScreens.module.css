@@ -82,7 +82,12 @@
 
 .resetMonkey { width: min(100%, 500px); max-height: 70dvh; }
 
-.changeCard { padding-top: clamp(28px, 4vh, 46px); }
+.changeHeading { top: 8px; }
+
+.changeCard {
+  padding-top: clamp(28px, 4vh, 46px);
+  transform: translateY(12px);
+}
 
 .changeForm {
   width: min(88%, 560px);
@@ -236,15 +241,12 @@
 }
 .primaryButton::after,
 .continueButton::after {
-  content: "→";
+  content: "";
   width: 35px;
   height: 35px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: white;
-  background: #126cff;
-  font: 800 25px/1 Arial, sans-serif;
+  flex: 0 0 35px;
+  display: block;
+  background: url("/arrow-right-circle.svg") center / contain no-repeat;
 }
 .primaryButton:hover,
 .continueButton:hover { background: #ffda28 !important; transform: translateY(-1px); }
@@ -309,6 +311,7 @@
   .resetMonkey { width: min(42vw, 190px); max-height: 24dvh; }
   .resetCard { order: 2; padding-top: 28px; }
   .changeForm { width: 100%; }
+  .changeCard { transform: none; margin-top: 12px; }
   .forgotLayout { grid-template-columns: 1fr; gap: 10px; }
   .forgotMonkeyWrap { order: 1; }
   .forgotMonkey { width: min(42vw, 190px); max-height: 24dvh; }
