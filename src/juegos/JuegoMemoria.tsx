@@ -83,15 +83,6 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
         fondoObj: CardBack;
         contenidoVisible: CardContent;
       };
-      type GridLayout = {
-        cardWidth: number;
-        cardHeight: number;
-        startY: number;
-        centerX: number;
-        gapX: number;
-        gapY: number;
-        escalaUi: number;
-      };
 
       class MemoryScene extends Phaser.Scene {
         private primeraCarta: SelectedCard | null = null;
@@ -132,63 +123,100 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
           const significados = Phaser.Utils.Array.Shuffle([...pares]);
 
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.3);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 480, height / 700), 0.65, 1.15);
           this.escalaUiGlobal = escalaUi;
-          const columnasPorGrupo = 4;
-          const filasPorGrupo = Math.max(Math.ceil(pares.length / columnasPorGrupo), 1);
-          const marcadorHeight = 48 * escalaUi;
-          const marcadorY = height - marcadorHeight - 16 * escalaUi;
 
-          const labelsY = Math.max(120 * escalaUi, height * 0.17);
-          const gapX = Phaser.Math.Clamp(width * 0.012, 10 * escalaUi, 22 * escalaUi);
-          const gapY = Phaser.Math.Clamp(height * 0.025, 14 * escalaUi, 28 * escalaUi);
-          const groupGapX = Phaser.Math.Clamp(width * 0.04, 40 * escalaUi, 90 * escalaUi);
-
-          const anchoDisponible = width * 0.94;
-          const cardSizePorAncho = (anchoDisponible - groupGapX - gapX * (columnasPorGrupo - 1) * 2) / (columnasPorGrupo * 2);
-
-          const topLimite = labelsY + 30 * escalaUi;
-          const altoDisponible = Math.max(200, marcadorY - topLimite - 15 * escalaUi);
-          const cardSizePorAlto = (altoDisponible - gapY * (filasPorGrupo - 1)) / filasPorGrupo;
-
-          const cardWidth = Phaser.Math.Clamp(Math.min(230 * escalaUi, cardSizePorAncho, cardSizePorAlto), 115, 230);
-          const cardHeight = cardWidth;
-
-          const startY = topLimite + cardHeight / 2;
-
-          const bloqueWidth = cardWidth * columnasPorGrupo + gapX * (columnasPorGrupo - 1);
-          const totalGridWidth = bloqueWidth * 2 + groupGapX;
-          const significadosLeft = width / 2 - totalGridWidth / 2;
-          const seniasLeft = significadosLeft + bloqueWidth + groupGapX;
-          const xSignificados = significadosLeft + bloqueWidth / 2;
-          const xSenias = seniasLeft + bloqueWidth / 2;
-
-          this.crearGrupo(significados, "significado", {
-            cardWidth,
-            cardHeight,
-            startY,
-            centerX: xSignificados,
-            gapX,
-            gapY,
-            escalaUi,
-          });
-          this.crearGrupo(senias, "senia", {
-            cardWidth,
-            cardHeight,
-            startY,
-            centerX: xSenias,
-            gapX,
-            gapY,
-            escalaUi,
-          });
+          const isPortrait = width < height || width < 650;
+          const marcadorHeight = 38 * escalaUi;
+          const marcadorY = height - marcadorHeight - 12 * escalaUi;
 
           this.crearHud(width, height, escalaUi, marcadorY, marcadorHeight);
-          this.crearEncabezadoColumnas(
-            xSignificados,
-            xSenias,
-            labelsY,
-            escalaUi
-          );
+
+          if (isPortrait) {
+            const cols = Math.min(pares.length, 3);
+            const gapX = 8 * escalaUi;
+            const gapY = 8 * escalaUi;
+
+            const topY = 110 * escalaUi;
+            const availHeight = marcadorY - topY - 20 * escalaUi;
+
+            const rowsTotal = Math.ceil(pares.length / cols) * 2;
+            const cardSizeByHeight = (availHeight - (rowsTotal + 1) * gapY) / rowsTotal;
+            const cardSizeByWidth = (width * 0.92 - (cols - 1) * gapX) / cols;
+
+            const cardWidth = Math.floor(Math.min(cardSizeByWidth, cardSizeByHeight));
+            const cardHeight = cardWidth;
+
+            const significadosRows = Math.ceil(significados.length / cols);
+            const section1Height = significadosRows * cardHeight + (significadosRows - 1) * gapY;
+            const ySignificadosStart = topY + 25 * escalaUi;
+
+            this.crearEtiqueta(width / 2, topY + 10 * escalaUi, "SIGNIFICADOS", escalaUi);
+            this.crearGrupoLayout(significados, "significado", {
+              cols,
+              cardWidth,
+              cardHeight,
+              startX: width / 2,
+              startY: ySignificadosStart + cardHeight / 2,
+              gapX,
+              gapY,
+              escalaUi,
+            });
+
+            const ySeniasHeader = ySignificadosStart + section1Height + 15 * escalaUi;
+            const ySeniasStart = ySeniasHeader + 15 * escalaUi;
+
+            this.crearEtiqueta(width / 2, ySeniasHeader, "SEÑAS", escalaUi);
+            this.crearGrupoLayout(senias, "senia", {
+              cols,
+              cardWidth,
+              cardHeight,
+              startX: width / 2,
+              startY: ySeniasStart + cardHeight / 2,
+              gapX,
+              gapY,
+              escalaUi,
+            });
+          } else {
+            const cols = 4;
+            const gapX = 10 * escalaUi;
+            const gapY = 10 * escalaUi;
+            const groupGapX = 24 * escalaUi;
+            const labelsY = 85 * escalaUi;
+            const startY = labelsY + 35 * escalaUi;
+
+            const totalWidthAvailable = width * 0.94;
+            const blockWidth = (totalWidthAvailable - groupGapX) / 2;
+            const cardWidth = Math.floor((blockWidth - (cols - 1) * gapX) / cols);
+            const cardHeight = cardWidth;
+
+            const leftBlockCenterX = width / 2 - blockWidth / 2 - groupGapX / 2;
+            const rightBlockCenterX = width / 2 + blockWidth / 2 + groupGapX / 2;
+
+            this.crearEtiqueta(leftBlockCenterX, labelsY, "SIGNIFICADOS", escalaUi);
+            this.crearGrupoLayout(significados, "significado", {
+              cols,
+              cardWidth,
+              cardHeight,
+              startX: leftBlockCenterX,
+              startY: startY + cardHeight / 2,
+              gapX,
+              gapY,
+              escalaUi,
+            });
+
+            this.crearEtiqueta(rightBlockCenterX, labelsY, "SEÑAS", escalaUi);
+            this.crearGrupoLayout(senias, "senia", {
+              cols,
+              cardWidth,
+              cardHeight,
+              startX: rightBlockCenterX,
+              startY: startY + cardHeight / 2,
+              gapX,
+              gapY,
+              escalaUi,
+            });
+          }
 
           this.scale.on("resize", () => {
             this.scene.restart();
@@ -199,76 +227,66 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const azul = 0x1e78ff;
           const amarillo = 0xffd32a;
           const azulTexto = "#05215b";
-          const topY = Math.max(34 * escalaUi, height * 0.08);
+          const topY = Math.max(30 * escalaUi, height * 0.05);
 
-          const botonVolver = this.add.circle(50 * escalaUi, topY - 3 * escalaUi, 20 * escalaUi, azul);
+          const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 18 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
           botonVolver.on("pointerdown", () => window.history.back());
 
           const flecha = this.add.graphics();
-          flecha.lineStyle(5 * escalaUi, 0xffffff, 1);
+          flecha.lineStyle(4 * escalaUi, 0xffffff, 1);
           flecha.beginPath();
-          flecha.moveTo(52 * escalaUi, topY - 15 * escalaUi);
-          flecha.lineTo(38 * escalaUi, topY - 3 * escalaUi);
-          flecha.lineTo(52 * escalaUi, topY + 9 * escalaUi);
-          flecha.moveTo(39 * escalaUi, topY - 3 * escalaUi);
-          flecha.lineTo(66 * escalaUi, topY - 3 * escalaUi);
+          flecha.moveTo(38 * escalaUi, topY + 2 * escalaUi);
+          flecha.lineTo(26 * escalaUi, topY + 12 * escalaUi);
+          flecha.lineTo(38 * escalaUi, topY + 22 * escalaUi);
+          flecha.moveTo(27 * escalaUi, topY + 12 * escalaUi);
+          flecha.lineTo(48 * escalaUi, topY + 12 * escalaUi);
           flecha.strokePath();
 
-          const titleWidth = Phaser.Math.Clamp(width * 0.25, 260 * escalaUi, 460 * escalaUi);
+          const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 10 * escalaUi, titleWidth, 58 * escalaUi, 10 * escalaUi);
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 44 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 39 * escalaUi, "Memoria", {
-              fontSize: `${Phaser.Math.Clamp(44 * escalaUi, 32, 54)}px`,
+            .text(width / 2, 30 * escalaUi, "Memoria", {
+              fontSize: `${Phaser.Math.Clamp(32 * escalaUi, 22, 42)}px`,
               fontFamily,
               color: "#ffffff",
               stroke: "#d28b00",
-              strokeThickness: 5 * escalaUi,
+              strokeThickness: 4 * escalaUi,
               fontStyle: "800",
             })
             .setOrigin(0.5);
 
-          const puntosTexto = `${points} puntos`;
-          const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
-          const scoreX = width - scoreWidth - 38 * escalaUi;
+          const puntosTexto = `${points} pts`;
+          const scoreWidth = Phaser.Math.Clamp(80 * escalaUi + puntosTexto.length * 6 * escalaUi, 110 * escalaUi, 200 * escalaUi);
+          const scoreX = width - scoreWidth - 16 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
-          scoreBg.lineStyle(3 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
-          this.add.star(scoreX + 26 * escalaUi, 36 * escalaUi, 5, 11 * escalaUi, 22 * escalaUi, amarillo);
+          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
+          scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
+          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
+          this.add.star(scoreX + 16 * escalaUi, 27 * escalaUi, 5, 7 * escalaUi, 14 * escalaUi, amarillo);
           this.add
-            .text(scoreX + 54 * escalaUi, 36 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
+            .text(scoreX + 34 * escalaUi, 27 * escalaUi, puntosTexto, {
+              fontSize: `${Phaser.Math.Clamp(15 * escalaUi, 12, 19)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
             })
             .setOrigin(0, 0.5);
 
-          this.add
-            .text(width / 2, 92 * escalaUi, "Encuentra los pares", {
-              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 22, 36)}px`,
-              fontFamily,
-              color: azulTexto,
-              fontStyle: "800",
-            })
-            .setOrigin(0.5)
-            .setStroke("#ffffff", 6 * escalaUi);
-
-          const marcadorWidth = Phaser.Math.Clamp(width * 0.24, 210 * escalaUi, 390 * escalaUi);
+          const marcadorWidth = Phaser.Math.Clamp(width * 0.4, 160, 260);
           const marcadorBg = this.add.graphics();
           marcadorBg.fillStyle(amarillo, 1);
-          marcadorBg.fillRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 13 * escalaUi);
-          marcadorBg.lineStyle(4 * escalaUi, 0x06398a, 1);
-          marcadorBg.strokeRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 13 * escalaUi);
+          marcadorBg.fillRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 10 * escalaUi);
+          marcadorBg.lineStyle(3 * escalaUi, 0x06398a, 1);
+          marcadorBg.strokeRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 10 * escalaUi);
 
           this.textoMarcador = this.add
             .text(width / 2, marcadorY + marcadorHeight / 2, `Pares: 0/${this.totalPares}`, {
-              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 22, 34)}px`,
+              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 15, 26)}px`,
               fontFamily,
               color: "#003895",
               fontStyle: "800",
@@ -276,55 +294,64 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             .setOrigin(0.5);
         }
 
-        crearEncabezadoColumnas(xSignificados: number, xSenias: number, y: number, escalaUi: number) {
-          const crearEtiqueta = (x: number, texto: string) => {
-            const widthEtiqueta = 176 * escalaUi;
-            const heightEtiqueta = 36 * escalaUi;
-            const bg = this.add.graphics();
-            bg.fillStyle(0xffd32a, 1);
-            bg.fillRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 12 * escalaUi);
-            bg.lineStyle(3 * escalaUi, 0x06398a, 1);
-            bg.strokeRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 12 * escalaUi);
+        crearEtiqueta(x: number, y: number, texto: string, escalaUi: number) {
+          const widthEtiqueta = 140 * escalaUi;
+          const heightEtiqueta = 28 * escalaUi;
+          const bg = this.add.graphics();
+          bg.fillStyle(0xffd32a, 1);
+          bg.fillRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 8 * escalaUi);
+          bg.lineStyle(2 * escalaUi, 0x06398a, 1);
+          bg.strokeRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 8 * escalaUi);
 
-            this.add
-              .text(x, y, texto, {
-                fontSize: `${Phaser.Math.Clamp(19 * escalaUi, 16, 24)}px`,
-                fontFamily,
-                color: "#003895",
-                fontStyle: "800",
-              })
-              .setOrigin(0.5);
-          };
-
-          crearEtiqueta(xSignificados, "SIGNIFICADOS");
-          crearEtiqueta(xSenias, "SEÑAS");
+          this.add
+            .text(x, y, texto, {
+              fontSize: `${Phaser.Math.Clamp(14 * escalaUi, 11, 18)}px`,
+              fontFamily,
+              color: "#003895",
+              fontStyle: "800",
+            })
+            .setOrigin(0.5);
         }
 
-        crearGrupo(items: string[], tipo: string, layout: GridLayout) {
-          const columnas = 4;
-          const bloqueWidth = layout.cardWidth * columnas + layout.gapX * (columnas - 1);
-          const startX = layout.centerX - bloqueWidth / 2 + layout.cardWidth / 2;
+        crearGrupoLayout(
+          items: string[],
+          tipo: string,
+          config: {
+            cols: number;
+            cardWidth: number;
+            cardHeight: number;
+            startX: number;
+            startY: number;
+            gapX: number;
+            gapY: number;
+            escalaUi: number;
+          }
+        ) {
+          const totalWidth = config.cols * config.cardWidth + (config.cols - 1) * config.gapX;
+          const originX = config.startX - totalWidth / 2 + config.cardWidth / 2;
 
           items.forEach((item, index) => {
             if (!item) return;
 
-            const columna = index % columnas;
-            const fila = Math.floor(index / columnas);
-            const x = startX + columna * (layout.cardWidth + layout.gapX);
-            const y = layout.startY + fila * (layout.cardHeight + layout.gapY);
-            const carta = this.add.container(x, y);
-            carta.setSize(layout.cardWidth, layout.cardHeight);
-            carta.setInteractive();
+            const c = index % config.cols;
+            const r = Math.floor(index / config.cols);
 
-            const fondoObj = this.add.image(0, 0, "fondoFicha").setDisplaySize(layout.cardWidth, layout.cardHeight);
+            const x = originX + c * (config.cardWidth + config.gapX);
+            const y = config.startY + r * (config.cardHeight + config.gapY);
+
+            const carta = this.add.container(x, y);
+            carta.setSize(config.cardWidth, config.cardHeight);
+            carta.setInteractive({ useHandCursor: true });
+
+            const fondoObj = this.add.image(0, 0, "fondoFicha").setDisplaySize(config.cardWidth, config.cardHeight);
             let contenidoVisible: CardContent;
 
             if (tipo === "senia") {
               const elementoImg = document.createElement("img");
-              elementoImg.style.width = `${Math.round(layout.cardWidth * 0.96)}px`;
-              elementoImg.style.height = `${Math.round(layout.cardHeight * 0.96)}px`;
+              elementoImg.style.width = `${Math.round(config.cardWidth * 0.92)}px`;
+              elementoImg.style.height = `${Math.round(config.cardHeight * 0.92)}px`;
               elementoImg.style.objectFit = "contain";
-              elementoImg.style.borderRadius = "12px";
+              elementoImg.style.borderRadius = "8px";
               elementoImg.style.pointerEvents = "none";
 
               const archivoImportado = diccionarioGifs[item];
@@ -336,13 +363,13 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             } else {
               contenidoVisible = this.add
                 .text(0, 0, item, {
-                  fontSize: `${Math.max(20, 26 * layout.escalaUi)}px`,
+                  fontSize: `${Math.round(Phaser.Math.Clamp(config.cardWidth * 0.22, 12, 22))}px`,
                   fontFamily,
                   color: "#003895",
                   stroke: "#ffffff",
-                  strokeThickness: 3 * layout.escalaUi,
+                  strokeThickness: 2 * config.escalaUi,
                   fontStyle: "800",
-                  wordWrap: { width: layout.cardWidth * 0.85 },
+                  wordWrap: { width: config.cardWidth * 0.85 },
                   align: "center",
                 })
                 .setOrigin(0.5);
@@ -360,31 +387,29 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
         }
 
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
-          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6, 0x00d2d3];
+          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
 
-          for (let i = 0; i < 90; i++) {
+          for (let i = 0; i < 40; i++) {
             const color = Phaser.Utils.Array.GetRandom(colores);
-            const ancho = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
-            const alto = Phaser.Math.Between(8 * escalaUi, 18 * escalaUi);
+            const size = Phaser.Math.Between(5 * escalaUi, 10 * escalaUi);
 
-            const papelito = this.add.rectangle(origenX, origenY, ancho, alto, color);
+            const papelito = this.add.rectangle(origenX, origenY, size, size, color);
             papelito.setAngle(Phaser.Math.Between(0, 360));
 
             const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1);
-            const velocidad = Phaser.Math.Between(200 * escalaUi, 550 * escalaUi);
-            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-80, 80);
-            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(150, 300);
+            const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad;
+            const targetY = origenY + Math.sin(angulo) * velocidad + 100;
 
             this.tweens.add({
               targets: papelito,
               x: targetX,
               y: targetY,
-              angle: papelito.angle + Phaser.Math.Between(720, 1440),
-              scaleX: { from: 1, to: Phaser.Math.FloatBetween(0.2, 0.8) },
-              alpha: { from: 1, to: 0 },
-              duration: Phaser.Math.Between(1400, 2200),
+              angle: papelito.angle + Phaser.Math.Between(360, 720),
+              alpha: 0,
+              duration: Phaser.Math.Between(1000, 1500),
               ease: "Cubic.easeOut",
-              onComplete: () => papelito.destroy()
+              onComplete: () => papelito.destroy(),
             });
           }
         }
@@ -408,7 +433,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           this.tweens.add({
             targets: carta,
             scaleX: 0,
-            duration: 150,
+            duration: 120,
             yoyo: true,
             onYoyo: () => {
               contenidoVisible.setVisible(true);
@@ -436,7 +461,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
               this.lanzarConfeti(this.primeraCarta.carta.x, this.primeraCarta.carta.y, this.escalaUiGlobal);
               this.lanzarConfeti(this.segundaCarta.carta.x, this.segundaCarta.carta.y, this.escalaUiGlobal);
 
-              this.time.delayedCall(500, () => {
+              this.time.delayedCall(400, () => {
                 if (!this.primeraCarta || !this.segundaCarta) return;
 
                 this.primeraCarta.fondoObj.setTint(0x4be06d);
@@ -453,15 +478,15 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
                 }
 
                 if (this.aciertos === this.totalPares) {
-                  this.time.delayedCall(7000, () => {
-                    window.history.back();
+                  this.time.delayedCall(2000, () => {
+                    this.scene.start("PantallaFin");
                   });
                 } else {
                   this.resetSeleccion();
                 }
               });
             } else {
-              this.time.delayedCall(1000, () => {
+              this.time.delayedCall(800, () => {
                 if (this.primeraCarta && this.segundaCarta) {
                   this.ocultarCarta(this.primeraCarta);
                   this.ocultarCarta(this.segundaCarta);
@@ -476,7 +501,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           this.tweens.add({
             targets: obj.carta,
             scaleX: 0,
-            duration: 150,
+            duration: 120,
             yoyo: true,
             onYoyo: () => {
               obj.fondoObj.clearTint();
@@ -500,23 +525,23 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 480, height / 650), 0.65, 1.15);
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
-          const panelWidth = Phaser.Math.Clamp(width * 0.68, 240 * escalaUi, 380 * escalaUi);
-          const panelHeight = 150 * escalaUi;
+          const panelWidth = Phaser.Math.Clamp(width * 0.8, 220, 360);
+          const panelHeight = 140 * escalaUi;
           const panelX = width / 2 - panelWidth / 2;
           const panelY = height / 2 - panelHeight / 2;
           const panel = this.add.graphics();
           panel.fillStyle(0xffd32a, 1);
-          panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
-          panel.lineStyle(5 * escalaUi, 0x06398a, 1);
-          panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18 * escalaUi);
+          panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 16 * escalaUi);
+          panel.lineStyle(4 * escalaUi, 0x06398a, 1);
+          panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 16 * escalaUi);
 
           const resultadoTexto = this.add
-            .text(width / 2, height / 2 - 28 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
-              fontSize: `${26 * escalaUi}px`,
+            .text(width / 2, height / 2 - 24 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
+              fontSize: `${Math.round(20 * escalaUi)}px`,
               fontFamily,
               color: "#003895",
               align: "center",
@@ -525,12 +550,12 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             .setOrigin(0.5);
 
           const botonFinal = this.add
-            .text(width / 2, height / 2 + 48 * escalaUi, "Guardando...", {
-              fontSize: `${20 * escalaUi}px`,
+            .text(width / 2, height / 2 + 36 * escalaUi, "Guardando...", {
+              fontSize: `${Math.round(18 * escalaUi)}px`,
               fontFamily,
               color: "#ffffff",
               backgroundColor: "#7f8c8d",
-              padding: { x: 22, y: 8 },
+              padding: { x: 18, y: 6 },
             })
             .setOrigin(0.5);
 
@@ -539,7 +564,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             completeGame("memoria", 0, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
-                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`,
+                  `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
                 botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
                 botonFinal.setInteractive({ useHandCursor: true });
@@ -592,5 +617,9 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
     };
   }, [palabras, onParAdivinado, points, origin]);
 
-  return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      <div ref={gameRef} style={{ width: "100%", height: "100%" }} />
+    </div>
+  );
 }
