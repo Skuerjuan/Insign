@@ -7,7 +7,7 @@
   place-items: center;
   padding: clamp(82px, 12vh, 128px) clamp(22px, 6vw, 96px) 32px;
   color: #002d72;
-  background: url("/FondoInicioSesion.png") center / cover no-repeat;
+  background: var(--app-page-background) center / cover no-repeat;
   font-family: var(--font-baloo), sans-serif;
 }
 
@@ -145,7 +145,7 @@
   align-self: end;
   padding: clamp(34px, 5vh, 58px) clamp(32px, 5vw, 70px) clamp(28px, 4vh, 46px);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--app-surface-background);
   box-shadow: 0 12px 28px rgba(0, 73, 115, 0.13);
   text-align: center;
 }
@@ -175,7 +175,7 @@
 
 .title {
   margin: 0;
-  color: #062e6e;
+  color: var(--app-surface-foreground);
   font-size: clamp(34px, 4vw, 54px);
   font-weight: 800;
   line-height: 1;
@@ -184,7 +184,7 @@
 .description {
   max-width: 540px;
   margin: 10px auto 18px;
-  color: #062e6e;
+  color: var(--app-surface-foreground);
   font-size: clamp(18px, 2vw, 27px);
   font-weight: 700;
   line-height: 1.14;
@@ -290,7 +290,7 @@
 }
 .codeInput:focus { outline: 4px solid rgba(18, 108, 255, 0.18); }
 
-.resend { margin: 0 0 12px; color: #062e6e; font-size: 13px; font-weight: 600; }
+.resend { margin: 0 0 12px; color: var(--app-surface-foreground); font-size: 13px; font-weight: 600; }
 .resend button { border: 0; padding: 0; color: #126cff; background: none; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; }
 .fallbackEmail { width: 100%; min-height: 44px; border: 2px solid #245bd3; border-radius: 6px; padding: 0 12px; font: 600 16px var(--font-baloo), sans-serif; }
 .message { margin: 10px 0 0; color: #b42318; font-size: 14px; font-weight: 700; }

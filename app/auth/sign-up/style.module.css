@@ -5,7 +5,7 @@
   place-items: center;
   padding: clamp(24px, 3vw, 48px);
   overflow: hidden;
-  background: url("/FondoInicioSesion.png") center / cover no-repeat;
+  background: var(--app-page-background) center / cover no-repeat;
 }
 
 .authLayout {
@@ -85,7 +85,7 @@
   justify-content: center;
   padding: clamp(18px, 2.6vh, 24px) clamp(30px, 3vw, 42px);
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--app-surface-background);
   --auth-field-height: 52px;
   --auth-field-margin: 0;
 }
@@ -94,7 +94,7 @@
   display: flex;
   justify-content: center;
   margin: 0 0 26px;
-  color: #0042ad;
+  color: var(--app-surface-foreground);
   font-family: var(--font-baloo);
   font-size: clamp(40px, 5vw, 58px);
   font-weight: 700;

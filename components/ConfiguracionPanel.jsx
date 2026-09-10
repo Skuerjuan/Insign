@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "@/app/configuracion/styles.module.css";
@@ -11,6 +11,27 @@ export default function ConfiguracionPanel() {
   const [tema, setTema] = useState("claro");
   const router = useRouter();
 
+  useEffect(() => {
+    const sincronizarTema = () => {
+      const temaGuardado = localStorage.getItem("insign-theme");
+      setTema(temaGuardado === "oscuro" ? "oscuro" : "claro");
+    };
+
+    const frame = requestAnimationFrame(sincronizarTema);
+    window.addEventListener("storage", sincronizarTema);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("storage", sincronizarTema);
+    };
+  }, []);
+
+  const cambiarTema = (nuevoTema) => {
+    setTema(nuevoTema);
+    localStorage.setItem("insign-theme", nuevoTema);
+    document.documentElement.dataset.theme = nuevoTema === "oscuro" ? "dark" : "light";
+  };
+
   return (
     <main className={styles.settingsMain}>
       <section className={styles.card}>
@@ -19,8 +40,8 @@ export default function ConfiguracionPanel() {
         </div>
         <div className={styles.cardContent}>
           <h2>Apariencia</h2>
-          <label>Claro <input type="radio" name="tema" checked={tema === "claro"} onChange={() => setTema("claro")} /></label>
-          <label>Oscuro <input type="radio" name="tema" checked={tema === "oscuro"} onChange={() => setTema("oscuro")} /></label>
+          <label>Claro <input type="radio" name="tema" checked={tema === "claro"} onChange={() => cambiarTema("claro")} /></label>
+          <label>Oscuro <input type="radio" name="tema" checked={tema === "oscuro"} onChange={() => cambiarTema("oscuro")} /></label>
         </div>
       </section>
 

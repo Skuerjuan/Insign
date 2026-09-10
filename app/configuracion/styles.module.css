@@ -4,7 +4,7 @@
     display:grid; 
     grid-template-columns:320px minmax(0,1fr);
     overflow:hidden; 
-    background:#72cff4 url("/FondoInicioSesion.png") center/cover no-repeat; 
+    background:#72cff4 var(--app-page-background) center/cover no-repeat;
     font-family:var(--font-baloo); 
 }
 
@@ -12,7 +12,8 @@
     height:100dvh; 
     padding:25px 24px; 
     box-sizing:border-box; 
-    background:#126cff url("/asidevector.svg"); 
+    background-color:var(--app-sidebar-background);
+    background-image:url("/asidevector.svg");
 }
 .logo { 
     display:flex; 
@@ -75,7 +76,7 @@
     padding:14px clamp(20px,4vw,42px); 
     box-sizing:border-box; 
     border-bottom:8px solid #29afe6; 
-    background:#cde0ff; 
+    background:var(--app-header-background);
 }
 .pageTitle { 
     display:flex; 
@@ -137,8 +138,8 @@
     align-items:center; 
     gap:18px; border:0; 
     border-radius:14px; 
-    background:#fff; 
-    color:#14213d; 
+    background:var(--app-surface-background);
+    color:var(--app-surface-foreground);
     box-sizing:border-box; 
     font-family:var(--font-baloo); 
 }
@@ -261,6 +262,17 @@
     text-align:left; 
     font-family:var(--font-baloo); 
     cursor:pointer; }
+
+:global(html[data-theme="dark"]) .logout {
+    background:#001a43;
+    color:#fff;
+}
+
+:global(html[data-theme="dark"]) .optionCard small,
+:global(html[data-theme="dark"]) .logout small,
+:global(html[data-theme="dark"]) .optionCard b {
+    color:#fff;
+}
 .logout > span:first-child { 
     font-size:42px; 
 } 

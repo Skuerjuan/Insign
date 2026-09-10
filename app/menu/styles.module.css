@@ -1,5 +1,5 @@
 .fondo {
-  background-image: url("/FondoInicioSesion.png");
+  background-image: var(--app-page-background);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -41,7 +41,7 @@
 
 .aside {
     background-image: url("/asidevector.svg");
-    background-color: #126cff;
+    background-color: var(--app-sidebar-background);
     height: 100dvh;
     width: 100%;
     padding: 25px 24px;
@@ -142,7 +142,7 @@ flex: 0 0 auto;
 }
 
 .header {
-  background-color: #cde0ff;
+  background-color: var(--app-header-background);
   width: 100%;
   height: 150px;
   display: flex;
@@ -183,7 +183,7 @@ flex: 0 0 auto;
   justify-content: center;
   gap: 16px;
   border-radius: 20px;
-  background: #fff;
+  background: var(--app-surface-background);
   flex: 0 0 auto;
 }
 
@@ -202,7 +202,7 @@ flex: 0 0 auto;
 
 .statItem strong {
   display: block;
-  color: #000;
+  color: var(--app-surface-foreground);
   font-size: 28px;
   font-weight: 900;
   line-height: 0.9;
@@ -210,7 +210,7 @@ flex: 0 0 auto;
 
 .statItem span:last-child {
   display: block;
-  color: #000;
+  color: var(--app-surface-foreground);
   font-size: 20px;
   font-weight: 500;
   line-height: 1;
@@ -291,6 +291,19 @@ flex: 0 0 auto;
   background: #fff;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
   z-index: 2;
+}
+
+:global(html[data-theme="dark"]) .levelCard {
+  background: #001a43;
+}
+
+:global(html[data-theme="dark"]) .levelCard:not(:hover) > * {
+  opacity: 1;
+}
+
+:global(html[data-theme="dark"]) .levelCard:not(:hover) .levelInfo h3,
+:global(html[data-theme="dark"]) .levelCard:not(:hover) .levelInfo p {
+  color: #fff;
 }
 
 .levelCard:not(:hover) > * {

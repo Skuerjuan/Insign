@@ -11,7 +11,7 @@
   padding: 36px;
   border: 1px solid rgba(0, 66, 173, 0.14);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--app-surface-background);
   box-shadow: 0 18px 48px rgba(0, 66, 173, 0.18);
 }
 
@@ -31,7 +31,7 @@
 
 .title {
   margin: 0;
-  color: #113b78;
+  color: var(--app-surface-foreground);
   font-family: var(--font-baloo), sans-serif;
   font-size: 29px;
   line-height: 1.1;
@@ -39,7 +39,7 @@
 
 .description {
   margin: 8px 0 24px;
-  color: #55709a;
+  color: var(--app-surface-foreground);
   line-height: 1.45;
 }
 

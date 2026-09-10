@@ -84,6 +84,8 @@ export default function JuegoAdivinar({
       const Phaser = await import("phaser");
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
+      const fondoPantallaSrc =
+        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.png" : fondo.src;
 
       const crearPillBadge = (
         scene: Phaser.Scene,
@@ -177,7 +179,7 @@ export default function JuegoAdivinar({
 
         preload() {
           this.load.image("fondoFicha", fondoCartas.src);
-          this.load.image("fondoPantalla", fondo.src);
+          this.load.image("fondoPantalla", fondoPantallaSrc);
         }
 
         create() {

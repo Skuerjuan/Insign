@@ -5,7 +5,7 @@
   grid-template-columns: 320px minmax(0, 1fr);
   overflow: hidden;
   background-color: #72cff4;
-  background-image: url("/FondoInicioSesion.png");
+  background-image: var(--app-page-background);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19,7 +19,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 25px 24px;
-  background-color: #126cff;
+  background-color: var(--app-sidebar-background);
   background-image: url("/asidevector.svg");
 }
 
@@ -107,7 +107,7 @@
   gap: 24px;
   padding: 14px clamp(20px, 4vw, 42px);
   border-bottom: 8px solid #29afe6;
-  background: #cde0ff;
+  background: var(--app-header-background);
 }
 
 .pageTitle {
@@ -135,7 +135,7 @@
   place-items: center;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #fff;
+  background: var(--app-surface-background);
 }
 
 .titleIcon img {
@@ -176,7 +176,7 @@
   width: 100%;
   min-height: 0;
   border-radius: 14px;
-  background: #fff;
+  background: var(--app-surface-background);
 }
 
 .practiceSection {
@@ -186,7 +186,7 @@
 .practiceSection h2,
 .streakPanel h2 {
   margin: 0;
-  color: #052c79;
+  color: var(--app-surface-foreground);
   font-size: clamp(20px, 2.4vw, 26px);
   font-weight: 900;
   line-height: 1;
@@ -331,7 +331,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: #052c79;
+  color: var(--app-surface-foreground);
   font-size: clamp(13px, 1.4vw, 17px);
   font-weight: 900;
 }
