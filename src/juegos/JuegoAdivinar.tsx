@@ -7,40 +7,19 @@ import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
-type GifImport = string | { src: string };
-type WebpackRequire = NodeJS.Require & {
-  context: (
-    path: string,
-    useSubdirectories: boolean,
-    regExp: RegExp
-  ) => {
-    keys: () => string[];
-    (id: string): { default?: GifImport } | GifImport;
-  };
-};
+// Lista base de palabras de tu carpeta public/nivel1 (asegúrate de incluir los nombres de tus videos sin extensión)
+const PALABRAS_DEFECTO = [
+  "Ayuda",
+  "Hola",
+  "Chau",
+  "Gracias",
+  "Bien",
+  "Mal",
+  "Por favor",
+  "Perdon",
+  "Nombre",
+];
 
-const diccionarioGifs: Record<string, GifImport> = {};
-
-try {
-  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
-
-  contextoGifs.keys().forEach((rutaArchivo: string) => {
-    const moduloGif = contextoGifs(rutaArchivo);
-    const nombrePalabra = rutaArchivo.replace(/^\.\//, "").replace(/\.gif$/, "");
-    const gifImport =
-      typeof moduloGif === "object" && "default" in moduloGif && moduloGif.default
-        ? moduloGif.default
-        : moduloGif;
-
-    if (typeof gifImport === "string" || ("src" in gifImport && typeof gifImport.src === "string")) {
-      diccionarioGifs[nombrePalabra] = gifImport;
-    }
-  });
-} catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
-}
-
-const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoAdivinarProps {
@@ -187,11 +166,7 @@ export default function JuegoAdivinar({
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          const mazoBase =
-            palabrasd.length >= 6
-              ? palabrasd
-              : ["Hola", "Chau", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"];
-          this.mazoJuego = palabras && palabras.length >= 6 ? palabras : mazoBase;
+          this.mazoJuego = palabras && palabras.length >= 6 ? palabras : PALABRAS_DEFECTO;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -310,37 +285,38 @@ export default function JuegoAdivinar({
 
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
 
-          this.dibujarPanelGifPrincipal(width, height, escalaUi);
+          this.dibujarPanelVideoPrincipal(width, height, escalaUi);
           this.dibujarBotoneraColumnas(width, height, escalaUi);
         }
 
-        dibujarPanelGifPrincipal(width: number, height: number, escalaUi: number) {
+        dibujarPanelVideoPrincipal(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height;
           const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.65 : 0.35), 180, 320);
           const panelHeight = panelWidth * 0.75;
           const centroX = width / 2;
           const centroY = isPortrait ? height * 0.30 : height * 0.36;
 
-          const elementoImg = document.createElement("img");
-          elementoImg.style.width = `${Math.round(panelWidth)}px`;
-          elementoImg.style.height = `${Math.round(panelHeight)}px`;
-          elementoImg.style.objectFit = "contain";
-          elementoImg.style.borderRadius = "12px";
-          elementoImg.style.pointerEvents = "none";
+          const elementoVideo = document.createElement("video");
+          elementoVideo.style.width = `${Math.round(panelWidth)}px`;
+          elementoVideo.style.height = `${Math.round(panelHeight)}px`;
+          elementoVideo.style.objectFit = "contain";
+          elementoVideo.style.borderRadius = "12px";
+          elementoVideo.style.pointerEvents = "none";
 
-          const archivoImportado = diccionarioGifs[this.palabraObjetivo];
-          if (archivoImportado) {
-            const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
-            elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
-          }
+          elementoVideo.autoplay = true;
+          elementoVideo.loop = true;
+          elementoVideo.muted = true;
+          elementoVideo.playsInline = true;
 
-          this.add.dom(centroX, centroY, elementoImg);
+          // Se asigna directamente la ruta estática desde public/nivel1
+          elementoVideo.src = `/nivel1/${this.palabraObjetivo}.mp4`;
+
+          this.add.dom(centroX, centroY, elementoVideo);
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height || width < 550;
           const cols = isPortrait ? 2 : 3;
-          const rows = isPortrait ? 3 : 2;
 
           const botonWidth = Phaser.Math.Clamp(
             (width * 0.88 - (cols - 1) * 12 * escalaUi) / cols,
