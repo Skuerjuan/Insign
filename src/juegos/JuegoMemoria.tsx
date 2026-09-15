@@ -5,40 +5,15 @@ import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
-type GifImport = string | { src: string };
-type WebpackRequire = NodeJS.Require & {
-  context: (
-    path: string,
-    useSubdirectories: boolean,
-    regExp: RegExp
-  ) => {
-    keys: () => string[];
-    (id: string): { default?: GifImport } | GifImport;
-  };
-};
+const PALABRAS_DEFECTO = [
+  "Hola",
+  "Chau",
+  "Gracias",
+  "Bien",
+  "Mal",
+  "Por favor",
+];
 
-const diccionarioGifs: Record<string, GifImport> = {};
-
-try {
-  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
-
-  contextoGifs.keys().forEach((rutaArchivo: string) => {
-    const moduloGif = contextoGifs(rutaArchivo);
-    const nombrePalabra = rutaArchivo.replace(/^\.\//, "").replace(/\.gif$/, "");
-    const gifImport =
-      typeof moduloGif === "object" && "default" in moduloGif && moduloGif.default
-        ? moduloGif.default
-        : moduloGif;
-
-    if (typeof gifImport === "string" || ("src" in gifImport && typeof gifImport.src === "string")) {
-      diccionarioGifs[nombrePalabra] = gifImport;
-    }
-  });
-} catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automaticamente:", e);
-}
-
-const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoMemoriaProps {
@@ -113,11 +88,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           this.bloqueado = false;
           this.aciertos = 0;
 
-          const mazoBase =
-            palabrasd.length > 0
-              ? palabrasd
-              : ["Hola", "Adios", "Gracias", "Bien", "Mal", "Por favor", "Mama", "Ayuda"];
-          const pares = palabras && palabras.length > 0 ? palabras : mazoBase;
+          const pares = palabras && palabras.length > 0 ? palabras : PALABRAS_DEFECTO;
           this.totalPares = pares.length;
 
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
@@ -132,94 +103,48 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
 
           this.crearHud(width, height, escalaUi, marcadorY, marcadorHeight);
 
-          if (isPortrait) {
-            const cols = Math.min(pares.length, 3);
-            const gapX = 8 * escalaUi;
-            const gapY = 8 * escalaUi;
+          const cols = Math.min(pares.length, 3);
+          const gapX = 8 * escalaUi;
+          const gapY = 8 * escalaUi;
+          const topY = 110 * escalaUi;
+          const availHeight = marcadorY - topY - 20 * escalaUi;
 
-            const topY = 110 * escalaUi;
-            const availHeight = marcadorY - topY - 20 * escalaUi;
+          const rowsTotal = Math.ceil(pares.length / cols) * 2;
+          const cardSizeByHeight = (availHeight - (rowsTotal + 1) * gapY) / rowsTotal;
+          const cardSizeByWidth = (width * 0.92 - (cols - 1) * gapX) / cols;
 
-            const rowsTotal = Math.ceil(pares.length / cols) * 2;
-            const cardSizeByHeight = (availHeight - (rowsTotal + 1) * gapY) / rowsTotal;
-            const cardSizeByWidth = (width * 0.92 - (cols - 1) * gapX) / cols;
+          const cardWidth = Math.floor(Math.min(cardSizeByWidth, cardSizeByHeight));
+          const cardHeight = cardWidth;
 
-            const cardWidth = Math.floor(Math.min(cardSizeByWidth, cardSizeByHeight));
-            const cardHeight = cardWidth;
+          const significadosRows = Math.ceil(significados.length / cols);
+          const ySignificadosStart = topY + 25 * escalaUi;
 
-            const significadosRows = Math.ceil(significados.length / cols);
-            const section1Height = significadosRows * cardHeight + (significadosRows - 1) * gapY;
-            const ySignificadosStart = topY + 25 * escalaUi;
+          significados.forEach((palabra, index) => {
+            const r = Math.floor(index / cols);
+            const c = index % cols;
+            const itemsInRow = r === significadosRows - 1 ? significados.length - r * cols : cols;
+            const rowWidth = itemsInRow * cardWidth + (itemsInRow - 1) * gapX;
+            const startX = width / 2 - rowWidth / 2 + cardWidth / 2;
 
-            this.crearEtiqueta(width / 2, topY + 10 * escalaUi, "SIGNIFICADOS", escalaUi);
-            this.crearGrupoLayout(significados, "significado", {
-              cols,
-              cardWidth,
-              cardHeight,
-              startX: width / 2,
-              startY: ySignificadosStart + cardHeight / 2,
-              gapX,
-              gapY,
-              escalaUi,
-            });
+            const x = startX + c * (cardWidth + gapX);
+            const y = ySignificadosStart + r * (cardHeight + gapY);
 
-            const ySeniasHeader = ySignificadosStart + section1Height + 15 * escalaUi;
-            const ySeniasStart = ySeniasHeader + 15 * escalaUi;
+            this.crearCartaTexto(x, y, cardWidth, cardHeight, palabra, escalaUi);
+          });
 
-            this.crearEtiqueta(width / 2, ySeniasHeader, "SEÑAS", escalaUi);
-            this.crearGrupoLayout(senias, "senia", {
-              cols,
-              cardWidth,
-              cardHeight,
-              startX: width / 2,
-              startY: ySeniasStart + cardHeight / 2,
-              gapX,
-              gapY,
-              escalaUi,
-            });
-          } else {
-            const cols = 4;
-            const gapX = 10 * escalaUi;
-            const gapY = 10 * escalaUi;
-            const groupGapX = 24 * escalaUi;
-            const labelsY = 85 * escalaUi;
-            const startY = labelsY + 35 * escalaUi;
+          const ySeniasStart = ySignificadosStart + significadosRows * (cardHeight + gapY) + 20 * escalaUi;
 
-            const totalWidthAvailable = width * 0.94;
-            const blockWidth = (totalWidthAvailable - groupGapX) / 2;
-            const cardWidth = Math.floor((blockWidth - (cols - 1) * gapX) / cols);
-            const cardHeight = cardWidth;
+          senias.forEach((palabra, index) => {
+            const r = Math.floor(index / cols);
+            const c = index % cols;
+            const itemsInRow = r === Math.ceil(senias.length / cols) - 1 ? senias.length - r * cols : cols;
+            const rowWidth = itemsInRow * cardWidth + (itemsInRow - 1) * gapX;
+            const startX = width / 2 - rowWidth / 2 + cardWidth / 2;
 
-            const leftBlockCenterX = width / 2 - blockWidth / 2 - groupGapX / 2;
-            const rightBlockCenterX = width / 2 + blockWidth / 2 + groupGapX / 2;
+            const x = startX + c * (cardWidth + gapX);
+            const y = ySeniasStart + r * (cardHeight + gapY);
 
-            this.crearEtiqueta(leftBlockCenterX, labelsY, "SIGNIFICADOS", escalaUi);
-            this.crearGrupoLayout(significados, "significado", {
-              cols,
-              cardWidth,
-              cardHeight,
-              startX: leftBlockCenterX,
-              startY: startY + cardHeight / 2,
-              gapX,
-              gapY,
-              escalaUi,
-            });
-
-            this.crearEtiqueta(rightBlockCenterX, labelsY, "SEÑAS", escalaUi);
-            this.crearGrupoLayout(senias, "senia", {
-              cols,
-              cardWidth,
-              cardHeight,
-              startX: rightBlockCenterX,
-              startY: startY + cardHeight / 2,
-              gapX,
-              gapY,
-              escalaUi,
-            });
-          }
-
-          this.scale.on("resize", () => {
-            this.scene.restart();
+            this.crearCartaVideo(x, y, cardWidth, cardHeight, palabra, escalaUi);
           });
         }
 
@@ -227,7 +152,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const azul = 0x1e78ff;
           const amarillo = 0xffd32a;
           const azulTexto = "#05215b";
-          const topY = Math.max(30 * escalaUi, height * 0.05);
+          const topY = Math.max(30 * escalaUi, height * 0.06);
 
           const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 18 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
@@ -277,129 +202,194 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
             })
             .setOrigin(0, 0.5);
 
-          const marcadorWidth = Phaser.Math.Clamp(width * 0.4, 160, 260);
-          const marcadorBg = this.add.graphics();
-          marcadorBg.fillStyle(amarillo, 1);
-          marcadorBg.fillRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 10 * escalaUi);
-          marcadorBg.lineStyle(3 * escalaUi, 0x06398a, 1);
-          marcadorBg.strokeRoundedRect(width / 2 - marcadorWidth / 2, marcadorY, marcadorWidth, marcadorHeight, 10 * escalaUi);
+          const scoreParesBg = this.add.graphics();
+          scoreParesBg.fillStyle(0xfbc02d, 1);
+          scoreParesBg.fillRoundedRect(width / 2 - 80 * escalaUi, marcadorY, 160 * escalaUi, marcadorHeight, marcadorHeight / 2);
 
           this.textoMarcador = this.add
             .text(width / 2, marcadorY + marcadorHeight / 2, `Pares: 0/${this.totalPares}`, {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 15, 26)}px`,
+              fontSize: `${Math.round(18 * escalaUi)}px`,
               fontFamily,
-              color: "#003895",
+              color: "#05215b",
               fontStyle: "800",
             })
             .setOrigin(0.5);
         }
 
-        crearEtiqueta(x: number, y: number, texto: string, escalaUi: number) {
-          const widthEtiqueta = 140 * escalaUi;
-          const heightEtiqueta = 28 * escalaUi;
-          const bg = this.add.graphics();
-          bg.fillStyle(0xffd32a, 1);
-          bg.fillRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 8 * escalaUi);
-          bg.lineStyle(2 * escalaUi, 0x06398a, 1);
-          bg.strokeRoundedRect(x - widthEtiqueta / 2, y - heightEtiqueta / 2, widthEtiqueta, heightEtiqueta, 8 * escalaUi);
+        crearCartaTexto(x: number, y: number, w: number, h: number, palabra: string, escalaUi: number) {
+          const container = this.add.container(x, y);
+          container.setSize(w, h);
+          container.setInteractive({ useHandCursor: true });
 
-          this.add
-            .text(x, y, texto, {
-              fontSize: `${Phaser.Math.Clamp(14 * escalaUi, 11, 18)}px`,
+          const fondoFicha = this.add.image(0, 0, "fondoFicha").setDisplaySize(w, h);
+
+          const texto = this.add
+            .text(0, 0, palabra, {
+              fontSize: `${Math.round(18 * escalaUi)}px`,
               fontFamily,
-              color: "#003895",
-              fontStyle: "800",
+              color: "#05215b",
+              fontStyle: "bold",
+              align: "center",
+              wordWrap: { width: w - 10 },
             })
-            .setOrigin(0.5);
+            .setOrigin(0.5)
+            .setVisible(false);
+
+          container.add([fondoFicha, texto]);
+
+          container.setData("palabra", palabra);
+          container.setData("tipo", "texto");
+
+          container.on("pointerdown", () => this.alHacerClicCarta(container, fondoFicha, texto));
         }
 
-        crearGrupoLayout(
-          items: string[],
-          tipo: string,
-          config: {
-            cols: number;
-            cardWidth: number;
-            cardHeight: number;
-            startX: number;
-            startY: number;
-            gapX: number;
-            gapY: number;
-            escalaUi: number;
-          }
+        crearCartaVideo(x: number, y: number, w: number, h: number, palabra: string, escalaUi: number) {
+          const container = this.add.container(x, y);
+          container.setSize(w, h);
+          container.setInteractive({ useHandCursor: true });
+
+          const fondoFicha = this.add.image(0, 0, "fondoFicha").setDisplaySize(w, h);
+
+          const elementoVideo = document.createElement("video");
+          elementoVideo.style.width = `${w - 8}px`;
+          elementoVideo.style.height = `${h - 8}px`;
+          elementoVideo.style.objectFit = "cover";
+          elementoVideo.style.borderRadius = `${Math.round(8 * escalaUi)}px`;
+          elementoVideo.style.pointerEvents = "none";
+          elementoVideo.autoplay = true;
+          elementoVideo.loop = true;
+          elementoVideo.muted = true;
+          elementoVideo.playsInline = true;
+
+          elementoVideo.src = `/nivel1/${palabra}.mp4`;
+
+          const domVideo = this.add.dom(0, 0, elementoVideo).setVisible(false);
+
+          container.add([fondoFicha, domVideo]);
+
+          container.setData("palabra", palabra);
+          container.setData("tipo", "video");
+
+          container.on("pointerdown", () => this.alHacerClicCarta(container, fondoFicha, domVideo));
+        }
+
+        alHacerClicCarta(
+          carta: InstanceType<typeof Phaser.GameObjects.Container>,
+          fondoObj: CardBack,
+          contenidoVisible: CardContent
         ) {
-          const totalWidth = config.cols * config.cardWidth + (config.cols - 1) * config.gapX;
-          const originX = config.startX - totalWidth / 2 + config.cardWidth / 2;
+          if (this.bloqueado) return;
+          if (this.primeraCarta && this.primeraCarta.carta === carta) return;
 
-          items.forEach((item, index) => {
-            if (!item) return;
+          this.voltearCarta(carta, fondoObj, contenidoVisible, true);
 
-            const c = index % config.cols;
-            const r = Math.floor(index / config.cols);
+          if (!this.primeraCarta) {
+            this.primeraCarta = { carta, fondoObj, contenidoVisible };
+          } else {
+            this.segundaCarta = { carta, fondoObj, contenidoVisible };
+            this.bloqueado = true;
+            this.verificarPareja();
+          }
+        }
 
-            const x = originX + c * (config.cardWidth + config.gapX);
-            const y = config.startY + r * (config.cardHeight + config.gapY);
+        voltearCarta(
+          carta: InstanceType<typeof Phaser.GameObjects.Container>,
+          fondoObj: CardBack,
+          contenidoVisible: CardContent,
+          mostrarContenido: boolean
+        ) {
+          this.tweens.add({
+            targets: carta,
+            scaleX: 0,
+            duration: 120,
+            onComplete: () => {
+              fondoObj.setVisible(!mostrarContenido);
+              contenidoVisible.setVisible(mostrarContenido);
 
-            const carta = this.add.container(x, y);
-            carta.setSize(config.cardWidth, config.cardHeight);
-            carta.setInteractive({ useHandCursor: true });
+              this.tweens.add({
+                targets: carta,
+                scaleX: 1,
+                duration: 120,
+              });
+            },
+          });
+        }
 
-            const fondoObj = this.add.image(0, 0, "fondoFicha").setDisplaySize(config.cardWidth, config.cardHeight);
-            let contenidoVisible: CardContent;
+        verificarPareja() {
+          if (!this.primeraCarta || !this.segundaCarta) return;
 
-            if (tipo === "senia") {
-              const elementoImg = document.createElement("img");
-              elementoImg.style.width = `${Math.round(config.cardWidth * 0.92)}px`;
-              elementoImg.style.height = `${Math.round(config.cardHeight * 0.92)}px`;
-              elementoImg.style.objectFit = "contain";
-              elementoImg.style.borderRadius = "8px";
-              elementoImg.style.pointerEvents = "none";
+          const p1 = this.primeraCarta.carta.getData("palabra");
+          const p2 = this.segundaCarta.carta.getData("palabra");
+          const t1 = this.primeraCarta.carta.getData("tipo");
+          const t2 = this.segundaCarta.carta.getData("tipo");
 
-              const archivoImportado = diccionarioGifs[item];
-              if (archivoImportado) {
-                const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
-                elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
-              }
-              contenidoVisible = this.add.dom(0, 0, elementoImg);
-            } else {
-              contenidoVisible = this.add
-                .text(0, 0, item, {
-                  fontSize: `${Math.round(Phaser.Math.Clamp(config.cardWidth * 0.22, 12, 22))}px`,
-                  fontFamily,
-                  color: "#003895",
-                  stroke: "#ffffff",
-                  strokeThickness: 2 * config.escalaUi,
-                  fontStyle: "800",
-                  wordWrap: { width: config.cardWidth * 0.85 },
-                  align: "center",
-                })
-                .setOrigin(0.5);
+          if (p1 === p2 && t1 !== t2) {
+            this.aciertos++;
+            if (this.textoMarcador) {
+              this.textoMarcador.setText(`Pares: ${this.aciertos}/${this.totalPares}`);
             }
 
-            contenidoVisible.setVisible(false);
+            if (typeof onParAdivinado === "function") {
+              onParAdivinado(this.aciertos);
+            }
 
-            carta.add([fondoObj, contenidoVisible]);
-            carta.setData("valor", item);
-            carta.setData("tipo", tipo);
-            carta.setData("volteada", false);
+            this.time.delayedCall(400, () => {
+              if (this.primeraCarta && this.segundaCarta) {
+                this.lanzarConfeti(this.primeraCarta.carta.x, this.primeraCarta.carta.y, this.escalaUiGlobal);
+                this.lanzarConfeti(this.segundaCarta.carta.x, this.segundaCarta.carta.y, this.escalaUiGlobal);
 
-            carta.on("pointerdown", () => this.voltearCarta(carta, fondoObj, contenidoVisible));
-          });
+                this.primeraCarta.carta.disableInteractive();
+                this.segundaCarta.carta.disableInteractive();
+
+                this.primeraCarta = null;
+                this.segundaCarta = null;
+                this.bloqueado = false;
+
+                if (this.aciertos >= this.totalPares) {
+                  this.time.delayedCall(800, () => {
+                    this.scene.start("PantallaFin");
+                  });
+                }
+              }
+            });
+          } else {
+            this.time.delayedCall(800, () => {
+              if (this.primeraCarta && this.segundaCarta) {
+                this.voltearCarta(
+                  this.primeraCarta.carta,
+                  this.primeraCarta.fondoObj,
+                  this.primeraCarta.contenidoVisible,
+                  false
+                );
+                this.voltearCarta(
+                  this.segundaCarta.carta,
+                  this.segundaCarta.fondoObj,
+                  this.segundaCarta.contenidoVisible,
+                  false
+                );
+
+                this.primeraCarta = null;
+                this.segundaCarta = null;
+                this.bloqueado = false;
+              }
+            });
+          }
         }
 
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
           const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
 
-          for (let i = 0; i < 40; i++) {
+          for (let i = 0; i < 20; i++) {
             const color = Phaser.Utils.Array.GetRandom(colores);
-            const size = Phaser.Math.Between(5 * escalaUi, 10 * escalaUi);
+            const size = Phaser.Math.Between(4 * escalaUi, 8 * escalaUi);
 
             const papelito = this.add.rectangle(origenX, origenY, size, size, color);
             papelito.setAngle(Phaser.Math.Between(0, 360));
 
-            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1);
-            const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
+            const angulo = Phaser.Math.FloatBetween(-Math.PI, 0);
+            const velocidad = Phaser.Math.Between(80 * escalaUi, 200 * escalaUi);
             const targetX = origenX + Math.cos(angulo) * velocidad;
-            const targetY = origenY + Math.sin(angulo) * velocidad + 100;
+            const targetY = origenY + Math.sin(angulo) * velocidad + 80;
 
             this.tweens.add({
               targets: papelito,
@@ -407,114 +397,11 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
               y: targetY,
               angle: papelito.angle + Phaser.Math.Between(360, 720),
               alpha: 0,
-              duration: Phaser.Math.Between(1000, 1500),
+              duration: Phaser.Math.Between(800, 1200),
               ease: "Cubic.easeOut",
               onComplete: () => papelito.destroy(),
             });
           }
-        }
-
-        voltearCarta(
-          carta: Phaser.GameObjects.Container,
-          fondoObj: CardBack,
-          contenidoVisible: CardContent
-        ) {
-          if (this.bloqueado || carta.getData("volteada")) return;
-
-          if (this.primeraCarta) {
-            const tipoPrimera = this.primeraCarta.carta.getData("tipo");
-            const tipoActual = carta.getData("tipo");
-
-            if (tipoPrimera === tipoActual) {
-              return;
-            }
-          }
-
-          this.tweens.add({
-            targets: carta,
-            scaleX: 0,
-            duration: 120,
-            yoyo: true,
-            onYoyo: () => {
-              contenidoVisible.setVisible(true);
-              carta.setData("volteada", true);
-            },
-            onComplete: () => this.verificarPar(carta, fondoObj, contenidoVisible),
-          });
-        }
-
-        verificarPar(
-          carta: Phaser.GameObjects.Container,
-          fondoObj: CardBack,
-          contenidoVisible: CardContent
-        ) {
-          if (!this.primeraCarta) {
-            this.primeraCarta = { carta, fondoObj, contenidoVisible };
-          } else {
-            this.segundaCarta = { carta, fondoObj, contenidoVisible };
-            this.bloqueado = true;
-
-            const valor1 = this.primeraCarta.carta.getData("valor");
-            const valor2 = this.segundaCarta.carta.getData("valor");
-
-            if (valor1 === valor2) {
-              this.lanzarConfeti(this.primeraCarta.carta.x, this.primeraCarta.carta.y, this.escalaUiGlobal);
-              this.lanzarConfeti(this.segundaCarta.carta.x, this.segundaCarta.carta.y, this.escalaUiGlobal);
-
-              this.time.delayedCall(400, () => {
-                if (!this.primeraCarta || !this.segundaCarta) return;
-
-                this.primeraCarta.fondoObj.setTint(0x4be06d);
-                this.segundaCarta.fondoObj.setTint(0x4be06d);
-
-                this.aciertos++;
-
-                if (this.textoMarcador) {
-                  this.textoMarcador.setText(`Pares: ${this.aciertos}/${this.totalPares}`);
-                }
-
-                if (typeof onParAdivinado === "function") {
-                  onParAdivinado(this.aciertos);
-                }
-
-                if (this.aciertos === this.totalPares) {
-                  this.time.delayedCall(2000, () => {
-                    this.scene.start("PantallaFin");
-                  });
-                } else {
-                  this.resetSeleccion();
-                }
-              });
-            } else {
-              this.time.delayedCall(800, () => {
-                if (this.primeraCarta && this.segundaCarta) {
-                  this.ocultarCarta(this.primeraCarta);
-                  this.ocultarCarta(this.segundaCarta);
-                }
-                this.resetSeleccion();
-              });
-            }
-          }
-        }
-
-        ocultarCarta(obj: SelectedCard) {
-          this.tweens.add({
-            targets: obj.carta,
-            scaleX: 0,
-            duration: 120,
-            yoyo: true,
-            onYoyo: () => {
-              obj.fondoObj.clearTint();
-              obj.contenidoVisible.setVisible(false);
-              obj.carta.setData("volteada", false);
-            },
-          });
-        }
-
-        resetSeleccion() {
-          this.primeraCarta = null;
-          this.segundaCarta = null;
-          this.bloqueado = false;
         }
       }
 
@@ -533,6 +420,7 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
           const panelHeight = 140 * escalaUi;
           const panelX = width / 2 - panelWidth / 2;
           const panelY = height / 2 - panelHeight / 2;
+
           const panel = this.add.graphics();
           panel.fillStyle(0xffd32a, 1);
           panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 16 * escalaUi);
@@ -566,9 +454,11 @@ export default function JuegoMemoria({ palabras, onParAdivinado, points = 0, ori
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
-                botonFinal.once("pointerdown", () => window.history.back());
+                botonFinal.once("pointerdown", () => {
+                  window.location.href = "/juegos/felicitar";
+                });
               })
               .catch(() => {
                 resultadoGuardado = false;

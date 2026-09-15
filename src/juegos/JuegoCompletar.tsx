@@ -6,40 +6,18 @@ import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
 
-type GifImport = string | { src: string };
-type WebpackRequire = NodeJS.Require & {
-  context: (
-    path: string,
-    useSubdirectories: boolean,
-    regExp: RegExp
-  ) => {
-    keys: () => string[];
-    (id: string): { default?: GifImport } | GifImport;
-  };
-};
+const PALABRAS_DEFECTO = [
+  "Ayuda",
+  "Hola",
+  "Chau",
+  "Gracias",
+  "Bien",
+  "Mal",
+  "Por favor",
+  "Perdon",
+  "Nombre",
+];
 
-const diccionarioGifs: Record<string, GifImport> = {};
-
-try {
-  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
-
-  contextoGifs.keys().forEach((rutaArchivo: string) => {
-    const moduloGif = contextoGifs(rutaArchivo);
-    const nombrePalabra = rutaArchivo.replace(/^\.\//, "").replace(/\.gif$/, "");
-    const gifImport =
-      typeof moduloGif === "object" && "default" in moduloGif && moduloGif.default
-        ? moduloGif.default
-        : moduloGif;
-
-    if (typeof gifImport === "string" || ("src" in gifImport && typeof gifImport.src === "string")) {
-      diccionarioGifs[nombrePalabra] = gifImport;
-    }
-  });
-} catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
-}
-
-const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
@@ -205,11 +183,7 @@ export default function JuegoCompletarCeldas({
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          const mazoBase =
-            palabrasd.length >= 4
-              ? palabrasd
-              : ["Hola", "Chau", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"];
-          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : mazoBase;
+          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : PALABRAS_DEFECTO;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -335,28 +309,28 @@ export default function JuegoCompletarCeldas({
             .setOrigin(0.5);
           textoPregunta.setStroke("#ffffff", 4 * escalaUi);
 
-          const gifWidth = Math.round(Phaser.Math.Clamp(width * (isPortrait ? 0.6 : 0.3), 160, 280));
-          const gifHeight = Math.round(gifWidth * 0.65);
+          const videoWidth = Math.round(Phaser.Math.Clamp(width * (isPortrait ? 0.6 : 0.3), 160, 280));
+          const videoHeight = Math.round(videoWidth * 0.65);
           const centroX = width / 2;
           const centroY = isPortrait ? height * 0.28 : height * 0.34;
 
-          const elementoImg = document.createElement("img");
-          elementoImg.style.width = `${gifWidth}px`;
-          elementoImg.style.height = `${gifHeight}px`;
-          elementoImg.style.objectFit = "cover";
-          elementoImg.style.borderRadius = `${Math.round(14 * escalaUi)}px`;
+          const elementoVideo = document.createElement("video");
+          elementoVideo.style.width = `${videoWidth}px`;
+          elementoVideo.style.height = `${videoHeight}px`;
+          elementoVideo.style.objectFit = "cover";
+          elementoVideo.style.borderRadius = `${Math.round(14 * escalaUi)}px`;
+          elementoVideo.autoplay = true;
+          elementoVideo.loop = true;
+          elementoVideo.muted = true;
+          elementoVideo.playsInline = true;
 
-          const archivoImportado = diccionarioGifs[this.palabraObjetivo];
-          if (archivoImportado) {
-            const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
-            elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
-          }
+          elementoVideo.src = `/nivel1/${this.palabraObjetivo}.mp4`;
 
-          this.add.dom(centroX, centroY, elementoImg);
+          this.add.dom(centroX, centroY, elementoVideo);
 
           const cardBg = this.add.graphics();
           cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
-          cardBg.strokeRoundedRect(centroX - gifWidth / 2, centroY - gifHeight / 2, gifWidth, gifHeight, 14 * escalaUi);
+          cardBg.strokeRoundedRect(centroX - videoWidth / 2, centroY - videoHeight / 2, videoWidth, videoHeight, 14 * escalaUi);
 
           const chars = this.palabraObjetivoNormalizada.split("");
           this.availableChars = Phaser.Utils.Array.Shuffle([...chars]).map((c, i) => ({
@@ -365,7 +339,7 @@ export default function JuegoCompletarCeldas({
             id: i,
           }));
 
-          this.crearGrillasDeLetras(width, height, escalaUi, centroY + gifHeight / 2 + 35 * escalaUi);
+          this.crearGrillasDeLetras(width, height, escalaUi, centroY + videoHeight / 2 + 35 * escalaUi);
         }
 
         crearGrillasDeLetras(width: number, height: number, escalaUi: number, gapY: number) {

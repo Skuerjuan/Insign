@@ -294,7 +294,7 @@ export default function JuegoAdivinar({
           const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.65 : 0.35), 180, 320);
           const panelHeight = panelWidth * 0.75;
           const centroX = width / 2;
-          const centroY = isPortrait ? height * 0.30 : height * 0.36;
+          const centroY = isPortrait ? height * 0.28 : height * 0.34;
 
           const elementoVideo = document.createElement("video");
           elementoVideo.style.width = `${Math.round(panelWidth)}px`;
@@ -308,7 +308,6 @@ export default function JuegoAdivinar({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          // Se asigna directamente la ruta estática desde public/nivel1
           elementoVideo.src = `/nivel1/${this.palabraObjetivo}.mp4`;
 
           this.add.dom(centroX, centroY, elementoVideo);
@@ -318,17 +317,19 @@ export default function JuegoAdivinar({
           const isPortrait = width < height || width < 550;
           const cols = isPortrait ? 2 : 3;
 
+          // Se incrementan el ancho y alto máximo de cada botón
           const botonWidth = Phaser.Math.Clamp(
-            (width * 0.88 - (cols - 1) * 12 * escalaUi) / cols,
-            120,
-            240
+            (width * 0.90 - (cols - 1) * 14 * escalaUi) / cols,
+            135,
+            260
           );
-          const botonHeight = Phaser.Math.Clamp(48 * escalaUi, 40, 60);
+          const botonHeight = Phaser.Math.Clamp(58 * escalaUi, 48, 70);
 
           const centroX = width / 2;
-          const inicioY = isPortrait ? height * 0.52 : height * 0.65;
-          const gapX = 12 * escalaUi;
-          const gapY = 12 * escalaUi;
+          // Se desplaza la posición vertical hacia abajo (de 0.52/0.65 a 0.58/0.68)
+          const inicioY = isPortrait ? height * 0.58 : height * 0.68;
+          const gapX = 14 * escalaUi;
+          const gapY = 14 * escalaUi;
 
           const totalW = cols * botonWidth + (cols - 1) * gapX;
           const startX = centroX - totalW / 2 + botonWidth / 2;
@@ -346,13 +347,13 @@ export default function JuegoAdivinar({
 
             const backgroundBoton = this.add.graphics();
             backgroundBoton.fillStyle(0xffd32a, 1);
-            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 14 * escalaUi);
+            backgroundBoton.fillRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 16 * escalaUi);
             backgroundBoton.lineStyle(3 * escalaUi, 0x1e78ff, 1);
-            backgroundBoton.strokeRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 14 * escalaUi);
+            backgroundBoton.strokeRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 16 * escalaUi);
 
             const textoBoton = this.add
               .text(0, 0, palabraOpcion, {
-                fontSize: `${Phaser.Math.Clamp(18 * escalaUi, 14, 22)}px`,
+                fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
                 fontFamily,
                 color: "#05215b",
                 fontStyle: "800",
@@ -412,9 +413,9 @@ export default function JuegoAdivinar({
           if (respuestaSeleccionada === this.palabraObjetivo) {
             graficoBg.clear();
             graficoBg.fillStyle(0x58cc02, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
             graficoBg.lineStyle(3 * escalaUi, 0x10ac84, 1);
-            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
 
             this.tweens.add({
               targets: contenedor,
@@ -450,9 +451,9 @@ export default function JuegoAdivinar({
           } else {
             graficoBg.clear();
             graficoBg.fillStyle(0xff4757, 1);
-            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
             graficoBg.lineStyle(3 * escalaUi, 0xb2bec3, 1);
-            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+            graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
 
             this.intentosFallidos++;
             if (this.badgeVidas) {
@@ -468,9 +469,9 @@ export default function JuegoAdivinar({
               onComplete: () => {
                 graficoBg.clear();
                 graficoBg.fillStyle(0xffd32a, 1);
-                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+                graficoBg.fillRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
                 graficoBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
-                graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 14 * escalaUi);
+                graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(300, () => {

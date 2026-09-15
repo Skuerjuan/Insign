@@ -7,40 +7,18 @@ import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
-type GifImport = string | { src: string };
-type WebpackRequire = NodeJS.Require & {
-  context: (
-    path: string,
-    useSubdirectories: boolean,
-    regExp: RegExp
-  ) => {
-    keys: () => string[];
-    (id: string): { default?: GifImport } | GifImport;
-  };
-};
+const PALABRAS_DEFECTO = [
+  "Ayuda",
+  "Hola",
+  "Chau",
+  "Gracias",
+  "Bien",
+  "Mal",
+  "Por favor",
+  "Perdon",
+  "Nombre",
+];
 
-const diccionarioGifs: Record<string, GifImport> = {};
-
-try {
-  const contextoGifs = (require as WebpackRequire).context("../../public/gifs", false, /\.gif$/);
-
-  contextoGifs.keys().forEach((rutaArchivo: string) => {
-    const moduloGif = contextoGifs(rutaArchivo);
-    const nombrePalabra = rutaArchivo.replace(/^\.\//, "").replace(/\.gif$/, "");
-    const gifImport =
-      typeof moduloGif === "object" && "default" in moduloGif && moduloGif.default
-        ? moduloGif.default
-        : moduloGif;
-
-    if (typeof gifImport === "string" || ("src" in gifImport && typeof gifImport.src === "string")) {
-      diccionarioGifs[nombrePalabra] = gifImport;
-    }
-  });
-} catch (e) {
-  console.warn("No se pudo cargar la carpeta de gifs automáticamente:", e);
-}
-
-const palabrasd = Object.keys(diccionarioGifs);
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoEleccionProps {
@@ -183,11 +161,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          const mazoBase =
-            palabrasd.length >= 4
-              ? palabrasd
-              : ["Hola", "Chau", "Gracias", "Bien", "Mal", "Por favor", "Mamá", "Ayuda"];
-          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : mazoBase;
+          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : PALABRAS_DEFECTO;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -330,26 +304,26 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             ficha.setSize(cardWidth, cardHeight);
             ficha.setInteractive({ useHandCursor: true });
 
-            const elementoImg = document.createElement("img");
-            elementoImg.style.width = `${cardWidth}px`;
-            elementoImg.style.height = `${cardHeight}px`;
-            elementoImg.style.objectFit = "cover";
-            elementoImg.style.borderRadius = `${Math.round(10 * escalaUi)}px`;
-            elementoImg.style.pointerEvents = "none";
+            const elementoVideo = document.createElement("video");
+            elementoVideo.style.width = `${cardWidth}px`;
+            elementoVideo.style.height = `${cardHeight}px`;
+            elementoVideo.style.objectFit = "cover";
+            elementoVideo.style.borderRadius = `${Math.round(10 * escalaUi)}px`;
+            elementoVideo.style.pointerEvents = "none";
+            elementoVideo.autoplay = true;
+            elementoVideo.loop = true;
+            elementoVideo.muted = true;
+            elementoVideo.playsInline = true;
 
-            const archivoImportado = diccionarioGifs[palabraOpcion];
-            if (archivoImportado) {
-              const src = typeof archivoImportado === "string" ? archivoImportado : archivoImportado.src;
-              elementoImg.src = `${src}?v=${Date.now()}-${Math.random()}`;
-            }
+            elementoVideo.src = `/nivel1/${palabraOpcion}.mp4`;
 
-            const domGif = this.add.dom(0, 0, elementoImg);
+            const domVideo = this.add.dom(0, 0, elementoVideo);
 
             const cardBg = this.add.graphics();
             cardBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
             cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 10 * escalaUi);
 
-            ficha.add([domGif, cardBg]);
+            ficha.add([domVideo, cardBg]);
 
             ficha.setData("valor", palabraOpcion);
             ficha.setData("graphics", cardBg);
