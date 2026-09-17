@@ -9,6 +9,8 @@ import Link from "next/link";
 
 export default function ConfiguracionPanel() {
   const [tema, setTema] = useState("claro");
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [cerrandoSesion, setCerrandoSesion] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,6 +32,28 @@ export default function ConfiguracionPanel() {
     setTema(nuevoTema);
     localStorage.setItem("insign-theme", nuevoTema);
     document.documentElement.dataset.theme = nuevoTema === "oscuro" ? "dark" : "light";
+  };
+
+  useEffect(() => {
+    if (!mostrarConfirmacion) return undefined;
+
+    const cerrarConEscape = (event) => {
+      if (event.key === "Escape" && !cerrandoSesion) {
+        setMostrarConfirmacion(false);
+      }
+    };
+
+    window.addEventListener("keydown", cerrarConEscape);
+    return () => window.removeEventListener("keydown", cerrarConEscape);
+  }, [mostrarConfirmacion, cerrandoSesion]);
+
+  const confirmarCierre = async () => {
+    setCerrandoSesion(true);
+    try {
+      await cerrarSesion(router);
+    } finally {
+      setCerrandoSesion(false);
+    }
   };
 
   return (
@@ -61,10 +85,66 @@ export default function ConfiguracionPanel() {
         <b aria-hidden="true">›</b>
       </Link>
 
-      <button type="button" className={styles.logout} onClick={() => cerrarSesion(router)}>
-        <span aria-hidden="true">⇥</span>
+      <button type="button" className={styles.logout} onClick={() => setMostrarConfirmacion(true)}>
+        <span className={styles.logoutIcon} aria-hidden="true">
+          <Image src="/cerrar-sesion.png" alt="" width={100} height={100} />
+        </span>
         <span><strong>Cerrar sesión</strong><small>Salir de tu cuenta</small></span>
       </button>
+
+      {mostrarConfirmacion && (
+        <div
+          className={styles.modalBackdrop}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !cerrandoSesion) {
+              setMostrarConfirmacion(false);
+            }
+          }}
+        >
+          <section
+            className={styles.logoutModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-modal-title"
+            aria-describedby="logout-modal-description"
+          >
+            <button
+              type="button"
+              className={styles.modalClose}
+              onClick={() => setMostrarConfirmacion(false)}
+              disabled={cerrandoSesion}
+              aria-label="Cerrar confirmación"
+            >
+              X
+            </button>
+
+            <h2 id="logout-modal-title">¿Quiere cerrar sesión?</h2>
+            <p id="logout-modal-description">
+              ¿Estas seguro de que quiere cerrar la sesión? Si lo hace, necesitará volver iniciar sesión en InSign.
+            </p>
+
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => setMostrarConfirmacion(false)}
+                disabled={cerrandoSesion}
+                autoFocus
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className={styles.confirmButton}
+                onClick={confirmarCierre}
+                disabled={cerrandoSesion}
+              >
+                {cerrandoSesion ? "Cerrando…" : "Cerrar la sesión"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
