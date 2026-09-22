@@ -7,7 +7,7 @@ import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
-const PALABRAS_DEFECTO = [
+const palabrasd = [
   "Ayuda",
   "Hola",
   "Chau",
@@ -66,7 +66,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         isRightAligned: boolean = false
       ) => {
         const container = scene.add.container(x, y);
-        const fontSizePx = Math.round(Phaser.Math.Clamp(20 * escalaUi, 14, 26));
+        const fontSizePx = Math.round(Phaser.Math.Clamp(24 * escalaUi, 18, 32));
 
         const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
           fontSize: `${fontSizePx}px`,
@@ -77,9 +77,9 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         const textWidth = tempText.width;
         tempText.destroy();
 
-        const paddingX = 16 * escalaUi;
+        const paddingX = 20 * escalaUi;
         const width = textWidth + paddingX * 2;
-        const height = 40 * escalaUi;
+        const height = 50 * escalaUi;
         const radius = height / 2;
 
         const originX = isRightAligned ? -width : 0;
@@ -101,15 +101,15 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           .setOrigin(0.5);
 
         const iconText = scene.add
-          .text(textX + mainText.width / 2 + 8 * escalaUi, 0, icono, {
-            fontSize: `${fontSizePx + 2}px`,
+          .text(textX + mainText.width / 2 + 10 * escalaUi, 0, icono, {
+            fontSize: `${fontSizePx + 4}px`,
             fontFamily,
             color: "#e53935",
           })
           .setOrigin(0, 0.5);
 
         mainText.setX(textX - iconText.width / 2);
-        iconText.setX(mainText.x + mainText.width / 2 + 4);
+        iconText.setX(mainText.x + mainText.width / 2 + 6);
 
         container.add([bg, mainText, iconText]);
 
@@ -118,7 +118,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           actualizar: (nuevoTexto: string) => {
             mainText.setText(nuevoTexto);
             mainText.setX(textX - iconText.width / 2);
-            iconText.setX(mainText.x + mainText.width / 2 + 4);
+            iconText.setX(mainText.x + mainText.width / 2 + 6);
           },
         };
       };
@@ -161,7 +161,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : PALABRAS_DEFECTO;
+          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : palabrasd;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -175,60 +175,64 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           const azul = 0x1e78ff;
           const amarillo = 0xffd32a;
           const azulTexto = "#05215b";
-          const topY = Math.max(30 * escalaUi, height * 0.06);
+          const topY = Math.max(25 * escalaUi, height * 0.05);
 
-          const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 18 * escalaUi, azul);
+          const btnRadius = 26 * escalaUi;
+          const btnX = 42 * escalaUi;
+          const btnY = topY + 16 * escalaUi;
+
+          const botonVolver = this.add.circle(btnX, btnY, btnRadius, azul);
           botonVolver.setInteractive({ useHandCursor: true });
           botonVolver.on("pointerdown", () => window.history.back());
 
           const flecha = this.add.graphics();
-          flecha.lineStyle(4 * escalaUi, 0xffffff, 1);
+          flecha.lineStyle(5 * escalaUi, 0xffffff, 1);
           flecha.beginPath();
-          flecha.moveTo(38 * escalaUi, topY + 2 * escalaUi);
-          flecha.lineTo(26 * escalaUi, topY + 12 * escalaUi);
-          flecha.lineTo(38 * escalaUi, topY + 22 * escalaUi);
-          flecha.moveTo(27 * escalaUi, topY + 12 * escalaUi);
-          flecha.lineTo(48 * escalaUi, topY + 12 * escalaUi);
+          flecha.moveTo(btnX + 4 * escalaUi, btnY - 12 * escalaUi);
+          flecha.lineTo(btnX - 12 * escalaUi, btnY);
+          flecha.lineTo(btnX + 4 * escalaUi, btnY + 12 * escalaUi);
+          flecha.moveTo(btnX - 10 * escalaUi, btnY);
+          flecha.lineTo(btnX + 14 * escalaUi, btnY);
           flecha.strokePath();
 
-          const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
+          const titleWidth = Phaser.Math.Clamp(width * 0.42, 220 * escalaUi, 420 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 44 * escalaUi, 10 * escalaUi);
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 54 * escalaUi, 12 * escalaUi);
 
           this.add
-            .text(width / 2, 30 * escalaUi, "Elección", {
-              fontSize: `${Phaser.Math.Clamp(32 * escalaUi, 22, 42)}px`,
+            .text(width / 2, 35 * escalaUi, "Elección", {
+              fontSize: `${Phaser.Math.Clamp(38 * escalaUi, 28, 52)}px`,
               fontFamily,
               color: "#ffffff",
               stroke: "#d28b00",
-              strokeThickness: 4 * escalaUi,
+              strokeThickness: 5 * escalaUi,
               fontStyle: "800",
             })
             .setOrigin(0.5);
 
           const puntosTexto = `${points} pts`;
-          const scoreWidth = Phaser.Math.Clamp(80 * escalaUi + puntosTexto.length * 6 * escalaUi, 110 * escalaUi, 200 * escalaUi);
+          const scoreWidth = Phaser.Math.Clamp(100 * escalaUi + puntosTexto.length * 8 * escalaUi, 130 * escalaUi, 240 * escalaUi);
           const scoreX = width - scoreWidth - 16 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
-          scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
-          this.add.star(scoreX + 16 * escalaUi, 27 * escalaUi, 5, 7 * escalaUi, 14 * escalaUi, amarillo);
+          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
+          scoreBg.lineStyle(3 * escalaUi, 0xf7b928, 1);
+          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
+          this.add.star(scoreX + 20 * escalaUi, 32 * escalaUi, 5, 9 * escalaUi, 18 * escalaUi, amarillo);
           this.add
-            .text(scoreX + 34 * escalaUi, 27 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(15 * escalaUi, 12, 19)}px`,
+            .text(scoreX + 42 * escalaUi, 32 * escalaUi, puntosTexto, {
+              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
             })
             .setOrigin(0, 0.5);
 
-          const bottomY = height - 28 * escalaUi;
+          const bottomY = height - 35 * escalaUi;
           this.badgeAciertos = crearPillBadge(
             this,
-            16 * escalaUi,
+            20 * escalaUi,
             bottomY,
             `Aciertos: ${this.aciertos}/5`,
             "✅",
@@ -238,7 +242,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           this.badgeVidas = crearPillBadge(
             this,
-            width - 16 * escalaUi,
+            width - 20 * escalaUi,
             bottomY,
             `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
             "❤️",
@@ -266,29 +270,29 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
 
           this.textoPalabra = this.add
-            .text(width / 2, 72 * escalaUi, `¿Qué seña es ${this.palabraObjetivo.toUpperCase()}?`, {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
+            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${this.palabraObjetivo.toUpperCase()}?`, {
+              fontSize: `${Phaser.Math.Clamp(26 * escalaUi, 20, 36)}px`,
               fontFamily,
               color: "#05215b",
               fontStyle: "800",
             })
             .setOrigin(0.5)
             .setDepth(10);
-          this.textoPalabra.setStroke("#ffffff", 4 * escalaUi);
+          this.textoPalabra.setStroke("#ffffff", 5 * escalaUi);
 
           this.dibujarGrillaOpciones(width, height, escalaUi);
         }
 
         dibujarGrillaOpciones(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height;
-          const cardWidth = Math.round(Phaser.Math.Clamp(width * (isPortrait ? 0.42 : 0.28), 130, 220));
+          const cardWidth = Math.round(Phaser.Math.Clamp(width * (isPortrait ? 0.44 : 0.34), 160, 290));
           const cardHeight = Math.round(cardWidth * 0.72);
 
-          const gapX = 14 * escalaUi;
-          const gapY = 12 * escalaUi;
+          const gapX = 16 * escalaUi;
+          const gapY = 14 * escalaUi;
 
           const centroX = width / 2;
-          const centroY = height * 0.52;
+          const centroY = height * 0.56;
 
           const posiciones = [
             { x: centroX - cardWidth / 2 - gapX / 2, y: centroY - cardHeight / 2 - gapY / 2 },
@@ -308,7 +312,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             elementoVideo.style.width = `${cardWidth}px`;
             elementoVideo.style.height = `${cardHeight}px`;
             elementoVideo.style.objectFit = "cover";
-            elementoVideo.style.borderRadius = `${Math.round(10 * escalaUi)}px`;
+            elementoVideo.style.borderRadius = `${Math.round(12 * escalaUi)}px`;
             elementoVideo.style.pointerEvents = "none";
             elementoVideo.autoplay = true;
             elementoVideo.loop = true;
@@ -320,8 +324,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             const domVideo = this.add.dom(0, 0, elementoVideo);
 
             const cardBg = this.add.graphics();
-            cardBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
-            cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 10 * escalaUi);
+            cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
+            cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12 * escalaUi);
 
             ficha.add([domVideo, cardBg]);
 
@@ -376,8 +380,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
-            cardBg.lineStyle(5 * escalaUi, 0x2ed573, 1);
-            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 10 * escalaUi);
+            cardBg.lineStyle(6 * escalaUi, 0x2ed573, 1);
+            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
             this.aciertos++;
             this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
@@ -403,8 +407,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             });
           } else {
             cardBg.clear();
-            cardBg.lineStyle(5 * escalaUi, 0xff4757, 1);
-            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 10 * escalaUi);
+            cardBg.lineStyle(6 * escalaUi, 0xff4757, 1);
+            cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
             this.intentosFallidos++;
 
@@ -420,8 +424,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
               repeat: 2,
               onComplete: () => {
                 cardBg.clear();
-                cardBg.lineStyle(3 * escalaUi, 0x1e78ff, 1);
-                cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 10 * escalaUi);
+                cardBg.lineStyle(4 * escalaUi, 0x1e78ff, 1);
+                cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
                 if (this.intentosFallidos >= 3) {
                   this.time.delayedCall(400, () => {
