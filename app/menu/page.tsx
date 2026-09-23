@@ -4,7 +4,6 @@ import Image from "next/image";
 import Foto from "@/components/Foto"
 import { getProfile, getSession } from "../../lib/server/profile.actions";
 import { getWeeklyActivity } from "../../lib/server/streak";
-import BotonJugar from "@/components/BotonJugar"
 
 export const dynamic = "force-dynamic";
 
@@ -75,67 +74,63 @@ export default async function Menu() {
         </header>
 
         <main className={styles.levels}>
-          <section className={styles.levelCard}>
+          <section className={`${styles.levelCard} ${styles.presentationOne}`}>
             <div className={styles.levelImagePlaceholder}>
-              <Image src="/gorila-niveles.png" alt="Explorador de nivel 1" width={436} height={475} className={styles.levelImage} />
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
-              <h3>Nivel 1</h3>
-              <p>Categoria: Eleccion</p>
-            </div>
-            <BotonJugar styleButton={styles.playButton} styleIcon={styles.playIcon} juego={"/juego-eleccion"} />
-          </section>
-
-          <section className={styles.levelCard}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/gorila-niveles.png" alt="Explorador de nivel 2" width={436} height={475} className={styles.levelImage} />
+              <h3>Presentación 1</h3>
+              <p>Aprende a saludar presentarte y conocer expresiones básicas</p>
             </div>
 
-            <div className={styles.levelInfo}>
-              <h3>Nivel 2</h3>
-              <p>Categoria: Memoria</p>
-            </div>
-
-            <Link href="/juego-memoria" className={styles.playButton}>
-              <span className={styles.playIcon} aria-hidden="true" />
-              Jugar
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Presentación 1">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
             </Link>
           </section>
 
-          <section className={styles.levelCard}>
+          <section className={`${styles.levelCard} ${styles.presentationTwo}`}>
             <div className={styles.levelImagePlaceholder}>
-              <Image src="/gorila-niveles.png" alt="Explorador de nivel 3" width={436} height={475} className={styles.levelImage} />
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
-              <h3>Nivel 3</h3>
-              <p>Categoria: Adivinar</p>
+              <h3>Presentación 2</h3>
+              <p>Preséntate y saluda de otros y preguntas básicas</p>
             </div>
 
-            <Link href="/Juego-adivinar" className={styles.playButton}>
-              <span className={styles.playIcon} aria-hidden="true" />
-              Jugar
+            <Link href="/juego-memoria" className={styles.levelArrow} aria-label="Jugar Presentación 2">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
             </Link>
           </section>
 
-          <section className={styles.levelCard}>
+          <section className={`${styles.levelCard} ${styles.familyAndFriends}`}>
             <div className={styles.levelImagePlaceholder}>
-              <Image src="/gorila-niveles.png" alt="Explorador de nivel 4" width={436} height={475} className={styles.levelImage} />
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
             </div>
 
             <div className={styles.levelInfo}>
-              <h3>Nivel 4</h3>
-              <p>Categoria: Completar</p>
-              <div className={styles.progressWrap}>
-                <img src="/Star.png" alt="" className={styles.progressStar} />
-                <div className={styles.progressBar} />
-              </div>
+              <h3>Familia y amigos</h3>
+              <p>Conoce los miembros de la familia y otros</p>
             </div>
 
-            <Link href="/Juego-completar" className={styles.playButton}>
-              <span className={styles.playIcon} aria-hidden="true" />
-              Jugar
+            <Link href="/Juego-adivinar" className={styles.levelArrow} aria-label="Jugar Familia y amigos">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={`${styles.levelCard} ${styles.numbers}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Números</h3>
+              <p>Aprende de los números en LSA de forma fácil y divertida</p>
+            </div>
+
+            <Link href="/Juego-completar" className={styles.levelArrow} aria-label="Jugar Números">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
             </Link>
           </section>
         </main>

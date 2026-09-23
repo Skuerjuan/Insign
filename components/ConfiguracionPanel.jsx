@@ -69,14 +69,6 @@ export default function ConfiguracionPanel() {
         </div>
       </section>
 
-      <button type="button" className={styles.optionCard}>
-        <span className={`${styles.settingsIcon} ${styles.parentalIcon}`}>
-          <Image src="/control-parental.png" alt="" width={58} height={58} aria-hidden="true" />
-        </span>
-        <span><strong>Control parental</strong><small>Gestioná el tiempo y el contenido</small></span>
-        <b aria-hidden="true">›</b>
-      </button>
-
       <Link href="/auth/change_password" className={styles.optionCard}>
         <span className={`${styles.settingsIcon} ${styles.passwordIcon}`}>
           <Image src="/contrasena.png" alt="" width={58} height={58} aria-hidden="true" />
