@@ -22,7 +22,7 @@ export default async function Menu() {
         </h1>
 
         <Link href="/menu" className={styles.inicio}>
-          <img src="/casa.png" alt="" className={styles.casa} />
+          <img src="/casablanco.png" alt="" className={styles.casa} />
           Inicio
         </Link>
         <Link href="/entrenamiento" className={styles.train}>
