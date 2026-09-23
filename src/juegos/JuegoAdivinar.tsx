@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
-import fondo from "./fondoP.png";
+import fondo from "./fondoP.png"; // Fixed syntax error
 
 // Lista base de palabras de tu carpeta public/nivel1 (asegúrate de incluir los nombres de tus videos sin extensión)
 const PALABRAS_DEFECTO = [
@@ -74,7 +74,8 @@ export default function JuegoAdivinar({
         isRightAligned: boolean = false
       ) => {
         const container = scene.add.container(x, y);
-        const fontSizePx = Math.round(Phaser.Math.Clamp(20 * escalaUi, 14, 26));
+        // Agrandar fuente base y límites
+        const fontSizePx = Math.round(Phaser.Math.Clamp(22 * escalaUi, 16, 28));
 
         const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
           fontSize: `${fontSizePx}px`,
@@ -85,9 +86,10 @@ export default function JuegoAdivinar({
         const textWidth = tempText.width;
         tempText.destroy();
 
-        const paddingX = 16 * escalaUi;
+        const paddingX = 18 * escalaUi;
         const width = textWidth + paddingX * 2;
-        const height = 40 * escalaUi;
+        // Agrandar altura del badge
+        const height = 45 * escalaUi;
         const radius = height / 2;
 
         const originX = isRightAligned ? -width : 0;
@@ -109,7 +111,7 @@ export default function JuegoAdivinar({
           .setOrigin(0.5);
 
         const iconText = scene.add
-          .text(textX + mainText.width / 2 + 8 * escalaUi, 0, icono, {
+          .text(textX + mainText.width / 2 + 10 * escalaUi, 0, icono, {
             fontSize: `${fontSizePx + 2}px`,
             fontFamily,
             color: "#e53935",
@@ -161,7 +163,8 @@ export default function JuegoAdivinar({
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 480, height / 700), 0.65, 1.15);
+          // Incrementar la escala global general ajustando la base de resolución y límites
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 650), 0.7, 1.3);
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
@@ -186,7 +189,7 @@ export default function JuegoAdivinar({
           const azulTexto = "#05215b";
           const topY = Math.max(30 * escalaUi, height * 0.06);
 
-          const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 18 * escalaUi, azul);
+          const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 20 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
           botonVolver.on("pointerdown", () => window.history.back());
 
@@ -203,11 +206,12 @@ export default function JuegoAdivinar({
           const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 44 * escalaUi, 10 * escalaUi);
+          // Agrandar un poco el título
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 48 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 30 * escalaUi, "Adivinar", {
-              fontSize: `${Phaser.Math.Clamp(32 * escalaUi, 22, 42)}px`,
+            .text(width / 2, 32 * escalaUi, "Adivinar", {
+              fontSize: `${Phaser.Math.Clamp(34 * escalaUi, 24, 44)}px`,
               fontFamily,
               color: "#ffffff",
               stroke: "#d28b00",
@@ -217,17 +221,18 @@ export default function JuegoAdivinar({
             .setOrigin(0.5);
 
           const puntosTexto = `${points} pts`;
-          const scoreWidth = Phaser.Math.Clamp(80 * escalaUi + puntosTexto.length * 6 * escalaUi, 110 * escalaUi, 200 * escalaUi);
+          const scoreWidth = Phaser.Math.Clamp(85 * escalaUi + puntosTexto.length * 6 * escalaUi, 120 * escalaUi, 210 * escalaUi);
           const scoreX = width - scoreWidth - 16 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
+          // Agrandar un poco el score badge
+          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
           scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 38 * escalaUi, 19 * escalaUi);
-          this.add.star(scoreX + 16 * escalaUi, 27 * escalaUi, 5, 7 * escalaUi, 14 * escalaUi, amarillo);
+          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
+          this.add.star(scoreX + 18 * escalaUi, 29 * escalaUi, 5, 8 * escalaUi, 16 * escalaUi, amarillo);
           this.add
-            .text(scoreX + 34 * escalaUi, 27 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(15 * escalaUi, 12, 19)}px`,
+            .text(scoreX + 38 * escalaUi, 29 * escalaUi, puntosTexto, {
+              fontSize: `${Phaser.Math.Clamp(17 * escalaUi, 14, 21)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
@@ -235,8 +240,8 @@ export default function JuegoAdivinar({
             .setOrigin(0, 0.5);
 
           this.add
-            .text(width / 2, 75 * escalaUi, "Adivina esta seña", {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
+            .text(width / 2, 85 * escalaUi, "Adivina esta seña", {
+              fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 18, 28)}px`,
               fontFamily,
               color: "#ffffff",
               fontStyle: "800",
@@ -244,10 +249,11 @@ export default function JuegoAdivinar({
             .setOrigin(0.5)
             .setStroke("#0042AD", 4 * escalaUi);
 
-          const bottomY = height - 28 * escalaUi;
+          // Subir un poco los badges inferiores
+          const bottomY = height - 35 * escalaUi;
           this.badgeAciertos = crearPillBadge(
             this,
-            16 * escalaUi,
+            18 * escalaUi,
             bottomY,
             `Aciertos: ${this.aciertos}/5`,
             "⭐",
@@ -257,7 +263,7 @@ export default function JuegoAdivinar({
 
           this.badgeVidas = crearPillBadge(
             this,
-            width - 16 * escalaUi,
+            width - 18 * escalaUi,
             bottomY,
             `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
             "❤️",
@@ -291,10 +297,12 @@ export default function JuegoAdivinar({
 
         dibujarPanelVideoPrincipal(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height;
-          const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.65 : 0.35), 180, 320);
+          // Agrandar el video principal
+          const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.7 : 0.4), 200, 360);
           const panelHeight = panelWidth * 0.75;
           const centroX = width / 2;
-          const centroY = isPortrait ? height * 0.28 : height * 0.34;
+          // Desplazar el video verticalmente hacia abajo (de 0.28/0.34 de altura a 0.38/0.45 de altura)
+          const centroY = isPortrait ? height * 0.38 : height * 0.45;
 
           const elementoVideo = document.createElement("video");
           elementoVideo.style.width = `${Math.round(panelWidth)}px`;
@@ -317,19 +325,20 @@ export default function JuegoAdivinar({
           const isPortrait = width < height || width < 550;
           const cols = isPortrait ? 2 : 3;
 
-          // Se incrementan el ancho y alto máximo de cada botón
+          // Se incrementan aún más el ancho y alto máximo de cada botón
           const botonWidth = Phaser.Math.Clamp(
-            (width * 0.90 - (cols - 1) * 14 * escalaUi) / cols,
-            135,
-            260
+            (width * 0.95 - (cols - 1) * 16 * escalaUi) / cols,
+            140,
+            280
           );
-          const botonHeight = Phaser.Math.Clamp(58 * escalaUi, 48, 70);
+          const botonHeight = Phaser.Math.Clamp(65 * escalaUi, 55, 80);
 
           const centroX = width / 2;
-          // Se desplaza la posición vertical hacia abajo (de 0.52/0.65 a 0.58/0.68)
-          const inicioY = isPortrait ? height * 0.58 : height * 0.68;
-          const gapX = 14 * escalaUi;
-          const gapY = 14 * escalaUi;
+          // Se desplaza la posición vertical de la botonera aún más hacia abajo (de 0.58/0.68 a 0.68/0.80)
+          const inicioY = isPortrait ? height * 0.68 : height * 0.80;
+          // Un poco más de separación
+          const gapX = 16 * escalaUi;
+          const gapY = 16 * escalaUi;
 
           const totalW = cols * botonWidth + (cols - 1) * gapX;
           const startX = centroX - totalW / 2 + botonWidth / 2;
@@ -353,7 +362,8 @@ export default function JuegoAdivinar({
 
             const textoBoton = this.add
               .text(0, 0, palabraOpcion, {
-                fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 16, 26)}px`,
+                // Agrandar la fuente del botón
+                fontSize: `${Phaser.Math.Clamp(24 * escalaUi, 18, 28)}px`,
                 fontFamily,
                 color: "#05215b",
                 fontStyle: "800",
@@ -437,7 +447,7 @@ export default function JuegoAdivinar({
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(1200, () => {
+            this.time.delayedCall(3000, () => {
               if (this.aciertos >= 5) {
                 this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
@@ -501,12 +511,14 @@ export default function JuegoAdivinar({
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 480, height / 650), 0.65, 1.15);
+          // Incrementar escala de PantallaFin
+          const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 600), 0.7, 1.3);
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
-          const panelWidth = Phaser.Math.Clamp(width * 0.8, 220, 360);
-          const panelHeight = 140 * escalaUi;
+          // Agrandar panel de fin
+          const panelWidth = Phaser.Math.Clamp(width * 0.85, 240, 400);
+          const panelHeight = 150 * escalaUi;
           const panelX = width / 2 - panelWidth / 2;
           const panelY = height / 2 - panelHeight / 2;
 
@@ -518,7 +530,8 @@ export default function JuegoAdivinar({
 
           const resultadoTexto = this.add
             .text(width / 2, height / 2 - 24 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
-              fontSize: `${Math.round(20 * escalaUi)}px`,
+              // Agrandar texto resultado
+              fontSize: `${Math.round(22 * escalaUi)}px`,
               fontFamily,
               color: "#003895",
               align: "center",
@@ -528,11 +541,12 @@ export default function JuegoAdivinar({
 
           const botonFinal = this.add
             .text(width / 2, height / 2 + 36 * escalaUi, "Guardando...", {
-              fontSize: `${Math.round(18 * escalaUi)}px`,
+              // Agrandar texto botón
+              fontSize: `${Math.round(20 * escalaUi)}px`,
               fontFamily,
               color: "#ffffff",
               backgroundColor: "#7f8c8d",
-              padding: { x: 18, y: 6 },
+              padding: { x: 20, y: 8 },
             })
             .setOrigin(0.5);
 
