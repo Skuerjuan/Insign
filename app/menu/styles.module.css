@@ -267,7 +267,8 @@ flex: 0 0 auto;
   height: calc(100dvh - 150px);
   padding: 16px clamp(16px, 3vw, 48px) 22px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .levelCard {
@@ -275,7 +276,7 @@ flex: 0 0 auto;
   width: 100%;
   min-height: 96px;
   max-height: 130px;
-  flex: 1 1 0;
+  flex: 0 0 clamp(96px, calc((100dvh - 218px) / 4), 130px);
   display: flex;
   align-items: center;
   padding: 0 18px 0 10px;
@@ -305,6 +306,26 @@ flex: 0 0 auto;
 
 .numbers {
   background-color: #c900d4;
+}
+
+.school {
+  background-color: #e8b900;
+}
+
+.weather {
+  background-color: #00aec2;
+}
+
+.houseParts {
+  background-color: #ff8800;
+}
+
+.questions {
+  background-color: #ff0099;
+}
+
+.shopping {
+  background-color: #002767;
 }
 
 .levelCard:hover {
@@ -431,6 +452,10 @@ flex: 0 0 auto;
     height: auto;
     min-height: auto;
     overflow: visible;
+  }
+
+  .levelCard {
+    flex: 1 1 0;
   }
 }
 

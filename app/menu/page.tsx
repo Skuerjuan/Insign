@@ -133,6 +133,81 @@ export default async function Menu() {
               <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
             </Link>
           </section>
+
+          <section className={`${styles.levelCard} ${styles.school}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Colegio</h3>
+              <p>Aprende las señas básicas sobre el colegio y los útiles escolares.</p>
+            </div>
+
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Colegio">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={`${styles.levelCard} ${styles.weather}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Clima</h3>
+              <p>Aprende sobre los distintos tipos de clima.</p>
+            </div>
+
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Clima">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={`${styles.levelCard} ${styles.houseParts}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Partes de la casa</h3>
+              <p>Conoce las partes de la casa y sus objetos principales.</p>
+            </div>
+
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Partes de la casa">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={`${styles.levelCard} ${styles.questions}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Preguntas</h3>
+              <p>Aprendé preguntas y respuestas sobre orientación en LSA.</p>
+            </div>
+
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Preguntas">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={`${styles.levelCard} ${styles.shopping}`}>
+            <div className={styles.levelImagePlaceholder}>
+              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+            </div>
+
+            <div className={styles.levelInfo}>
+              <h3>Compras</h3>
+              <p>Aprendé a pedir, elegir y comprar diferentes productos.</p>
+            </div>
+
+            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Compras">
+              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+            </Link>
+          </section>
         </main>
       </div>
     </div>
