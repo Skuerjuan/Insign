@@ -7,10 +7,76 @@ import { getWeeklyActivity } from "../../lib/server/streak";
 
 export const dynamic = "force-dynamic";
 
+const levels = [
+  {
+    title: "Presentación 1",
+    description: "Aprende a saludar presentarte y conocer expresiones básicas",
+    href: "/juego-eleccion",
+    colorClass: "presentationOne",
+    requiredLevel: 1,
+  },
+  {
+    title: "Presentación 2",
+    description: "Preséntate y saluda de otros y preguntas básicas",
+    href: "/juego-memoria",
+    colorClass: "presentationTwo",
+    requiredLevel: 2,
+  },
+  {
+    title: "Familia y amigos",
+    description: "Conoce los miembros de la familia y otros",
+    href: "/Juego-adivinar",
+    colorClass: "familyAndFriends",
+    requiredLevel: 3,
+  },
+  {
+    title: "Números",
+    description: "Aprende de los números en LSA de forma fácil y divertida",
+    href: "/Juego-completar",
+    colorClass: "numbers",
+    requiredLevel: 4,
+  },
+  {
+    title: "Colegio",
+    description: "Aprende las señas básicas sobre el colegio y los útiles escolares.",
+    href: "/juego-eleccion",
+    colorClass: "school",
+    requiredLevel: 5,
+  },
+  {
+    title: "Clima",
+    description: "Aprende sobre los distintos tipos de clima.",
+    href: "/juego-eleccion",
+    colorClass: "weather",
+    requiredLevel: 6,
+  },
+  {
+    title: "Partes de la casa",
+    description: "Conoce las partes de la casa y sus objetos principales.",
+    href: "/juego-eleccion",
+    colorClass: "houseParts",
+    requiredLevel: 7,
+  },
+  {
+    title: "Preguntas",
+    description: "Aprendé preguntas y respuestas sobre orientación en LSA.",
+    href: "/juego-eleccion",
+    colorClass: "questions",
+    requiredLevel: 8,
+  },
+  {
+    title: "Compras",
+    description: "Aprendé a pedir, elegir y comprar diferentes productos.",
+    href: "/juego-eleccion",
+    colorClass: "shopping",
+    requiredLevel: 9,
+  },
+] as const;
+
 export default async function Menu() {
   const user = await getSession();
 
-    const { puntos, racha, ultimo_dia_activo } = await getProfile(user.id);
+    const { puntos, racha, ultimo_dia_activo, nivel } = await getProfile(user.id);
     const rachaActual = getWeeklyActivity(racha, ultimo_dia_activo).count;
 
   return (
@@ -74,140 +140,44 @@ export default async function Menu() {
         </header>
 
         <main className={styles.levels}>
-          <section className={`${styles.levelCard} ${styles.presentationOne}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
+          {levels.map((level) => {
+            const isLocked = level.requiredLevel > 1 && nivel < level.requiredLevel;
 
-            <div className={styles.levelInfo}>
-              <h3>Presentación 1</h3>
-              <p>Aprende a saludar presentarte y conocer expresiones básicas</p>
-            </div>
+            return (
+              <section
+                key={level.title}
+                className={`${styles.levelCard} ${styles[level.colorClass]} ${isLocked ? styles.locked : ""}`}
+              >
+                <div className={styles.levelImagePlaceholder}>
+                  <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+                  {isLocked && (
+                    <Image
+                      src="/lock.png"
+                      alt="Nivel bloqueado"
+                      width={54}
+                      height={54}
+                      className={styles.levelLock}
+                    />
+                  )}
+                </div>
 
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Presentación 1">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
+                <div className={styles.levelInfo}>
+                  <h3>{level.title}</h3>
+                  <p>{level.description}</p>
+                </div>
 
-          <section className={`${styles.levelCard} ${styles.presentationTwo}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Presentación 2</h3>
-              <p>Preséntate y saluda de otros y preguntas básicas</p>
-            </div>
-
-            <Link href="/juego-memoria" className={styles.levelArrow} aria-label="Jugar Presentación 2">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.familyAndFriends}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Familia y amigos</h3>
-              <p>Conoce los miembros de la familia y otros</p>
-            </div>
-
-            <Link href="/Juego-adivinar" className={styles.levelArrow} aria-label="Jugar Familia y amigos">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.numbers}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Números</h3>
-              <p>Aprende de los números en LSA de forma fácil y divertida</p>
-            </div>
-
-            <Link href="/Juego-completar" className={styles.levelArrow} aria-label="Jugar Números">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.school}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Colegio</h3>
-              <p>Aprende las señas básicas sobre el colegio y los útiles escolares.</p>
-            </div>
-
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Colegio">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.weather}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Clima</h3>
-              <p>Aprende sobre los distintos tipos de clima.</p>
-            </div>
-
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Clima">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.houseParts}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Partes de la casa</h3>
-              <p>Conoce las partes de la casa y sus objetos principales.</p>
-            </div>
-
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Partes de la casa">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.questions}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Preguntas</h3>
-              <p>Aprendé preguntas y respuestas sobre orientación en LSA.</p>
-            </div>
-
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Preguntas">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
-
-          <section className={`${styles.levelCard} ${styles.shopping}`}>
-            <div className={styles.levelImagePlaceholder}>
-              <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
-            </div>
-
-            <div className={styles.levelInfo}>
-              <h3>Compras</h3>
-              <p>Aprendé a pedir, elegir y comprar diferentes productos.</p>
-            </div>
-
-            <Link href="/juego-eleccion" className={styles.levelArrow} aria-label="Jugar Compras">
-              <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
-            </Link>
-          </section>
+                {isLocked ? (
+                  <span className={`${styles.levelArrow} ${styles.disabledArrow}`} aria-hidden="true">
+                    <Image src="/flecha-seccion.png" alt="" width={87} height={87} />
+                  </span>
+                ) : (
+                  <Link href={level.href} className={styles.levelArrow} aria-label={`Jugar ${level.title}`}>
+                    <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+                  </Link>
+                )}
+              </section>
+            );
+          })}
         </main>
       </div>
     </div>

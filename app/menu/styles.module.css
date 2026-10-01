@@ -336,13 +336,48 @@ flex: 0 0 auto;
   box-shadow: 0 10px 20px rgba(0, 35, 90, 0.22);
 }
 
+.locked {
+  cursor: not-allowed;
+}
+
+.locked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 12px;
+  background: rgba(52, 58, 64, 0.58);
+  pointer-events: none;
+}
+
+.locked:hover {
+  z-index: auto;
+  border-color: transparent;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
 .levelImagePlaceholder {
+  position: relative;
   width: clamp(92px, 10vw, 116px);
   height: 100%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   flex: 0 0 auto;
+}
+
+.levelLock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: clamp(34px, 4vw, 46px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.4));
 }
 
 .levelImage {
@@ -407,6 +442,10 @@ flex: 0 0 auto;
 .levelArrow:focus-visible {
   transform: scale(1.08);
   box-shadow: 0 6px 11px rgba(0, 25, 74, 0.42);
+}
+
+.disabledArrow {
+  pointer-events: none;
 }
 
 .levelArrow:focus-visible {
