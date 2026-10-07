@@ -52,6 +52,21 @@ export async function getProfile(userId: string){
     return profile;
 }
 
+export async function getLearnedSignsCount(userId: string) {
+    const completedExercises = await prisma.completado.findMany({
+        where: {
+            usuario_id: userId,
+            aprobado: true,
+        },
+        distinct: ["ejercicio_id"],
+        select: {
+            ejercicio_id: true,
+        },
+    });
+
+    return completedExercises.length;
+}
+
 function calculatePoints(game: GameName, mistakes: number) {
     if (game === "memoria") return 15;
 

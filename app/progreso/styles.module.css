@@ -129,7 +129,6 @@
 
 .profileImagePlaceholder,
 .levelImagePlaceholder,
-.chartPlaceholder,
 .summaryImagePlaceholder {
   border: 2px dashed #86a5d3;
   background: #f7faff;
@@ -287,29 +286,39 @@
   margin-top: 4px;
 }
 
-.chartPlaceholder {
-  width: 126px;
-  height: clamp(82px, 11vh, 104px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  text-align: center;
+.learnedChart {
+  position: relative;
+  width: clamp(112px, 15vh, 140px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: conic-gradient(
+    #36a900 0 var(--learned-percentage),
+    #d2d2d2 var(--learned-percentage) 100%
+  );
 }
 
-.chartPlaceholder strong {
-  color: var(--app-surface-foreground);
-  font-size: 34px;
+.learnedChart::before {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: var(--app-surface-background);
+}
+
+.learnedChart strong {
+  position: relative;
+  z-index: 1;
+  color: #052c79;
+  font-size: clamp(32px, 4vh, 42px);
+  font-weight: 900;
   line-height: 1;
 }
 
-.chartPlaceholder span {
-  max-width: 100px;
-  margin-top: 7px;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.15;
+.learnedChart strong span {
+  font-size: 0.6em;
 }
 
 .legend {
@@ -320,7 +329,7 @@
 
 .legendRow {
   display: grid;
-  grid-template-columns: 20px minmax(115px, 1fr) auto;
+  grid-template-columns: 20px minmax(125px, 1fr) minmax(76px, auto);
   align-items: center;
   gap: 12px;
   color: var(--app-surface-foreground);
@@ -336,7 +345,7 @@
 }
 
 .learnedDot {
-  background: #37a900;
+  background: #36a900;
 }
 
 .pendingDot {

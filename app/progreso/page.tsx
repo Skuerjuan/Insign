@@ -1,18 +1,33 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
-import { getProfile, getSession } from "@/lib/server/profile.actions";
+import {
+  getLearnedSignsCount,
+  getProfile,
+  getSession,
+} from "@/lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
+const TOTAL_SIGNS = 150;
+
 export default async function Progreso() {
   const user = await getSession();
-  const profile = await getProfile(user.id)
+  const [profile, completedSigns] = await Promise.all([
+    getProfile(user.id),
+    getLearnedSignsCount(user.id),
+  ]);
 
-  const userProgress = user as typeof user & {
-    aprendidas?: string | number | null;
-    poraprender?: string | number | null;
-  };
+  const learnedSigns = Math.min(
+    TOTAL_SIGNS,
+    Math.max(0, completedSigns),
+  );
+  const pendingSigns = TOTAL_SIGNS - learnedSigns;
+  const learnedPercentage = Math.round((learnedSigns / TOTAL_SIGNS) * 100);
+  const chartStyle = {
+    "--learned-percentage": `${learnedPercentage}%`,
+  } as CSSProperties;
   const totalMinutes = Math.floor(profile.tiempo_total_segundos / 60);
 
   return (
@@ -94,20 +109,28 @@ export default async function Progreso() {
             <h2>Señas aprendidas</h2>
 
             <div className={styles.learnedContent}>
-              <div className={styles.chartPlaceholder}>
-                <span>Espacio para gráfico o imagen</span>
+              <div
+                className={styles.learnedChart}
+                style={chartStyle}
+                role="progressbar"
+                aria-label={`${learnedSigns} de ${TOTAL_SIGNS} señas aprendidas`}
+                aria-valuemin={0}
+                aria-valuemax={TOTAL_SIGNS}
+                aria-valuenow={learnedSigns}
+              >
+                <strong>{learnedPercentage}<span>%</span></strong>
               </div>
 
               <div className={styles.legend}>
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.learnedDot}`} />
                   <span>Aprendidas</span>
-                  <strong>{userProgress.aprendidas ?? 0}</strong>
+                  <strong>{learnedSigns} / {TOTAL_SIGNS}</strong>
                 </div>
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.pendingDot}`} />
                   <span>Por aprender</span>
-                  <strong>{userProgress.poraprender ?? 0}</strong>
+                  <strong>{pendingSigns} / {TOTAL_SIGNS}</strong>
                 </div>
               </div>
             </div>
