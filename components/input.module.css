@@ -12,7 +12,10 @@
 }
 
 @media (max-height: 680px) and (min-width: 769px) {
-  .containerIni { min-height: 42px; margin-block: 8px; }
+  .containerIni {
+    min-height: 42px;
+    margin: var(--auth-field-margin, 8px) auto;
+  }
 }
 
 .input {
@@ -47,7 +50,7 @@
 @media (max-height: 760px) and (min-width: 769px) {
   .containerIni {
     height: 46px;
-    margin: 14px auto;
+    margin: var(--auth-field-margin, 14px) auto;
   }
 }
 

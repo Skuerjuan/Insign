@@ -4,7 +4,7 @@
     display:grid; 
     grid-template-columns:320px minmax(0,1fr);
     overflow:hidden; 
-    background:#72cff4 url("/FondoInicioSesion.png") center/cover no-repeat; 
+    background:#72cff4 var(--app-page-background) center/cover no-repeat;
     font-family:var(--font-baloo); 
 }
 
@@ -12,7 +12,8 @@
     height:100dvh; 
     padding:25px 24px; 
     box-sizing:border-box; 
-    background:#126cff url("/asidevector.svg"); 
+    background-color:var(--app-sidebar-background);
+    background-image:url("/asidevector.svg");
 }
 .logo { 
     display:flex; 
@@ -62,6 +63,7 @@
     background:#facc15; 
 }
 .mainContent { 
+    width:100%;
     min-width:0; 
     height:100dvh; 
     overflow:hidden; 
@@ -74,7 +76,7 @@
     padding:14px clamp(20px,4vw,42px); 
     box-sizing:border-box; 
     border-bottom:8px solid #29afe6; 
-    background:#cde0ff; 
+    background:var(--app-header-background);
 }
 .pageTitle { 
     display:flex; 
@@ -119,7 +121,7 @@
 }
 .settingsMain { 
     height:calc(100dvh - 96px); 
-    max-width:900px; display:flex;
+    width:100%; max-width:none; display:flex;
     flex-direction:column; 
     gap:14px; 
     padding:24px clamp(18px,4vw,52px); 
@@ -136,8 +138,8 @@
     align-items:center; 
     gap:18px; border:0; 
     border-radius:14px; 
-    background:#fff; 
-    color:#14213d; 
+    background:var(--app-surface-background);
+    color:var(--app-surface-foreground);
     box-sizing:border-box; 
     font-family:var(--font-baloo); 
 }
@@ -191,9 +193,6 @@
 }
 .appearanceIcon {
     --icon-background:#bd00a4;
-}
-.parentalIcon {
-    --icon-background:#ff8112;
 }
 .passwordIcon {
     --icon-background:#1216ff;
@@ -251,7 +250,7 @@
     display:flex; 
     align-items:center; 
     gap:18px; 
-    margin-top:auto; 
+    margin-top:0;
     padding:16px 24px; 
     border:0; 
     border-radius:14px; 
@@ -260,11 +259,124 @@
     text-align:left; 
     font-family:var(--font-baloo); 
     cursor:pointer; }
-.logout > span:first-child { 
-    font-size:42px; 
-} 
+
+:global(html[data-theme="dark"]) .logout {
+    background:#001a43;
+    color:#fff;
+}
+
+:global(html[data-theme="dark"]) .optionCard small,
+:global(html[data-theme="dark"]) .logout small,
+:global(html[data-theme="dark"]) .optionCard b {
+    color:#fff;
+}
+.logoutIcon {
+    width:72px;
+    height:72px;
+    display:grid;
+    place-items:center;
+    flex:0 0 auto;
+}
+.logoutIcon img {
+    width:64px;
+    height:64px;
+    object-fit:contain;
+}
 .logout small { 
     color:#d22637; 
+}
+
+.modalBackdrop {
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:grid;
+    place-items:center;
+    padding:20px;
+    background:rgba(5,44,121,.18);
+}
+.logoutModal {
+    position:relative;
+    width:min(100%,510px);
+    padding:14px 22px 12px;
+    border:4px solid #126cff;
+    border-radius:15px;
+    background:#fff;
+    color:#052c79;
+    box-shadow:0 8px 24px rgba(0,34,91,.18);
+    font-family:var(--font-baloo);
+}
+.logoutModal h2 {
+    margin:0 46px 2px 0;
+    color:#052c79;
+    font-size:31px;
+    font-weight:900;
+    line-height:1.15;
+}
+.logoutModal p {
+    margin:0 0 18px;
+    color:#052c79;
+    font-size:14px;
+    font-weight:600;
+    line-height:1.55;
+}
+.modalClose {
+    position:absolute;
+    top:13px;
+    right:16px;
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    padding:0;
+    border:1px solid #e1af00;
+    border-radius:50%;
+    background:#ffc800;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    font-size:24px;
+    font-weight:900;
+    line-height:1;
+    text-shadow:0 1px 0 #8c6b00;
+    cursor:pointer;
+}
+.modalActions {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+.modalActions button {
+    min-height:35px;
+    border-radius:0;
+    font-family:var(--font-baloo);
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+.cancelButton {
+    border:1px solid #777;
+    background:#e8e8e8;
+    color:#052c79;
+}
+.confirmButton {
+    border:1px solid #a48200;
+    background:#ffc800;
+    color:#052c79;
+}
+.modalActions button:disabled,
+.modalClose:disabled {
+    cursor:wait;
+    opacity:.7;
+}
+.modalActions button:focus-visible,
+.modalClose:focus-visible {
+    outline:3px solid #052c79;
+    outline-offset:2px;
+}
+:global(html[data-theme="dark"]) .logoutModal,
+:global(html[data-theme="dark"]) .logoutModal h2,
+:global(html[data-theme="dark"]) .logoutModal p {
+    color:#052c79;
 }
 @media (max-width:980px) { 
     .fondo { 
@@ -305,5 +417,15 @@
     }
      .settingsMain { 
         padding:16px; 
-    } 
+    }
+    .logoutModal {
+        padding:18px 16px 16px;
+    }
+    .logoutModal h2 {
+        font-size:clamp(24px,8vw,31px);
+    }
+    .modalActions {
+        grid-template-columns:1fr;
+        gap:10px;
+    }
 }

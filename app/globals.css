@@ -3,6 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --app-page-background: url("/FondoInicioSesion.png");
+  --app-sidebar-background: #126cff;
+  --app-header-background: #cde0ff;
+  --app-surface-background: #ffffff;
+  --app-surface-foreground: #052c79;
   --font-geist-sans: "Geist", Arial, Helvetica, sans-serif;
   --font-geist-mono: "Geist Mono", Consolas, monospace;
   --font-rubik-one: "Rubik", Arial, sans-serif;
@@ -16,11 +21,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html[data-theme="dark"] {
+  --background: #001a43;
+  --foreground: #ffffff;
+  --app-page-background: url("/fondo-modo-oscuro.png");
+  --app-sidebar-background: #001a43;
+  --app-header-background: #001a43;
+  --app-surface-background: #001a43;
+  --app-surface-foreground: #ffffff;
 }
 
 body {
@@ -31,6 +39,30 @@ body {
   min-width: 320px;
   min-height: 100dvh;
   overflow-x: hidden;
+}
+
+/* El tema se aplica en la raíz para cubrir todas las rutas, incluso las de auth. */
+html[data-theme="dark"] body > :is(div, main, section) {
+  background-color: #001a43 !important;
+  background-image: var(--app-page-background) !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+html[data-theme="dark"] aside {
+  background-color: var(--app-sidebar-background) !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] header {
+  background-color: var(--app-header-background) !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] header :is(h1, h2, h3, p, strong, span),
+html[data-theme="dark"] section :is(h1, h2, h3, p, label, strong, small) {
+  color: var(--app-surface-foreground);
 }
 
 html {

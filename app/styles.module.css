@@ -1,5 +1,5 @@
 .fondo {
-    background-image: url("/FondoInicioSesion.png");
+    background-image: var(--app-page-background);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

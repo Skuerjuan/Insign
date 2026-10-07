@@ -1,3 +1,4 @@
+
 "use server"
 
 import { prisma } from "@/db"
@@ -6,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLocalDayNumber, registerActiveDay } from "./streak";
 
-export type GameName = "eleccion" | "memoria";
+export type GameName = "eleccion" | "memoria" | "adivinar" | "completar";
 export type GameOrigin = "menu" | "training";
 
 export async function getSession(){

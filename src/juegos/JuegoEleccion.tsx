@@ -55,6 +55,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
       const Phaser = await import("phaser");
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
+      const fondoPantallaSrc =
+        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.png" : fondo.src;
 
       const crearPillBadge = (
         scene: Phaser.Scene,
@@ -150,7 +152,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
         preload() {
           this.load.image("fondoFicha", fondoCartas.src);
-          this.load.image("fondoPantalla", fondo.src);
+          this.load.image("fondoPantalla", fondoPantallaSrc);
         }
 
         create() {

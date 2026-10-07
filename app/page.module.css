@@ -1,0 +1,840 @@
+.page {
+  min-height: 100vh;
+  overflow: clip;
+  background: #eaf8ff;
+  font-family: var(--font-baloo);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+.navWrap {
+  position: fixed;
+  inset: 18px 0 auto;
+  z-index: 80;
+  padding: 0 5vw;
+  pointer-events: none;
+}
+.nav {
+  width: min(1320px,100%);
+  min-height: 76px;
+  margin: auto;
+  padding: 10px 14px 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  border: 1px solid #0b1c331f;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 14px 40px #003e8b1c;
+  pointer-events: auto;
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: var(--font-rubik-one);
+  font-size: 35px;
+  line-height: 1;
+  letter-spacing: -2px;
+  text-shadow: -2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;
+}
+.logo span {
+  color: #fff;
+}
+.logo strong {
+  color: #ffd12a;
+}
+.navLinks {
+  display: flex;
+  gap: clamp(22px,3vw,48px);
+  margin: auto;
+}
+.navLinks a, .navCta {
+  color: #073c8f;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: .2s;
+}
+.navLinks a:hover {
+  color: #126cff;
+  transform: translateY(-2px);
+}
+.navCta {
+  padding: 14px 24px;
+  border: 1px solid #e5ae00;
+  border-radius: 15px;
+  background: #ffd12a;
+  box-shadow: 0 3px 0 #dfa900;
+  white-space: nowrap;
+}
+.menuButton {
+  display: none;
+  border: 0;
+  background: transparent;
+}
+.showcaseSection, .progressSection {
+  position: relative;
+  background-color: #eaf8ff;
+  background-image: url('/marco-hojas.png');
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: center;
+  padding: 118px max(5vw,28px) 80px;
+  isolation: isolate;
+  background: url('/paisaje-inicio.png') center bottom/cover no-repeat;
+}
+.heroContent {
+  width: min(1270px,100%);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  align-items: center;
+  gap: 46px;
+}
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  animation: rise .8s ease both;
+}
+.hero h1 {
+  margin: 0;
+  color: #073a8c;
+  font-size: clamp(48px,5.2vw,78px);
+  line-height: .98;
+  letter-spacing: -.045em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+.hero h1 em {
+  position: relative;
+  color: #126cff;
+  font-style: normal;
+}
+.hero h1 em:after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -3%;
+  bottom: -3px;
+  height: 14px;
+  z-index: -1;
+  border-radius: 50%;
+  background: #ffd21c;
+  transform: rotate(-2deg);
+}
+.lead {
+  max-width: 640px;
+  margin: 24px 0;
+  color: #153b6e;
+  font-size: clamp(18px,1.5vw,22px);
+  line-height: 1.45;
+  font-weight: 600;
+}
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px 23px;
+  border-radius: 18px;
+  background: #ffd21c;
+  color: #092550;
+  box-shadow: 0 7px 0 #dda800;
+  text-decoration: none;
+  font-size: 19px;
+  font-weight: 800;
+  transition: .2s;
+}
+.primaryButton:hover {
+  transform: translateY(3px);
+  box-shadow: 0 4px 0 #dda800;
+}
+.primaryButton span, .playDot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  color: #126cff;
+}
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border: 2px solid #ffffffb8;
+  border-radius: 18px;
+  background: #fffffff2;
+  color: #073f9d;
+  box-shadow: 0 8px 22px #06458226;
+  font: 800 17px var(--font-baloo);
+  cursor: pointer;
+  transition: .2s;
+}
+.textButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 11px 26px #06458238;
+}
+.heroVisual {
+  align-self: end;
+  justify-self: center;
+  width: min(45vw,640px);
+  height: min(68vh,650px);
+  display: grid;
+  place-items: end center;
+}
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 20px #16375a30);
+}
+.scrollHint, .sectionScroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #072e72;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 800;
+}
+.scrollHint {
+  position: absolute;
+  left: 50%;
+  bottom: 13px;
+  transform: translateX(-50%);
+}
+.scrollHint b, .sectionScroll b {
+  font-size: 32px;
+  line-height: .55;
+  animation: bounce 1.5s infinite;
+}
+.learningJourney {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #eaf8ff;
+}
+.showcaseSection {
+  padding: 112px max(5vw,30px) 22px;
+  scroll-margin-top: 0;
+}
+.showcaseSection+.showcaseSection {
+  border-top: 2px solid #fff9;
+}
+.sectionIntro {
+  max-width: 850px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+.sectionIntro h2 {
+  margin: 0;
+  color: #0746a4;
+  font-size: clamp(44px,4.8vw,67px);
+  line-height: .96;
+  letter-spacing: -.03em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+.sectionIntro h2>span {
+  display: block;
+  color: #1c70ff;
+}
+.sectionIntro h2 em {
+  color: #ffd018;
+  font-style: normal;
+}
+.sectionIntro p {
+  margin: 20px auto 0;
+  color: #0b57ca;
+  font-size: clamp(18px,1.7vw,24px);
+  line-height: 1.35;
+  font-weight: 700;
+}
+.familyTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sectionIntro .familyTitle em {
+  color: #ffd018;
+}
+.sectionIntro .familyTitle span {
+  color: #1c70ff;
+}
+.gameGrid {
+  width: min(1360px,100%);
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+.gameCard {
+  min-height: 500px;
+  padding: 14px;
+  overflow: hidden;
+  border: 14px solid #fff;
+  border-radius: 29px;
+  box-shadow: 0 15px 30px #07346f18;
+  transition: .25s;
+}
+.gameCard:hover {
+  transform: translateY(-6px);
+}
+.blue {
+  background: #abcaf9;
+}
+.green {
+  background: #60fa48;
+}
+.yellow {
+  background: #ffe170;
+}
+.cardImage {
+  position: relative;
+  width: 100%;
+  height: 205px;
+  overflow: hidden;
+  border: 3px solid #0b0b0b;
+  border-radius: 25px;
+  background: #fff;
+}
+.cardImage img {
+  object-fit: contain;
+}
+.yellow .cardImage {
+  background: #fff8df;
+}
+.cardBody {
+  position: relative;
+  min-height: 250px;
+  padding: 18px 5px 58px;
+  text-align: center;
+  color: #062f70;
+}
+.cardBody>span {
+  font-size: 20px;
+  font-weight: 600;
+}
+.cardBody h3 {
+  margin: 5px 0 12px;
+  color: #fff;
+  font-family: var(--font-baloo);
+  font-size: clamp(37px,3.4vw,52px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  -webkit-text-stroke: 6px #0750b3;
+  paint-order: stroke fill;
+  text-shadow: none;
+}
+.cardBody p {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+.cardBody a {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef5ff;
+  box-shadow: 0 5px 6px #07346f4a;
+  text-decoration: none;
+}
+.cardBody a img {
+  width: 27px;
+  height: 40px;
+  object-fit: contain;
+}
+.sectionScroll {
+  width: max-content;
+  margin: 16px auto 0;
+}
+.progressSection {
+  padding: 112px max(2.7vw,28px) 36px;
+  display: flex;
+  align-items: center;
+}
+.familyPanel {
+  width: min(1360px,100%);
+  min-height: 500px;
+  margin: auto;
+  padding: 72px 40px;
+  display: grid;
+  grid-template-columns: .72fr 1.28fr;
+  align-items: center;
+  gap: 40px;
+  border-radius: 28px;
+  background: #176cf3;
+  color: #fff;
+}
+.familyCopy h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(38px,3.8vw,58px);
+  line-height: 1.12;
+}
+.familyCopy p {
+  margin: 18px 0 34px;
+  font-size: 28px;
+  line-height: 1.35;
+}
+.familyCopy a {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  border: 2px solid #fff;
+  border-radius: 13px;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+.progressCards {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 12px;
+}
+.progressCard, .miniStat {
+  min-height: 350px;
+  padding: 35px 26px;
+  border-radius: 26px;
+  background: #fff;
+  color: #082d72;
+  box-shadow: 0 12px 32px #0023642e;
+}
+.progressCard>span {
+  font-size: 22px;
+  font-weight: 800;
+}
+.progressCard strong {
+  display: block;
+  margin: 26px 0;
+  color: #176cf3;
+  font-size: 68px;
+}
+.progressBar {
+  height: 27px;
+  margin: 10px 0 28px;
+  border-radius: 99px;
+  background: #dce9fa;
+  overflow: hidden;
+}
+.progressBar i {
+  display: block;
+  width: 75%;
+  height: 100%;
+  background: #18e000;
+  animation: fill 1.5s;
+}
+.progressCard small {
+  font-size: 24px;
+  font-weight: 700;
+}
+.miniStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.miniStat b {
+  font-size: 82px;
+}
+.miniStat strong {
+  color: #176cf3;
+  font-size: 54px;
+}
+.miniStat span {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+}
+.footer {
+  min-height: 120px;
+  padding: 26px max(3.5vw,28px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  background: #062b67;
+  color: #fff;
+}
+.footer .logo {
+  font-size: 38px;
+}
+.footer p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.footer>span {
+  font-size: 16px;
+}
+.videoModal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: #03162dcc;
+  backdrop-filter: blur(8px);
+}
+.videoDialog {
+  position: relative;
+  width: min(1100px,94vw);
+  padding: 12px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 30px 90px #0008;
+}
+.video {
+  display: block;
+  width: 100%;
+  max-height: 82vh;
+  border-radius: 15px;
+  background: #000;
+}
+.videoClose {
+  position: absolute;
+  z-index: 2;
+  top: -18px;
+  right: -18px;
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #ffd21c;
+  color: #062b67;
+  box-shadow: 0 5px 14px #0005;
+  font: 800 32px/1 Arial;
+  cursor: pointer;
+}
+/* Animaciones existentes: se conservan sin cambios. */
+.travelMascot {
+  z-index: 90;
+  position: fixed;
+  top: -42px;
+  left: -240px;
+  right: auto;
+  width: 220px;
+  height: auto;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 42% 0;
+  will-change: transform;
+}
+.swingMonkeyImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 16px 12px #12355c2b);
+}
+.scene_games {
+  opacity: 1;
+  animation: swingAcrossGames 5.6s ease-in-out infinite alternate;
+}
+.scene_banana {
+  opacity: 1;
+  animation: swingAcrossFamily 5.2s ease-in-out infinite alternate;
+}
+@keyframes swingAcrossGames {
+  0% {
+    transform: translateX(0) rotate(13deg);
+  }
+  50% {
+    transform: translateX(calc(50vw + 120px)) rotate(-12deg);
+  }
+  100% {
+    transform: translateX(calc(100vw + 260px)) rotate(13deg);
+  }
+}
+@keyframes swingAcrossFamily {
+  0% {
+    transform: translateX(calc(100vw + 260px)) rotate(13deg);
+  }
+  50% {
+    transform: translateX(calc(50vw + 120px)) rotate(-12deg);
+  }
+  100% {
+    transform: translateX(0) rotate(13deg);
+  }
+}
+.learningJourney:before, .learningJourney:after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  width: 190px;
+  background: url("/camino-bananas.png") 0 0/170px auto repeat-y;
+  pointer-events: none;
+  animation: bananaFall 7s linear infinite;
+}
+.learningJourney:before {
+  left: 0;
+}
+.learningJourney:after {
+  right: 0;
+  transform: scaleX(-1);
+}
+.sectionIntro, .gameGrid, .sectionScroll, .familyPanel {
+  position: relative;
+  z-index: 2;
+}
+@keyframes bananaFall {
+  to {
+    background-position: 0 509px;
+  }
+}
+@keyframes bananaFallTablet {
+  to {
+    background-position: 0 434px;
+  }
+}
+@keyframes bananaFallMobile {
+  to {
+    background-position: 0 344px;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes float {
+  50% {
+    transform: translateY(-13px) rotate(1deg);
+  }
+}
+@keyframes bounce {
+  50% {
+    transform: translateY(7px);
+  }
+}
+@keyframes fill {
+  from {
+    width: 0;
+  }
+}
+@media(max-width:1000px) {
+  .nav {
+    padding: 10px 25px;
+  }
+  .navLinks {
+    gap: 22px;
+  }
+  .heroContent {
+    grid-template-columns: 1.1fr .9fr;
+  }
+  .showcaseSection {
+    padding-inline: 9vw;
+  }
+  .gameCard {
+    min-height: 430px;
+  }
+  .cardImage {
+    height: 160px;
+  }
+  .cardBody p {
+    font-size: 16px;
+  }
+  .familyPanel {
+    grid-template-columns: 1fr;
+  }
+  .learningJourney:before, .learningJourney:after {
+    width: 165px;
+    background-size: 145px auto;
+    animation-name: bananaFallTablet;
+  }
+  .learningJourney:before {
+    left: -45px;
+  }
+  .learningJourney:after {
+    right: -45px;
+  }
+}
+@media(max-width:760px) {
+  .navWrap {
+    inset: 10px 0 auto;
+    padding: 0 12px;
+  }
+  .nav {
+    min-height: 64px;
+    padding: 8px 10px 8px 16px;
+    border-radius: 18px;
+  }
+  .logo {
+    font-size: 30px;
+    letter-spacing: -2px;
+  }
+  .menuButton {
+    width: 42px;
+    height: 42px;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 12px;
+    background: #edf6ff;
+  }
+  .menuButton i {
+    width: 20px;
+    height: 2px;
+    margin: 0 auto;
+    background: #083c92;
+  }
+  .navLinks {
+    position: absolute;
+    top: 74px;
+    left: 12px;
+    right: 12px;
+    display: none;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 18px 40px #00265e33;
+  }
+  .navLinks a {
+    padding: 10px;
+  }
+  .navOpen {
+    display: flex;
+  }
+  .navCta {
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+  .showcaseSection, .progressSection {
+    background-size: 100% 100%;
+    background-position: center;
+  }
+  .hero {
+    padding: 96px 20px 66px;
+  }
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hero h1 {
+    font-size: clamp(41px,12vw,60px);
+  }
+  .lead {
+    font-size: 17px;
+  }
+  .heroVisual {
+    width: 100%;
+    height: 320px;
+  }
+  .showcaseSection {
+    padding: 96px 18px 24px;
+  }
+  .sectionIntro h2 {
+    font-size: 42px;
+  }
+  .gameGrid {
+    grid-template-columns: 1fr;
+  }
+  .gameCard {
+    min-height: 470px;
+  }
+  .cardImage {
+    height: 200px;
+  }
+  .cardBody p {
+    font-size: 19px;
+  }
+  .progressSection {
+    padding: 96px 18px 32px;
+  }
+  .familyPanel {
+    padding: 35px 20px;
+  }
+  .familyCopy p {
+    font-size: 21px;
+  }
+  .progressCards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .progressCard {
+    grid-column: 1/-1;
+    min-height: 260px;
+  }
+  .miniStat {
+    min-height: 220px;
+    padding: 18px;
+  }
+  .miniStat b {
+    font-size: 56px;
+  }
+  .footer {
+    min-height: 160px;
+    padding: 22px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .travelMascot {
+    display: block;
+    top: 52px;
+    left: -130px;
+    width: 120px;
+  }
+  .learningJourney:before, .learningJourney:after {
+    width: 135px;
+    background-size: 115px auto;
+    opacity: .78;
+    animation-name: bananaFallMobile;
+  }
+  .learningJourney:before {
+    left: -65px;
+  }
+  .learningJourney:after {
+    right: -65px;
+  }
+  .videoClose {
+    top: -14px;
+    right: -8px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .page, .page *, .page *:before, .page *:after {
+    animation-duration: .01ms!important;
+    animation-iteration-count: 1!important;
+    scroll-behavior: auto!important;
+  }
+  .travelMascot {
+    display: none;
+  }
+  .learningJourney:before, .learningJourney:after {
+    animation: none;
+  }
+}

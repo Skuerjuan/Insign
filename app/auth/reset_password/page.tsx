@@ -14,11 +14,18 @@ export default function ResetPassword(){
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H5m6-7-7 7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
             <h1 className={styles.heading}>Una nueva <strong>contraseña</strong></h1>
-            <div className={styles.layout}>
-                <div className={styles.monkeyWrap}>
-                    <Image className={styles.monkey} src="/mono-abecedario.png" alt="Mono de InSign" width={373} height={498} priority />
+            <div className={`${styles.layout} ${styles.resetLayout}`}>
+                <div className={`${styles.monkeyWrap} ${styles.resetMonkeyWrap}`}>
+                    <Image
+                        className={`${styles.monkey} ${styles.resetMonkey}`}
+                        src="/mono-nueva-contrasena.png"
+                        alt="Mono de InSign señalando hacia arriba"
+                        width={506}
+                        height={730}
+                        priority
+                    />
                 </div>
-                <section className={styles.card}>
+                <section className={`${styles.card} ${styles.resetCard}`}>
                 <h2 className={styles.title}>¡Ya casi está!</h2>
                 <p className={styles.description}>Creá tu nueva contraseña para seguir aprendiendo y jugando</p>
                 <AuthUIProvider
@@ -30,10 +37,10 @@ export default function ResetPassword(){
                         className={styles.authForm}
                         classNames={{
                             label: styles.authLabel,
-                            input: styles.authInput,
+                            input: `${styles.authInput} ${styles.resetInput}`,
                             error: styles.authError,
-                            button: styles.primaryButton,
-                            primaryButton: styles.primaryButton,
+                            button: `${styles.primaryButton} ${styles.resetButton}`,
+                            primaryButton: `${styles.primaryButton} ${styles.resetButton}`,
                         }}
                         localization={{
                             NEW_PASSWORD: "Nueva contraseña",
