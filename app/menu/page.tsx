@@ -4,74 +4,9 @@ import Image from "next/image";
 import Foto from "@/components/Foto"
 import { getProfile, getSession } from "../../lib/server/profile.actions";
 import { getWeeklyActivity } from "../../lib/server/streak";
+import { LEVELS } from "@/lib/levels";
 
 export const dynamic = "force-dynamic";
-
-const levels = [
-  {
-    title: "Presentación 1",
-    description: "Aprende a saludar presentarte y conocer expresiones básicas",
-    href: "/juego-eleccion",
-    colorClass: "presentationOne",
-    requiredLevel: 1,
-  },
-  {
-    title: "Presentación 2",
-    description: "Preséntate y saluda de otros y preguntas básicas",
-    href: "/juego-memoria",
-    colorClass: "presentationTwo",
-    requiredLevel: 2,
-  },
-  {
-    title: "Familia y amigos",
-    description: "Conoce los miembros de la familia y otros",
-    href: "/Juego-adivinar",
-    colorClass: "familyAndFriends",
-    requiredLevel: 3,
-  },
-  {
-    title: "Números",
-    description: "Aprende de los números en LSA de forma fácil y divertida",
-    href: "/Juego-completar",
-    colorClass: "numbers",
-    requiredLevel: 4,
-  },
-  {
-    title: "Colegio",
-    description: "Aprende las señas básicas sobre el colegio y los útiles escolares.",
-    href: "/juego-eleccion",
-    colorClass: "school",
-    requiredLevel: 5,
-  },
-  {
-    title: "Clima",
-    description: "Aprende sobre los distintos tipos de clima.",
-    href: "/juego-eleccion",
-    colorClass: "weather",
-    requiredLevel: 6,
-  },
-  {
-    title: "Partes de la casa",
-    description: "Conoce las partes de la casa y sus objetos principales.",
-    href: "/juego-eleccion",
-    colorClass: "houseParts",
-    requiredLevel: 7,
-  },
-  {
-    title: "Preguntas",
-    description: "Aprendé preguntas y respuestas sobre orientación en LSA.",
-    href: "/juego-eleccion",
-    colorClass: "questions",
-    requiredLevel: 8,
-  },
-  {
-    title: "Compras",
-    description: "Aprendé a pedir, elegir y comprar diferentes productos.",
-    href: "/juego-eleccion",
-    colorClass: "shopping",
-    requiredLevel: 9,
-  },
-] as const;
 
 export default async function Menu() {
   const user = await getSession();
@@ -140,8 +75,8 @@ export default async function Menu() {
         </header>
 
         <main className={styles.levels}>
-          {levels.map((level) => {
-            const isLocked = level.requiredLevel > 1 && nivel < level.requiredLevel;
+          {LEVELS.map((level) => {
+            const isLocked = level.id > 1 && nivel < level.id;
 
             return (
               <section
@@ -171,7 +106,7 @@ export default async function Menu() {
                     <Image src="/flecha-seccion.png" alt="" width={87} height={87} />
                   </span>
                 ) : (
-                  <Link href={level.href} className={styles.levelArrow} aria-label={`Jugar ${level.title}`}>
+                  <Link href={`/nivel/${level.id}`} className={styles.levelArrow} aria-label={`Ver juegos de ${level.title}`}>
                     <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
                   </Link>
                 )}

@@ -26,10 +26,12 @@ interface JuegoEleccionProps {
   onRondaGanada?: (actuales: number) => void;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
 }
 
-export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu" }: JuegoEleccionProps) {
+export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu", level }: JuegoEleccionProps) {
   const router = useRouter();
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -321,7 +323,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             elementoVideo.muted = true;
             elementoVideo.playsInline = true;
 
-            elementoVideo.src = `/nivel1/${palabraOpcion}.mp4`;
+            elementoVideo.src = `/nivel${assetLevel}/${palabraOpcion}.mp4`;
 
             const domVideo = this.add.dom(0, 0, elementoVideo);
 
@@ -494,7 +496,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("eleccion", this.errores, origin)
+            completeGame("eleccion", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -504,7 +506,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
                   .setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push("/");
+                  router.push(level ? `/nivel/${level}` : "/menu");
                 });
               })
               .catch(() => {
@@ -556,7 +558,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points, origin, router]);
+  }, [palabras, onRondaGanada, points, origin, level, assetLevel, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

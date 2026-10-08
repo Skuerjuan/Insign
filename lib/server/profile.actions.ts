@@ -67,6 +67,18 @@ export async function getLearnedSignsCount(userId: string) {
     return completedExercises.length;
 }
 
+export async function getCompletedGames(userId: string, level: number) {
+    const completed = await prisma.juegos_completados.findMany({
+        where: {
+            usuario_id: userId,
+            nivel: level,
+        },
+        select: { juego: true },
+    });
+
+    return completed.map(({ juego }) => juego as GameName);
+}
+
 function calculatePoints(game: GameName, mistakes: number) {
     if (game === "memoria") return 15;
 
@@ -80,12 +92,17 @@ export async function completeGame(
     game: GameName,
     mistakes = 0,
     origin: GameOrigin = "menu",
+    level?: number,
 ){
     const user = await getSession();
 
-    if (game !== "eleccion" && game !== "memoria") {
+    if (!["eleccion", "memoria", "adivinar", "completar"].includes(game)) {
         throw new Error("Juego no válido");
     }
+
+    const safeLevel = Number.isInteger(level) && Number(level) >= 1 && Number(level) <= 9
+        ? Number(level)
+        : undefined;
 
     const safeMistakes = Math.max(0, Math.trunc(Number(mistakes) || 0));
     const pointsAwarded = calculatePoints(game, safeMistakes);
@@ -120,6 +137,24 @@ export async function completeGame(
             },
         });
 
+        if (origin === "menu" && safeLevel) {
+            await tx.juegos_completados.upsert({
+                where: {
+                    usuario_id_nivel_juego: {
+                        usuario_id: user.id,
+                        nivel: safeLevel,
+                        juego: game,
+                    },
+                },
+                update: { completado_at: new Date() },
+                create: {
+                    usuario_id: user.id,
+                    nivel: safeLevel,
+                    juego: game,
+                },
+            });
+        }
+
         return {
             pointsAwarded,
             totalPoints: updatedProfile.puntos ?? 0,
@@ -136,6 +171,7 @@ export async function completeGame(
     revalidatePath("/perfil");
     revalidatePath("/entrenamiento");
     revalidatePath("/progreso");
+    if (safeLevel) revalidatePath(`/nivel/${safeLevel}`);
 
     return result;
 }

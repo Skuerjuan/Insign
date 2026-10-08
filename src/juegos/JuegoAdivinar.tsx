@@ -28,6 +28,7 @@ interface JuegoAdivinarProps {
   userName?: string;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
 }
 
 export default function JuegoAdivinar({
@@ -36,8 +37,10 @@ export default function JuegoAdivinar({
   userName = "user",
   points = 0,
   origin = "menu",
+  level,
 }: JuegoAdivinarProps) {
   const router = useRouter();
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -318,7 +321,7 @@ export default function JuegoAdivinar({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          elementoVideo.src = `/nivel1/${this.palabraObjetivo}.mp4`;
+          elementoVideo.src = `/nivel${assetLevel}/${this.palabraObjetivo}.mp4`;
 
           this.add.dom(centroX, centroY, elementoVideo);
         }
@@ -554,7 +557,7 @@ export default function JuegoAdivinar({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("adivinar", this.errores, origin)
+            completeGame("adivinar", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -562,7 +565,7 @@ export default function JuegoAdivinar({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  window.location.href = "/juegos/felicitar";
+                  window.location.href = level ? `/nivel/${level}` : "/menu";
                 });
               })
               .catch(() => {
@@ -614,7 +617,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, userName, points, origin]);
+  }, [palabras, onRondaGanada, userName, points, origin, level, assetLevel]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

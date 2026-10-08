@@ -23,6 +23,7 @@ interface JuegoMemoriaProps {
   onParAdivinado?: (actuales: number) => void;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
 }
 
 export default function JuegoMemoria({
@@ -30,7 +31,9 @@ export default function JuegoMemoria({
   onParAdivinado,
   points = 0,
   origin = "menu",
+  level,
 }: JuegoMemoriaProps) {
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -366,7 +369,7 @@ export default function JuegoMemoria({
               elementoVideo.style.borderRadius = "12px";
               elementoVideo.style.pointerEvents = "none";
 
-              elementoVideo.src = `/nivel1/${item}.mp4`;
+              elementoVideo.src = `/nivel${assetLevel}/${item}.mp4`;
 
               contenidoVisible = this.add.dom(0, 0, elementoVideo);
             } else {
@@ -603,7 +606,7 @@ export default function JuegoMemoria({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("memoria", 0, origin)
+            completeGame("memoria", 0, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -662,7 +665,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onParAdivinado, points, origin]);
+  }, [palabras, onParAdivinado, points, origin, level, assetLevel]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }
