@@ -2,23 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
-
-const palabrasd = [
-  "Hola",
-  "Chau",
-  "Bien",
-  "Mal",
-  "Por favor",
-  "Ayuda",
-  "Perdón",
-  "Nombre",
-];
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoMemoriaProps {
+  nivel?: string;
   palabras?: string[];
   onParAdivinado?: (actuales: number) => void;
   points?: number;
@@ -26,6 +17,7 @@ interface JuegoMemoriaProps {
 }
 
 export default function JuegoMemoria({
+  nivel = "presentacion-1",
   palabras,
   onParAdivinado,
   points = 0,
@@ -106,7 +98,9 @@ export default function JuegoMemoria({
           this.bloqueado = false;
           this.aciertos = 0;
 
-          const pares = palabras && palabras.length > 0 ? palabras : palabrasd;
+          // Carga dinámica de pares desde la categoría activa
+          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
+          const pares = mazoObtenido.slice(0, 8); // Tomamos máximo 8 pares para mantener un tablero de 16 cartas (2x8)
           this.totalPares = pares.length;
 
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
@@ -209,27 +203,27 @@ export default function JuegoMemoria({
           flecha.strokePath();
 
           const titleWidth = Phaser.Math.Clamp(width * 0.18, 180 * escalaUi, 320 * escalaUi);
-            const titleHeight = 42 * escalaUi;
-            const titleBg = this.add.graphics();
-            titleBg.fillStyle(azul, 0.98);
-            titleBg.fillRoundedRect(
-              width / 2 - titleWidth / 2,
-              10 * escalaUi,
-              titleWidth,
-              titleHeight,
-              8 * escalaUi
-            );
+          const titleHeight = 42 * escalaUi;
+          const titleBg = this.add.graphics();
+          titleBg.fillStyle(azul, 0.98);
+          titleBg.fillRoundedRect(
+            width / 2 - titleWidth / 2,
+            10 * escalaUi,
+            titleWidth,
+            titleHeight,
+            8 * escalaUi
+          );
 
-            this.add
-              .text(width / 2, 10 * escalaUi + titleHeight / 2, "Memoria", {
-                fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 20, 36)}px`, // Tamaño achicado (antes 44)
-                fontFamily,
-                color: "#ffffff",
-                stroke: "#d28b00",
-                strokeThickness: 3 * escalaUi,
-                fontStyle: "800",
-              })
-              .setOrigin(0.5);
+          this.add
+            .text(width / 2, 10 * escalaUi + titleHeight / 2, "Memoria", {
+              fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 20, 36)}px`,
+              fontFamily,
+              color: "#ffffff",
+              stroke: "#d28b00",
+              strokeThickness: 3 * escalaUi,
+              fontStyle: "800",
+            })
+            .setOrigin(0.5);
 
           const puntosTexto = `${points} puntos`;
           const scoreWidth = Phaser.Math.Clamp(
@@ -366,7 +360,8 @@ export default function JuegoMemoria({
               elementoVideo.style.borderRadius = "12px";
               elementoVideo.style.pointerEvents = "none";
 
-              elementoVideo.src = `/nivel1/${item}.mp4`;
+              // Ruta dinámica al video de la seña en public/señas/[nivel]/
+              elementoVideo.src = `/señas/${nivel}/${item}.mp4`;
 
               contenidoVisible = this.add.dom(0, 0, elementoVideo);
             } else {
@@ -662,7 +657,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onParAdivinado, points, origin]);
+  }, [nivel, palabras, onParAdivinado, points, origin]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

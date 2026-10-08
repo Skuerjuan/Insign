@@ -3,32 +3,28 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
-const palabrasd = [
-  "Ayuda",
-  "Hola",
-  "Chau",
-  "Gracias",
-  "Bien",
-  "Mal",
-  "Por favor",
-  "Perdon",
-  "Nombre",
-];
-
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoEleccionProps {
+  nivel?: string;
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   points?: number;
   origin?: GameOrigin;
 }
 
-export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, origin = "menu" }: JuegoEleccionProps) {
+export default function JuegoEleccion({
+  nivel = "presentacion-1",
+  palabras,
+  onRondaGanada,
+  points = 0,
+  origin = "menu",
+}: JuegoEleccionProps) {
   const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
@@ -163,13 +159,21 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : palabrasd;
+          const mazoObtenido =
+            palabras && palabras.length > 0
+              ? palabras
+              : getPalabrasPorCategoria(nivel) || [];
+          this.mazoJuego = mazoObtenido;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
 
           this.scale.on("resize", () => {
-            this.scene.restart({ aciertos: this.aciertos, palabrasUsadas: this.palabrasUsadas });
+            this.scene.restart({
+              aciertos: this.aciertos,
+              palabrasUsadas: this.palabrasUsadas,
+              intentosFallidos: this.intentosFallidos,
+            });
           });
         }
 
@@ -254,25 +258,38 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         }
 
         generarNuevaRonda(width: number, height: number, escalaUi: number) {
+          if (!this.mazoJuego || this.mazoJuego.length === 0) {
+            console.error("El mazo de palabras está vacío o no se encontraron palabras para este nivel.");
+            return;
+          }
+
           let palabrasDisponiblesFiltradas = this.mazoJuego.filter(
             (p) => !this.palabrasUsadas.includes(p)
           );
 
           if (palabrasDisponiblesFiltradas.length === 0) {
             this.palabrasUsadas = [];
-            palabrasDisponiblesFiltradas = this.mazoJuego;
+            palabrasDisponiblesFiltradas = [...this.mazoJuego];
           }
 
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
-          this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
+          this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom] || "";
+
+          if (!this.palabraObjetivo) {
+            console.error("No se pudo seleccionar una palabra objetivo válida.");
+            return;
+          }
+
           this.palabrasUsadas.push(this.palabraObjetivo);
 
           const distractores = this.mazoJuego.filter((p) => p !== this.palabraObjetivo);
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 3);
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
 
+          const palabraTextoFormatted = this.palabraObjetivo.toUpperCase();
+
           this.textoPalabra = this.add
-            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${this.palabraObjetivo.toUpperCase()}?`, {
+            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${palabraTextoFormatted}?`, {
               fontSize: `${Phaser.Math.Clamp(26 * escalaUi, 20, 36)}px`,
               fontFamily,
               color: "#05215b",
@@ -321,7 +338,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             elementoVideo.muted = true;
             elementoVideo.playsInline = true;
 
-            elementoVideo.src = `/nivel1/${palabraOpcion}.mp4`;
+            elementoVideo.src = `/señas/${nivel}/${palabraOpcion}.mp4`;
 
             const domVideo = this.add.dom(0, 0, elementoVideo);
 
@@ -340,28 +357,29 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
           });
         }
 
+        // 💡 MODIFICACIÓN: Mayor cantidad de confeti y mayor dispersión/duración
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
-          const colores = [0xff4757, 0x2ed573, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81];
+          const colores = [0xff4757, 0x2ed573, 0x00ff66, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6];
 
-          for (let i = 0; i < 40; i++) {
+          for (let i = 0; i < 100; i++) {
             const color = Phaser.Utils.Array.GetRandom(colores);
-            const size = Phaser.Math.Between(5 * escalaUi, 10 * escalaUi);
+            const size = Phaser.Math.Between(6 * escalaUi, 14 * escalaUi);
 
             const papelito = this.add.rectangle(origenX, origenY, size, size, color).setDepth(20);
             papelito.setAngle(Phaser.Math.Between(0, 360));
 
-            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.1, 0.1);
-            const velocidad = Phaser.Math.Between(150 * escalaUi, 350 * escalaUi);
-            const targetX = origenX + Math.cos(angulo) * velocidad;
-            const targetY = origenY + Math.sin(angulo) * velocidad + 100;
+            const angulo = Phaser.Math.FloatBetween(-Math.PI * 1.2, 0.2);
+            const velocidad = Phaser.Math.Between(200 * escalaUi, 500 * escalaUi);
+            const targetX = origenX + Math.cos(angulo) * velocidad + Phaser.Math.Between(-60, 60);
+            const targetY = origenY + Math.sin(angulo) * velocidad + Phaser.Math.Between(100, 300);
 
             this.tweens.add({
               targets: papelito,
               x: targetX,
               y: targetY,
-              angle: papelito.angle + Phaser.Math.Between(360, 720),
+              angle: papelito.angle + Phaser.Math.Between(720, 1440),
               alpha: 0,
-              duration: Phaser.Math.Between(1000, 1500),
+              duration: Phaser.Math.Between(1500, 3000),
               ease: "Cubic.easeOut",
               onComplete: () => papelito.destroy(),
             });
@@ -382,7 +400,12 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
-            cardBg.lineStyle(6 * escalaUi, 0x2ed573, 1);
+            
+            // 💡 MODIFICACIÓN: Relleno verde sutil de fondo y borde verde brillante de 12px
+            cardBg.fillStyle(0x00ff66, 0.2);
+            cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
+
+            cardBg.lineStyle(12 * escalaUi, 0x00ff66, 1);
             cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
             this.aciertos++;
@@ -396,7 +419,8 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
               onRondaGanada(this.aciertos);
             }
 
-            this.time.delayedCall(1200, () => {
+            // 💡 MODIFICACIÓN: Pausa de 5 segundos (5000ms) antes de pasar al siguiente nivel/ronda
+            this.time.delayedCall(5000, () => {
               if (this.aciertos >= 5) {
                 this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
@@ -409,7 +433,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
             });
           } else {
             cardBg.clear();
-            cardBg.lineStyle(6 * escalaUi, 0xff4757, 1);
+            cardBg.lineStyle(8 * escalaUi, 0xff4757, 1);
             cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
             this.intentosFallidos++;
@@ -556,7 +580,7 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points, origin, router]);
+  }, [nivel, palabras, onRondaGanada, points, origin, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

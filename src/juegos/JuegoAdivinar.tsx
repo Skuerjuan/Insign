@@ -3,26 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
-import fondo from "./fondoP.png"; // Fixed syntax error
-
-// Lista base de palabras de tu carpeta public/nivel1 (asegúrate de incluir los nombres de tus videos sin extensión)
-const PALABRAS_DEFECTO = [
-  "Ayuda",
-  "Hola",
-  "Chau",
-  "Gracias",
-  "Bien",
-  "Mal",
-  "Por favor",
-  "Perdon",
-  "Nombre",
-];
+import fondo from "./fondoP.png";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
 interface JuegoAdivinarProps {
+  nivel?: string;
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   userName?: string;
@@ -31,6 +20,7 @@ interface JuegoAdivinarProps {
 }
 
 export default function JuegoAdivinar({
+  nivel = "presentacion-1",
   palabras,
   onRondaGanada,
   userName = "user",
@@ -76,7 +66,6 @@ export default function JuegoAdivinar({
         isRightAligned: boolean = false
       ) => {
         const container = scene.add.container(x, y);
-        // Agrandar fuente base y límites
         const fontSizePx = Math.round(Phaser.Math.Clamp(22 * escalaUi, 16, 28));
 
         const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
@@ -90,7 +79,6 @@ export default function JuegoAdivinar({
 
         const paddingX = 18 * escalaUi;
         const width = textWidth + paddingX * 2;
-        // Agrandar altura del badge
         const height = 45 * escalaUi;
         const radius = height / 2;
 
@@ -165,13 +153,14 @@ export default function JuegoAdivinar({
 
         create() {
           const { width, height } = this.scale;
-          // Incrementar la escala global general ajustando la base de resolución y límites
           const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 650), 0.7, 1.3);
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          this.mazoJuego = palabras && palabras.length >= 6 ? palabras : PALABRAS_DEFECTO;
+          // Carga de palabras dinámicas desde el diccionario
+          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
+          this.mazoJuego = mazoObtenido;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -208,7 +197,6 @@ export default function JuegoAdivinar({
           const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          // Agrandar un poco el título
           titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 48 * escalaUi, 10 * escalaUi);
 
           this.add
@@ -227,7 +215,6 @@ export default function JuegoAdivinar({
           const scoreX = width - scoreWidth - 16 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          // Agrandar un poco el score badge
           scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
           scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
           scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
@@ -251,7 +238,6 @@ export default function JuegoAdivinar({
             .setOrigin(0.5)
             .setStroke("#0042AD", 4 * escalaUi);
 
-          // Subir un poco los badges inferiores
           const bottomY = height - 35 * escalaUi;
           this.badgeAciertos = crearPillBadge(
             this,
@@ -299,11 +285,9 @@ export default function JuegoAdivinar({
 
         dibujarPanelVideoPrincipal(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height;
-          // Agrandar el video principal
           const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.7 : 0.4), 200, 360);
           const panelHeight = panelWidth * 0.75;
           const centroX = width / 2;
-          // Desplazar el video verticalmente hacia abajo (de 0.28/0.34 de altura a 0.38/0.45 de altura)
           const centroY = isPortrait ? height * 0.38 : height * 0.45;
 
           const elementoVideo = document.createElement("video");
@@ -318,7 +302,8 @@ export default function JuegoAdivinar({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          elementoVideo.src = `/nivel1/${this.palabraObjetivo}.mp4`;
+          // Carga del video dinámico según nivel
+          elementoVideo.src = `/señas/${nivel}/${this.palabraObjetivo}.mp4`;
 
           this.add.dom(centroX, centroY, elementoVideo);
         }
@@ -327,7 +312,6 @@ export default function JuegoAdivinar({
           const isPortrait = width < height || width < 550;
           const cols = isPortrait ? 2 : 3;
 
-          // Se incrementan aún más el ancho y alto máximo de cada botón
           const botonWidth = Phaser.Math.Clamp(
             (width * 0.95 - (cols - 1) * 16 * escalaUi) / cols,
             140,
@@ -336,9 +320,7 @@ export default function JuegoAdivinar({
           const botonHeight = Phaser.Math.Clamp(65 * escalaUi, 55, 80);
 
           const centroX = width / 2;
-          // Se desplaza la posición vertical de la botonera aún más hacia abajo (de 0.58/0.68 a 0.68/0.80)
           const inicioY = isPortrait ? height * 0.68 : height * 0.80;
-          // Un poco más de separación
           const gapX = 16 * escalaUi;
           const gapY = 16 * escalaUi;
 
@@ -364,7 +346,6 @@ export default function JuegoAdivinar({
 
             const textoBoton = this.add
               .text(0, 0, palabraOpcion, {
-                // Agrandar la fuente del botón
                 fontSize: `${Phaser.Math.Clamp(24 * escalaUi, 18, 28)}px`,
                 fontFamily,
                 color: "#05215b",
@@ -513,12 +494,10 @@ export default function JuegoAdivinar({
 
         create() {
           const { width, height } = this.scale;
-          // Incrementar escala de PantallaFin
           const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 600), 0.7, 1.3);
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
-          // Agrandar panel de fin
           const panelWidth = Phaser.Math.Clamp(width * 0.85, 240, 400);
           const panelHeight = 150 * escalaUi;
           const panelX = width / 2 - panelWidth / 2;
@@ -532,7 +511,6 @@ export default function JuegoAdivinar({
 
           const resultadoTexto = this.add
             .text(width / 2, height / 2 - 24 * escalaUi, "¡Excelente trabajo!\nGuardando tus puntos...", {
-              // Agrandar texto resultado
               fontSize: `${Math.round(22 * escalaUi)}px`,
               fontFamily,
               color: "#003895",
@@ -543,7 +521,6 @@ export default function JuegoAdivinar({
 
           const botonFinal = this.add
             .text(width / 2, height / 2 + 36 * escalaUi, "Guardando...", {
-              // Agrandar texto botón
               fontSize: `${Math.round(20 * escalaUi)}px`,
               fontFamily,
               color: "#ffffff",
@@ -614,7 +591,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, userName, points, origin]);
+  }, [nivel, palabras, onRondaGanada, userName, points, origin]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
