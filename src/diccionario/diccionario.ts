@@ -196,7 +196,6 @@ export const CATEGORIAS: CategoriaInfo[] = [
   },
 ];
 
-// Mapeo directo de ID de categoría a su array de palabras
 export const DICCIONARIO_CATEGORIAS: Record<string, string[]> = CATEGORIAS.reduce(
   (acc, cat) => {
     acc[cat.id] = cat.palabras;
@@ -205,7 +204,6 @@ export const DICCIONARIO_CATEGORIAS: Record<string, string[]> = CATEGORIAS.reduc
   {} as Record<string, string[]>
 );
 
-// Función auxiliar para obtener palabras por ID de carpeta
 export function getPalabrasPorCategoria(idCategoria: string): string[] {
   return DICCIONARIO_CATEGORIAS[idCategoria] || DICCIONARIO_CATEGORIAS["abecedario"] || [];
 }
