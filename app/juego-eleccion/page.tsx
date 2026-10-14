@@ -2,13 +2,14 @@ import JuegoEleccion from "@/src/juegos/JuegoEleccion";
 import { auth } from "@/lib/auth/server";
 import { getProfile } from "@/lib/server/profile.actions";
 import { redirect } from "next/navigation";
+import { getLevel, getLevelWords } from "@/lib/levels";
 
 export const dynamic = "force-dynamic";
 
 export default async function JuegoEleccionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ origen?: string }>;
+  searchParams: Promise<{ origen?: string; nivel?: string }>;
 }) {
   const { data: session } = await auth.getSession();
 
@@ -17,13 +18,17 @@ export default async function JuegoEleccionPage({
   }
 
   const profile = await getProfile(session.user.id);
-  const { origen } = await searchParams;
+  const { origen, nivel } = await searchParams;
+  const level = Number(nivel) || undefined;
+  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) redirect("/menu");
 
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <JuegoEleccion
         points={profile.puntos ?? 0}
         origin={origen === "entrenamiento" ? "training" : "menu"}
+        level={level}
+        palabras={level ? getLevelWords(level) : undefined}
       />
     </main>
   );
