@@ -198,7 +198,7 @@ export default function JuegoCompletarCeldas({
             }
           });
 
-          this.input.keyboard.on("keydown", this.alPresionarTecla, this);
+          this.input.keyboard?.on("keydown", this.alPresionarTecla, this);
         }
 
         crearHud(width: number, height: number, escalaUi: number) {

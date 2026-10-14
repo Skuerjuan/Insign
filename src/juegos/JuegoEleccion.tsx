@@ -400,7 +400,7 @@ export default function JuegoEleccion({
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
-            
+
             // 💡 MODIFICACIÓN: Relleno verde sutil de fondo y borde verde brillante de 12px
             cardBg.fillStyle(0x00ff66, 0.2);
             cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
