@@ -3,21 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
+import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
-
-
-const palabrasd = [
-  "Ayuda",
-  "Hola",
-  "Chau",
-  "Gracias",
-  "Bien",
-  "Mal",
-  "Por favor",
-  "Perdon",
-  "Nombre",
-];
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
@@ -32,24 +20,23 @@ const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
 };
 
 interface JuegoCompletarProps {
+  nivel?: string;
   palabras?: string[];
   onRondaGanada?: (actuales: number) => void;
   onJuegoTerminado?: (puntos: number, aciertos: number) => void;
   points?: number;
   origin?: GameOrigin;
-  level?: number;
 }
 
 export default function JuegoCompletarCeldas({
+  nivel = "presentacion-1",
   palabras,
   onRondaGanada,
   onJuegoTerminado,
   points = 0,
   origin = "menu",
-  level,
 }: JuegoCompletarProps) {
   const router = useRouter();
-  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -190,7 +177,9 @@ export default function JuegoCompletarCeldas({
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          this.mazoJuego = palabras && palabras.length >= 4 ? palabras : palabrasd;
+          // Carga dinámica del diccionario según la categoría recibida
+          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
+          this.mazoJuego = mazoObtenido;
 
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
@@ -209,7 +198,7 @@ export default function JuegoCompletarCeldas({
             }
           });
 
-          this.input.keyboard?.on("keydown", this.alPresionarTecla, this);
+          this.input.keyboard.on("keydown", this.alPresionarTecla, this);
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
@@ -307,7 +296,6 @@ export default function JuegoCompletarCeldas({
 
           const azulTexto = "#05215b";
 
-          // SUBTÍTULO DE LA PANTALLA (Ligeramente más chico que en el original)
           const textoPregunta = this.add
             .text(width / 2, 85 * escalaUi, "Escribe la palabra correcta", {
               fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 17, 30)}px`,
@@ -333,7 +321,8 @@ export default function JuegoCompletarCeldas({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          elementoVideo.src = `/nivel${assetLevel}/${this.palabraObjetivo}.mp4`;
+          // Carga dinámica del archivo .mp4 dentro de public/señas/[nivel]/
+          elementoVideo.src = `/señas/${nivel}/${this.palabraObjetivo}.mp4`;
 
           this.add.dom(centroX, centroY, elementoVideo);
 
@@ -730,7 +719,7 @@ export default function JuegoCompletarCeldas({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("completar", this.errores, origin, level)
+            completeGame("completar", this.errores, origin)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -738,7 +727,7 @@ export default function JuegoCompletarCeldas({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  window.location.href = level ? `/nivel/${level}` : "/menu";
+                  window.location.href = "/juegos/felicitar";
                 });
               })
               .catch(() => {
@@ -790,7 +779,7 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, onJuegoTerminado, points, origin, level, assetLevel, router]);
+  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
