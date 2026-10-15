@@ -1,5 +1,7 @@
 import JuegoEleccion from "@/src/juegos/JuegoAdivinar";
 import { auth } from "@/lib/auth/server";
+import { getLevel, getLevelWords } from "@/src/diccionario/diccionario";
+import { getProfile } from "@/lib/server/profile.actions";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -11,9 +13,20 @@ export default async function JuegoAdivinarPage() {
     redirect("/auth/sign-in");
   }
 
+  const profile = await getProfile(session.user.id);
+  const { origen, nivel } = await searchParams;
+  const level = Number(nivel) || undefined;
+  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) redirect("/menu");
+
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <JuegoEleccion userName={session.user.name} />
+      <JuegoEleccion
+        userName={session.user.name}
+        points={profile.puntos ?? 0}
+        origin={origen === "entrenamiento" ? "training" : "menu"}
+        level={level}
+        palabras={level ? getLevelWords(level) : undefined}
+      />
     </main>
   );
 }

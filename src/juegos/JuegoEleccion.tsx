@@ -575,3 +575,4 @@ export default function JuegoEleccion({ palabras, onRondaGanada, points = 0, ori
     </div>
   );
 }
+
