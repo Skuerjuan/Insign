@@ -68,12 +68,7 @@ export async function getLearnedSignsCount(userId: string) {
 }
 
 export async function getCompletedGames(userId: string, level: number) {
-    // Un servidor iniciado antes de regenerar Prisma puede conservar un cliente
-    // viejo en memoria. En ese caso no bloqueamos la pantalla de selección.
-    const completedGames = prisma.juegos_completados;
-    if (!completedGames) return [];
-
-    const completed = await completedGames.findMany({
+    const completed = await prisma.juegos_completados.findMany({
         where: {
             usuario_id: userId,
             nivel: level,
@@ -143,8 +138,7 @@ export async function completeGame(
         });
 
         if (origin === "menu" && safeLevel) {
-            const completedGames = tx.juegos_completados;
-            if (completedGames) await completedGames.upsert({
+            await tx.juegos_completados.upsert({
                 where: {
                     usuario_id_nivel_juego: {
                         usuario_id: user.id,
