@@ -83,7 +83,7 @@ export default function Home() {
       <section id="inicio" data-scene="hero" className={styles.hero}>
         <div className={styles.heroContent}>
           <div className={styles.heroCopy}>
-            <h1>Aprender lengua de señas también puede ser <em>un juego.</em></h1>
+            <h1>Aprender LSA también puede ser <em>un juego.</em></h1>
             <p className={styles.lead}>Una aventura interactiva para que chicos y chicas aprendan LSA jugando, practicando y celebrando cada logro.</p>
             <div className={styles.heroActions}>
               <a className={styles.primaryButton} href="#juegos">Empezar a jugar <span>→</span></a>
