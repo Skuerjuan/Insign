@@ -6,7 +6,11 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function JuegoAdivinarPage() {
+interface PageProps {
+  searchParams: Promise<{ origen?: string; nivel?: string }>;
+}
+
+export default async function JuegoAdivinarPage({ searchParams }: PageProps) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user) {
@@ -16,7 +20,10 @@ export default async function JuegoAdivinarPage() {
   const profile = await getProfile(session.user.id);
   const { origen, nivel } = await searchParams;
   const level = Number(nivel) || undefined;
-  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) redirect("/menu");
+
+  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) {
+    redirect("/menu");
+  }
 
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
