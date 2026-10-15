@@ -1,29 +1,29 @@
 import type { Metadata } from "next";
-import "@fontsource/geist/latin-100.css";
-import "@fontsource/geist/latin-200.css";
-import "@fontsource/geist/latin-300.css";
-import "@fontsource/geist/latin-400.css";
-import "@fontsource/geist/latin-500.css";
-import "@fontsource/geist/latin-600.css";
-import "@fontsource/geist/latin-700.css";
-import "@fontsource/geist/latin-800.css";
-import "@fontsource/geist/latin-900.css";
-import "@fontsource/geist-mono/latin-100.css";
-import "@fontsource/geist-mono/latin-200.css";
-import "@fontsource/geist-mono/latin-300.css";
-import "@fontsource/geist-mono/latin-400.css";
-import "@fontsource/geist-mono/latin-500.css";
-import "@fontsource/geist-mono/latin-600.css";
-import "@fontsource/geist-mono/latin-700.css";
-import "@fontsource/geist-mono/latin-800.css";
-import "@fontsource/geist-mono/latin-900.css";
-import "@fontsource/rubik/latin-900.css";
-import "@fontsource/baloo-2/latin-400.css";
-import "@fontsource/baloo-2/latin-500.css";
-import "@fontsource/baloo-2/latin-600.css";
-import "@fontsource/baloo-2/latin-700.css";
-import "@fontsource/baloo-2/latin-800.css";
+import { Geist, Geist_Mono, Rubik, Baloo_2 } from "next/font/google";
 import "./globals.css";
+
+// Configuración nativa de fuentes
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
+
+const rubik = Rubik({
+  subsets: ["latin"],
+  weight: ["900"],
+  variable: "--font-rubik",
+});
+
+const baloo2 = Baloo_2({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-baloo",
+});
 
 export const metadata: Metadata = {
   title: "InSign",
@@ -36,7 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full antialiased" suppressHydrationWarning>
+    <html
+      lang="es"
+      className={`h-full antialiased ${baloo2.className} ${geistSans.variable} ${geistMono.variable} ${rubik.variable} ${baloo2.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
