@@ -594,7 +594,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, userName, points, origin, level, assetLevel]);
+  }, [nivel, palabras, onRondaGanada, userName, points, origin, level, assetLevel]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

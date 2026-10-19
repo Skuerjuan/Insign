@@ -20,6 +20,7 @@ interface JuegoEleccionProps {
 }
 
 export default function JuegoEleccion({ 
+  nivel = "presentacion-1",
   palabras, 
   onRondaGanada, 
   points = 0, 
@@ -580,7 +581,7 @@ export default function JuegoEleccion({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, points, origin, level, assetLevel, router]);
+  }, [nivel, palabras, onRondaGanada, points, origin, level, assetLevel, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

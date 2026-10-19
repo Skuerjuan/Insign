@@ -2,14 +2,15 @@ import styles from "./style.module.css";
 import Link from "next/link";
 import EditButton from "@/components/EditButton";
 import Foto from "@/components/Foto";
-import { getProfile, getSession } from "../../lib/server/profile.actions";
+import { getAchievementProgress, getProfile, getSession } from "../../lib/server/profile.actions";
 import { getWeeklyActivity } from "../../lib/server/streak";
 
 export const dynamic = "force-dynamic";
 
 export default async function Perfil() {
   const user = await getSession();
-  const { puntos, premios, racha, ultimo_dia_activo } = await getProfile(user.id);
+  const { puntos, premios, racha, ultimo_dia_activo, nivel } = await getProfile(user.id);
+  const achievementProgress = await getAchievementProgress(user.id);
   const weeklyActivity = getWeeklyActivity(racha, ultimo_dia_activo);
   const rachaActual = weeklyActivity.count;
   const weekDays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -71,7 +72,7 @@ export default async function Perfil() {
 
             <div className={styles.userInfo}>
               <h1>{user.name}</h1>
-              <p>Nivel 5</p>
+              <p>Nivel {Math.min(9, Math.max(1, nivel ?? 1))}</p>
             </div>
 
             <div className={styles.profileStats}>
@@ -98,9 +99,36 @@ export default async function Perfil() {
           <section className={styles.panel}>
             <details className={styles.achievementsDetails}>
               <summary className={styles.panelHeader}>
-                <h2>Mis logros</h2>
-                <span>Ver todos</span>
+                <div>
+                  <h2>Mis logros</h2>
+                  <small>
+                    {achievementProgress.achievements.filter((achievement) => achievement.unlocked).length}
+                    /{achievementProgress.achievements.length} desbloqueados
+                  </small>
+                </div>
+                <span className={styles.achievementsToggle}>Ver todos</span>
               </summary>
+
+              <div className={styles.achievementsGrid}>
+                {achievementProgress.achievements.map((achievement) => (
+                  <article
+                    key={achievement.id}
+                    className={`${styles.achievementCard} ${achievement.unlocked ? styles.achievementUnlocked : styles.achievementLocked}`}
+                  >
+                    <div className={styles.achievementImage} aria-label={`Imagen pendiente para ${achievement.name}`}>
+                      <span aria-hidden="true">{achievement.unlocked ? "🏆" : "🔒"}</span>
+                      <small>Imagen pendiente</small>
+                    </div>
+                    <div>
+                      <h3>{achievement.name}</h3>
+                      <p>{achievement.description}</p>
+                      <span className={styles.achievementStatus}>
+                        {achievement.unlocked ? "Desbloqueado" : "Bloqueado"}
+                      </span>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </details>
           </section>
 

@@ -439,6 +439,109 @@ flex: 0 0 auto;
   min-height: 230px;
 }
 
+.achievementsDetails {
+  width: 100%;
+}
+
+.achievementsDetails[open] .panelHeader {
+  margin-bottom: 18px;
+}
+
+.panelHeader > div {
+  min-width: 0;
+}
+
+.panelHeader small {
+  display: block;
+  margin-top: 5px;
+  color: #607ca8;
+  font-family: var(--font-baloo);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.achievementsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.achievementCard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 2px solid #dce7f7;
+  border-radius: 20px;
+  background: #f8fbff;
+  color: #052c79;
+}
+
+.achievementLocked {
+  filter: grayscale(1);
+  opacity: 0.62;
+}
+
+.achievementUnlocked {
+  border-color: #facc15;
+  box-shadow: 0 5px 0 #e5b600;
+}
+
+.achievementImage {
+  width: 86px;
+  height: 86px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #86a5d3;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+}
+
+.achievementImage > span {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.achievementImage small {
+  margin-top: 5px;
+  color: #607ca8;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.achievementCard h3 {
+  margin: 0;
+  font-family: var(--font-baloo);
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.achievementCard p {
+  margin: 5px 0 8px;
+  color: #607ca8;
+  font-family: var(--font-baloo);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.achievementStatus {
+  color: #248b00;
+  font-family: var(--font-baloo);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.achievementLocked .achievementStatus {
+  color: #607ca8;
+}
+
 .panelSmall {
   min-height: 150px;
   margin-top: 10px;
@@ -601,6 +704,10 @@ flex: 0 0 auto;
   .weekGrid {
     grid-template-columns: repeat(4, minmax(52px, 1fr));
     gap: 16px;
+  }
+
+  .achievementsGrid {
+    grid-template-columns: 1fr;
   }
 }
 

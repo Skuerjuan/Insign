@@ -202,7 +202,7 @@ export default function JuegoCompletarCeldas({
             }
           });
 
-          this.input.keyboard.on("keydown", this.alPresionarTecla, this);
+          this.input.keyboard?.on("keydown", this.alPresionarTecla, this);
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
@@ -783,7 +783,7 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onRondaGanada, onJuegoTerminado, points, origin, level, assetLevel, router]);
+  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, level, assetLevel, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

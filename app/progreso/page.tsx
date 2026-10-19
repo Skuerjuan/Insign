@@ -1,19 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./styles.module.css";
 import Foto from "@/components/Foto";
-import { getProfile, getSession } from "@/lib/server/profile.actions";
+import { getAchievementProgress, getProfile, getSession } from "@/lib/server/profile.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function Progreso() {
   const user = await getSession();
   const profile = await getProfile(user.id)
-
-  const userProgress = user as typeof user & {
-    aprendidas?: string | number | null;
-    poraprender?: string | number | null;
-  };
+  const achievementProgress = await getAchievementProgress(user.id);
   const totalMinutes = Math.floor(profile.tiempo_total_segundos / 60);
+  const currentLevel = Math.min(9, Math.max(1, profile.nivel ?? 1));
+  const experience = Math.max(0, profile.experiencia ?? profile.puntos ?? 0);
+  const levelExperience = experience % 1000;
+  const progressPercent = Math.min(100, levelExperience / 10);
 
   return (
     <div className={styles.fondo}>
@@ -66,13 +67,18 @@ export default async function Progreso() {
             <h2>Experiencia</h2>
 
             <div className={styles.levelContent}>
-              <div className={styles.levelImagePlaceholder}>
-                <span>Imagen de nivel</span>
+              <div className={styles.levelBadge}>
+                <Image
+                  src={`/niveles/nivel-${currentLevel}.png`}
+                  alt={`Insignia del nivel ${currentLevel}`}
+                  width={150}
+                  height={150}
+                  priority
+                />
               </div>
 
               <div className={styles.levelInformation}>
-                <h3>Nivel 1</h3>
-                <p className={styles.levelName}>Aprendiz</p>
+                <h3>Nivel {currentLevel}</h3>
 
                 <div
                   className={styles.progressBar}
@@ -80,12 +86,12 @@ export default async function Progreso() {
                   aria-label="Progreso del nivel"
                   aria-valuemin={0}
                   aria-valuemax={1000}
-                  aria-valuenow={100}
+                  aria-valuenow={levelExperience}
                 >
-                  <span />
+                  <span style={{ width: `${progressPercent}%` }} />
                 </div>
 
-                <p className={styles.points}>{profile.puntos ?? 0}</p>
+                <p className={styles.points}>{profile.puntos ?? 0} puntos</p>
               </div>
             </div>
           </section>
@@ -102,12 +108,12 @@ export default async function Progreso() {
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.learnedDot}`} />
                   <span>Aprendidas</span>
-                  <strong>{userProgress.aprendidas ?? 0}</strong>
+                  <strong>{achievementProgress.learnedSigns}</strong>
                 </div>
                 <div className={styles.legendRow}>
                   <span className={`${styles.legendDot} ${styles.pendingDot}`} />
                   <span>Por aprender</span>
-                  <strong>{userProgress.poraprender ?? 0}</strong>
+                  <strong>{Math.max(0, achievementProgress.totalSigns - achievementProgress.learnedSigns)}</strong>
                 </div>
               </div>
             </div>
@@ -148,6 +154,7 @@ export default async function Progreso() {
               </article>
             </div>
           </section>
+
         </main>
       </div>
     </div>

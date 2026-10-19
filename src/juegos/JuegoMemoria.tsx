@@ -18,6 +18,7 @@ interface JuegoMemoriaProps {
 }
 
 export default function JuegoMemoria({
+  nivel = "presentacion-1",
   palabras,
   onParAdivinado,
   points = 0,
@@ -76,6 +77,7 @@ export default function JuegoMemoria({
         private segundaCarta: SelectedCard | null = null;
         private bloqueado = false;
         private aciertos = 0;
+        private errores = 0;
         private totalPares = 0;
         private escalaUiGlobal = 1;
         private textoMarcador: Phaser.GameObjects.Text | null = null;
@@ -99,8 +101,9 @@ export default function JuegoMemoria({
           this.segundaCarta = null;
           this.bloqueado = false;
           this.aciertos = 0;
+          this.errores = 0;
 
-          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(Level);
+          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
           const pares = mazoObtenido.slice(0, 8); // Tomamos máximo 8 pares para mantener un tablero de 16 cartas (2x8)
           this.totalPares = pares.length;
 
@@ -507,13 +510,14 @@ export default function JuegoMemoria({
 
                 if (this.aciertos === this.totalPares) {
                   this.time.delayedCall(1200, () => {
-                    this.scene.start("PantallaFin");
+                    this.scene.start("PantallaFin", { errores: this.errores });
                   });
                 } else {
                   this.resetSeleccion();
                 }
               });
             } else {
+              this.errores++;
               this.time.delayedCall(3000, () => {
                 if (this.primeraCarta && this.segundaCarta) {
                   this.ocultarCarta(this.primeraCarta);
@@ -547,8 +551,14 @@ export default function JuegoMemoria({
       }
 
       class PantallaFin extends Phaser.Scene {
+        private errores = 0;
+
         constructor() {
           super("PantallaFin");
+        }
+
+        init(data: { errores?: number }) {
+          this.errores = data.errores ?? 0;
         }
 
         create() {
@@ -598,7 +608,7 @@ export default function JuegoMemoria({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("memoria", 0, origin, level)
+            completeGame("memoria", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -659,7 +669,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [palabras, onParAdivinado, points, origin, level, assetLevel]);
+  }, [nivel, palabras, onParAdivinado, points, origin, level, assetLevel]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

@@ -5,10 +5,86 @@ import { prisma } from "@/db"
 import { auth } from "@/lib/auth/server"
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getLocalDayNumber, registerActiveDay } from "./streak";
+import { ACHIEVEMENTS, type AchievementId } from "@/lib/achievements";
+import { LEVELS } from "@/src/diccionario/diccionario";
+import type { Prisma } from "@/prisma/generated/client";
+import { getLocalDayNumber, getWeeklyActivity, registerActiveDay } from "./streak";
 
 export type GameName = "eleccion" | "memoria" | "adivinar" | "completar";
-export type GameOrigin = "menu" | "training";
+export type GameOrigin = "menu" | "training" | "exam";
+
+const GAMES_PER_LEVEL = 4;
+
+async function calculateAchievementSnapshot(
+    db: Prisma.TransactionClient | typeof prisma,
+    userId: string,
+) {
+    const [profile, completedGames, activities, completedExercises] = await Promise.all([
+        db.profiles.findUniqueOrThrow({ where: { user_id: userId } }),
+        db.juegos_completados.findMany({ where: { usuario_id: userId } }),
+        db.actividades.findMany({
+            where: { usuario_id: userId },
+            orderBy: { completado_at: "asc" },
+        }),
+        db.completado.findMany({
+            where: { usuario_id: userId, aprobado: true },
+            distinct: ["ejercicio_id"],
+            select: { ejercicio_id: true },
+        }),
+    ]);
+
+    const completedByLevel = new Map<number, Set<string>>();
+    for (const item of completedGames) {
+        const games = completedByLevel.get(item.nivel) ?? new Set<string>();
+        games.add(item.juego);
+        completedByLevel.set(item.nivel, games);
+    }
+
+    const completedLevels = new Set(
+        [...completedByLevel]
+            .filter(([, games]) => games.size >= GAMES_PER_LEVEL)
+            .map(([level]) => level),
+    );
+    const learnedSignsSet = new Set<string>();
+    for (const level of LEVELS) {
+        if (completedLevels.has(level.id)) {
+            level.palabras.forEach((word) => learnedSignsSet.add(word));
+        }
+    }
+
+    const perfectGamesByLevel = new Map<number, Set<string>>();
+    for (const activity of activities) {
+        if (activity.origen !== "menu" || activity.nivel === null || activity.errores !== 0) continue;
+        const games = perfectGamesByLevel.get(activity.nivel) ?? new Set<string>();
+        games.add(activity.juego);
+        perfectGamesByLevel.set(activity.nivel, games);
+    }
+
+    const learnedSigns = Math.max(learnedSignsSet.size, completedExercises.length);
+    const completedTopics = completedLevels.size;
+    const weeklyActivity = getWeeklyActivity(
+        profile.racha,
+        profile.ultimo_dia_activo,
+    ).count;
+    const unlocked = new Set<AchievementId>();
+
+    if (profile.juegos_jugados >= 1) unlocked.add("primeras-senas");
+    if (activities.some((activity) => activity.origen === "training")) unlocked.add("manos-a-la-obra");
+    if (completedTopics >= 1) unlocked.add("pequeno-explorador");
+    if (learnedSigns >= 10) unlocked.add("aprendiz");
+    if (activities.some((activity) => activity.juego === "memoria" && activity.errores === 0)) unlocked.add("memoria-de-elefante");
+    if (learnedSigns >= 25) unlocked.add("gran-aprendiz");
+    if (learnedSigns >= 50) unlocked.add("maestro-de-senas");
+    if (activities.length >= 3) unlocked.add("racha-imparable");
+    if ([...perfectGamesByLevel.values()].some((games) => games.size >= GAMES_PER_LEVEL)) unlocked.add("todo-correcto");
+    if (activities.some((activity) => activity.estrellas === 3)) unlocked.add("estrella-del-dia");
+    if (completedTopics >= 5) unlocked.add("explorador-de-temas");
+    if (activities.some((activity) => activity.origen === "exam" && activity.errores <= 2)) unlocked.add("lo-logre");
+    if (completedTopics >= LEVELS.length) unlocked.add("campeon-de-insign");
+    if (weeklyActivity >= 7) unlocked.add("on-fire");
+
+    return { unlocked: [...unlocked], learnedSigns, completedTopics };
+}
 
 export async function getSession(){
     const { data: session } = await auth.getSession();
@@ -67,6 +143,38 @@ export async function getLearnedSignsCount(userId: string) {
     return completedExercises.length;
 }
 
+export async function getAchievementProgress(userId: string) {
+    await getProfile(userId);
+    const snapshot = await calculateAchievementSnapshot(prisma, userId);
+
+    if (snapshot.unlocked.length > 0) {
+        await prisma.logros_desbloqueados.createMany({
+            data: snapshot.unlocked.map((logro_id) => ({ usuario_id: userId, logro_id })),
+            skipDuplicates: true,
+        });
+    }
+
+    const unlockedRows = await prisma.logros_desbloqueados.findMany({
+        where: { usuario_id: userId },
+        select: { logro_id: true, desbloqueado_at: true },
+    });
+    const unlockedDates = new Map(
+        unlockedRows.map((row) => [row.logro_id, row.desbloqueado_at]),
+    );
+    const totalSigns = new Set(LEVELS.flatMap((level) => level.palabras)).size;
+
+    return {
+        learnedSigns: snapshot.learnedSigns,
+        totalSigns,
+        completedTopics: snapshot.completedTopics,
+        achievements: ACHIEVEMENTS.map((achievement) => ({
+            ...achievement,
+            unlocked: unlockedDates.has(achievement.id),
+            unlockedAt: unlockedDates.get(achievement.id) ?? null,
+        })),
+    };
+}
+
 export async function getCompletedGames(userId: string, level: number) {
     const completed = await prisma.juegos_completados.findMany({
         where: {
@@ -106,6 +214,7 @@ export async function completeGame(
 
     const safeMistakes = Math.max(0, Math.trunc(Number(mistakes) || 0));
     const pointsAwarded = calculatePoints(game, safeMistakes);
+    const starsAwarded = safeMistakes === 0 ? 3 : safeMistakes === 1 ? 2 : safeMistakes === 2 ? 1 : 0;
     const today = getLocalDayNumber();
 
     await getProfile(user.id);
@@ -124,7 +233,7 @@ export async function completeGame(
         );
         const isNewActiveDay = profile.ultimo_dia_activo !== today;
 
-        const updatedProfile = await tx.profiles.update({
+        let updatedProfile = await tx.profiles.update({
             where: { user_id: user.id },
             data: {
                 puntos: profile.puntos == null
@@ -153,10 +262,52 @@ export async function completeGame(
                     juego: game,
                 },
             });
+
+            const completedInLevel = await tx.juegos_completados.count({
+                where: { usuario_id: user.id, nivel: safeLevel },
+            });
+            if (completedInLevel >= GAMES_PER_LEVEL && safeLevel < LEVELS.length) {
+                updatedProfile = await tx.profiles.update({
+                    where: { user_id: user.id },
+                    data: { nivel: Math.max(profile.nivel, safeLevel + 1) },
+                });
+            }
+        }
+
+        await tx.actividades.create({
+            data: {
+                usuario_id: user.id,
+                juego: game,
+                origen: origin,
+                nivel: safeLevel,
+                errores: safeMistakes,
+                estrellas: starsAwarded,
+            },
+        });
+
+        const achievementSnapshot = await calculateAchievementSnapshot(tx, user.id);
+        if (achievementSnapshot.unlocked.length > 0) {
+            await tx.logros_desbloqueados.createMany({
+                data: achievementSnapshot.unlocked.map((logro_id) => ({
+                    usuario_id: user.id,
+                    logro_id,
+                })),
+                skipDuplicates: true,
+            });
+        }
+        const achievementCount = await tx.logros_desbloqueados.count({
+            where: { usuario_id: user.id },
+        });
+        if (updatedProfile.premios !== achievementCount) {
+            updatedProfile = await tx.profiles.update({
+                where: { user_id: user.id },
+                data: { premios: achievementCount },
+            });
         }
 
         return {
             pointsAwarded,
+            starsAwarded,
             totalPoints: updatedProfile.puntos ?? 0,
             streak: streak.count,
             gamesPlayed: updatedProfile.juegos_jugados,

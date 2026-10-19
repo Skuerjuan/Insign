@@ -97,7 +97,7 @@
 .mainContent {
   min-width: 0;
   height: 100dvh;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .header {
@@ -128,7 +128,6 @@
 }
 
 .profileImagePlaceholder,
-.levelImagePlaceholder,
 .chartPlaceholder,
 .summaryImagePlaceholder {
   border: 2px dashed #86a5d3;
@@ -171,13 +170,12 @@
 }
 
 .progressMain {
-  height: calc(100dvh - 96px);
+  min-height: calc(100dvh - 96px);
   display: grid;
-  grid-template-rows: minmax(0, 1.08fr) minmax(0, 0.96fr) minmax(0, 0.76fr);
-  gap: 8px;
-  padding: 8px clamp(16px, 3vw, 28px);
+  grid-template-rows: auto auto auto;
+  gap: 14px;
+  padding: 14px clamp(16px, 3vw, 28px) 30px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .levelSection,
@@ -204,7 +202,7 @@
   display: flex;
   flex-direction: column;
   padding: 8px 24px 10px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .levelSection h2,
@@ -225,18 +223,18 @@
   padding-left: clamp(10px, 4vw, 30px);
 }
 
-.levelImagePlaceholder {
+.levelBadge {
   width: clamp(82px, 12vh, 108px);
   height: clamp(82px, 12vh, 108px);
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 50%;
-  padding: 16px;
-  box-sizing: border-box;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 800;
+}
+
+.levelBadge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .levelInformation {
@@ -249,12 +247,6 @@
   font-size: 32px;
   font-weight: 900;
   line-height: 1;
-}
-
-.levelName {
-  margin: 2px 0 8px;
-  font-size: 15px;
-  font-weight: 800;
 }
 
 .progressBar {
