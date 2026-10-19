@@ -4,8 +4,7 @@ import Image from "next/image";
 import Foto from "@/components/Foto"
 import { getProfile, getSession } from "../../lib/server/profile.actions";
 import { getWeeklyActivity } from "../../lib/server/streak";
-import { LEVELS } from "@/lib/levels";
-
+import { LEVELS } from "@/src/diccionario/diccionario";
 export const dynamic = "force-dynamic";
 
 export default async function Menu() {
@@ -75,8 +74,9 @@ export default async function Menu() {
         </header>
 
         <main className={styles.levels}>
-          {LEVELS.map((level) => {
+        {LEVELS.map((level) => {
             const isLocked = level.id > 1 && nivel < level.id;
+
 
             return (
               <section
@@ -106,7 +106,7 @@ export default async function Menu() {
                     <Image src="/flecha-seccion.png" alt="" width={87} height={87} />
                   </span>
                 ) : (
-                  <Link href={`/nivel/${level.id}`} className={styles.levelArrow} aria-label={`Ver juegos de ${level.title}`}>
+                  <Link href={`/nivel/${level.id}`} className={styles.levelArrow} aria-label={`Jugar ${level.title}`}>
                     <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
                   </Link>
                 )}

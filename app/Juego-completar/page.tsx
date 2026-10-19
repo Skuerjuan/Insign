@@ -2,15 +2,15 @@ import JuegoMemoria from "@/src/juegos/JuegoCompletar";
 import { auth } from "@/lib/auth/server";
 import { getProfile } from "@/lib/server/profile.actions";
 import { redirect } from "next/navigation";
-import { getLevel } from "@/lib/levels";
+import { getLevel, getLevelWords } from "@/src/diccionario/diccionario";
 
 export const dynamic = "force-dynamic";
 
-export default async function JuegoMemoriaPage({
-  searchParams,
-}: {
+interface PageProps {
   searchParams: Promise<{ origen?: string; nivel?: string }>;
-}) {
+}
+
+export default async function JuegoMemoriaPage({ searchParams }: PageProps) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user) {
@@ -20,15 +20,18 @@ export default async function JuegoMemoriaPage({
   const profile = await getProfile(session.user.id);
   const { origen, nivel } = await searchParams;
   const level = Number(nivel) || undefined;
-  const selectedLevel = level ? getLevel(level) : undefined;
-  if (level && (!selectedLevel || (level > 1 && profile.nivel < level))) redirect("/menu");
+
+  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) {
+    redirect("/menu");
+  }
 
   return (
     <main style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <JuegoMemoria
         points={profile.puntos ?? 0}
         origin={origen === "entrenamiento" ? "training" : "menu"}
-        nivel={selectedLevel?.categoryId}
+        level={level}
+        palabras={level ? getLevelWords(level) : undefined}
       />
     </main>
   );

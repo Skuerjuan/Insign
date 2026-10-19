@@ -26,6 +26,8 @@ interface JuegoCompletarProps {
   onJuegoTerminado?: (puntos: number, aciertos: number) => void;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
+
 }
 
 export default function JuegoCompletarCeldas({
@@ -35,9 +37,11 @@ export default function JuegoCompletarCeldas({
   onJuegoTerminado,
   points = 0,
   origin = "menu",
+  level,
 }: JuegoCompletarProps) {
   const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
 
@@ -198,7 +202,7 @@ export default function JuegoCompletarCeldas({
             }
           });
 
-          this.input.keyboard?.on("keydown", this.alPresionarTecla, this);
+          this.input.keyboard.on("keydown", this.alPresionarTecla, this);
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
@@ -719,7 +723,7 @@ export default function JuegoCompletarCeldas({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("completar", this.errores, origin)
+            completeGame("completar", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -727,7 +731,7 @@ export default function JuegoCompletarCeldas({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  window.location.href = "/juegos/felicitar";
+                  window.location.href = level ? `/nivel/${level}` : "/menu";
                 });
               })
               .catch(() => {
@@ -779,7 +783,7 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, router]);
+  }, [palabras, onRondaGanada, onJuegoTerminado, points, origin, level, assetLevel, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

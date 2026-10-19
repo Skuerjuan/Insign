@@ -16,16 +16,18 @@ interface JuegoEleccionProps {
   onRondaGanada?: (actuales: number) => void;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
 }
 
-export default function JuegoEleccion({
-  nivel = "presentacion-1",
-  palabras,
-  onRondaGanada,
-  points = 0,
-  origin = "menu",
+export default function JuegoEleccion({ 
+  palabras, 
+  onRondaGanada, 
+  points = 0, 
+  origin = "menu", 
+  level 
 }: JuegoEleccionProps) {
   const router = useRouter();
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -338,7 +340,7 @@ export default function JuegoEleccion({
             elementoVideo.muted = true;
             elementoVideo.playsInline = true;
 
-            elementoVideo.src = `/señas/${nivel}/${palabraOpcion}.mp4`;
+            elementoVideo.src = `/nivel${assetLevel}/${palabraOpcion}.mp4`;
 
             const domVideo = this.add.dom(0, 0, elementoVideo);
 
@@ -400,7 +402,7 @@ export default function JuegoEleccion({
 
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
-
+            
             // 💡 MODIFICACIÓN: Relleno verde sutil de fondo y borde verde brillante de 12px
             cardBg.fillStyle(0x00ff66, 0.2);
             cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
@@ -518,17 +520,15 @@ export default function JuegoEleccion({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("eleccion", this.errores, origin)
+            completeGame("eleccion", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal
-                  .setText("Volver al Menú")
-                  .setBackgroundColor("#2ed573");
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push("/");
+                  window.location.href = level ? `/nivel/${level}` : "/menu";
                 });
               })
               .catch(() => {
@@ -580,7 +580,7 @@ export default function JuegoEleccion({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, points, origin, router]);
+  }, [palabras, onRondaGanada, points, origin, level, assetLevel, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

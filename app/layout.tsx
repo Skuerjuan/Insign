@@ -36,9 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`h-full antialiased ${baloo2.className} ${geistSans.variable} ${geistMono.variable} ${rubik.variable} ${baloo2.variable}`}
+   <html lang="es" className={`h-full antialiased ${baloo2.className} ${geistSans.variable} ${geistMono.variable} ${rubik.variable} ${baloo2.variable}`}
       suppressHydrationWarning
     >
       <head>

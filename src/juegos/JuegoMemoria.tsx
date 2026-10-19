@@ -14,15 +14,17 @@ interface JuegoMemoriaProps {
   onParAdivinado?: (actuales: number) => void;
   points?: number;
   origin?: GameOrigin;
+  level?: number;
 }
 
 export default function JuegoMemoria({
-  nivel = "presentacion-1",
   palabras,
   onParAdivinado,
   points = 0,
   origin = "menu",
+  level,
 }: JuegoMemoriaProps) {
+  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -98,8 +100,7 @@ export default function JuegoMemoria({
           this.bloqueado = false;
           this.aciertos = 0;
 
-          // Carga dinámica de pares desde la categoría activa
-          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
+          const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(Level);
           const pares = mazoObtenido.slice(0, 8); // Tomamos máximo 8 pares para mantener un tablero de 16 cartas (2x8)
           this.totalPares = pares.length;
 
@@ -360,8 +361,7 @@ export default function JuegoMemoria({
               elementoVideo.style.borderRadius = "12px";
               elementoVideo.style.pointerEvents = "none";
 
-              // Ruta dinámica al video de la seña en public/señas/[nivel]/
-              elementoVideo.src = `/señas/${nivel}/${item}.mp4`;
+              elementoVideo.src = `/nivel${assetLevel}/${item}.mp4`;
 
               contenidoVisible = this.add.dom(0, 0, elementoVideo);
             } else {
@@ -598,14 +598,16 @@ export default function JuegoMemoria({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("memoria", 0, origin)
+            completeGame("memoria", 0, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal.setText("Volver").setBackgroundColor("#1e78ff");
+                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
-                botonFinal.once("pointerdown", () => window.history.back());
+                botonFinal.once("pointerdown", () => {
+                  window.location.href = level ? `/nivel/${level}` : "/menu";
+                });
               })
               .catch(() => {
                 resultadoGuardado = false;
@@ -657,7 +659,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onParAdivinado, points, origin]);
+  }, [palabras, onParAdivinado, points, origin, level, assetLevel]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }
