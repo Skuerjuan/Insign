@@ -7,7 +7,7 @@ export interface CategoriaInfo {
 export const CATEGORIAS: CategoriaInfo[] = [
   {
     id: "presentacion-1",
-    titulo: "Presentación 1 – Presentación y expresión personal",
+    titulo: "Presentación 1",
     palabras: [
       "Hola",
       "Chau",
@@ -28,7 +28,7 @@ export const CATEGORIAS: CategoriaInfo[] = [
   },
   {
     id: "presentacion-2",
-    titulo: "Presentación 2 – Presentación de otros y preguntas básicas",
+    titulo: "Presentación 2",
     palabras: [
       "Él",
       "Ella",
