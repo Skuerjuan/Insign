@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
+import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
 
@@ -25,7 +25,6 @@ export default function JuegoMemoria({
   origin = "menu",
   level,
 }: JuegoMemoriaProps) {
-  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -364,7 +363,7 @@ export default function JuegoMemoria({
               elementoVideo.style.borderRadius = "12px";
               elementoVideo.style.pointerEvents = "none";
 
-              elementoVideo.src = `/nivel${assetLevel}/${item}.mp4`;
+              elementoVideo.src = getVideoPath(level ?? nivel, item) ?? "";
 
               contenidoVisible = this.add.dom(0, 0, elementoVideo);
             } else {
@@ -669,7 +668,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onParAdivinado, points, origin, level, assetLevel]);
+  }, [nivel, palabras, onParAdivinado, points, origin, level]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

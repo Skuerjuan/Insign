@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
+import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
@@ -28,7 +28,6 @@ export default function JuegoEleccion({
   level 
 }: JuegoEleccionProps) {
   const router = useRouter();
-  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -341,7 +340,7 @@ export default function JuegoEleccion({
             elementoVideo.muted = true;
             elementoVideo.playsInline = true;
 
-            elementoVideo.src = `/nivel${assetLevel}/${palabraOpcion}.mp4`;
+            elementoVideo.src = getVideoPath(level ?? nivel, palabraOpcion) ?? "";
 
             const domVideo = this.add.dom(0, 0, elementoVideo);
 
@@ -581,7 +580,7 @@ export default function JuegoEleccion({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, points, origin, level, assetLevel, router]);
+  }, [nivel, palabras, onRondaGanada, points, origin, level, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

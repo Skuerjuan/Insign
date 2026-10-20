@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
+import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondoCartas from "./fondo.png";
 import fondo from "./fondoP.png";
@@ -31,7 +31,6 @@ export default function JuegoAdivinar({
 }: JuegoAdivinarProps) {
   const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
-  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
 
@@ -305,8 +304,7 @@ export default function JuegoAdivinar({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          // Carga del video dinámico según nivel
-          elementoVideo.src = `/señas/${nivel}/${this.palabraObjetivo}.mp4`;
+          elementoVideo.src = getVideoPath(level ?? nivel, this.palabraObjetivo) ?? "";
 
           this.add.dom(centroX, centroY, elementoVideo);
         }
@@ -594,7 +592,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, userName, points, origin, level, assetLevel]);
+  }, [nivel, palabras, onRondaGanada, userName, points, origin, level]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

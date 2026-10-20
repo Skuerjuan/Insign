@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import { getPalabrasPorCategoria } from "@/src/diccionario/diccionario";
+import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
 
@@ -41,7 +41,6 @@ export default function JuegoCompletarCeldas({
 }: JuegoCompletarProps) {
   const router = useRouter();
   const gameRef = useRef<HTMLDivElement>(null);
-  const assetLevel = level && level >= 1 && level <= 5 ? level : 1;
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
 
@@ -325,8 +324,7 @@ export default function JuegoCompletarCeldas({
           elementoVideo.muted = true;
           elementoVideo.playsInline = true;
 
-          // Carga dinámica del archivo .mp4 dentro de public/señas/[nivel]/
-          elementoVideo.src = `/señas/${nivel}/${this.palabraObjetivo}.mp4`;
+          elementoVideo.src = getVideoPath(level ?? nivel, this.palabraObjetivo) ?? "";
 
           this.add.dom(centroX, centroY, elementoVideo);
 
@@ -783,7 +781,7 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, level, assetLevel, router]);
+  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, level, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
