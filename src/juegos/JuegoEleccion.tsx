@@ -133,6 +133,7 @@ export default function JuegoEleccion({
         private palabrasUsadas: string[] = [];
         private escalaUiGlobal = 1;
 
+        private fichasContainers: Phaser.GameObjects.Container[] = [];
         private textoPalabra: Phaser.GameObjects.Text | null = null;
         private badgeAciertos: ReturnType<typeof crearPillBadge> | null = null;
         private badgeVidas: ReturnType<typeof crearPillBadge> | null = null;
@@ -146,6 +147,7 @@ export default function JuegoEleccion({
           this.palabrasUsadas = data.palabrasUsadas || [];
           this.intentosFallidos = data.intentosFallidos || 0;
           this.bloqueado = false;
+          this.fichasContainers = [];
         }
 
         preload() {
@@ -305,6 +307,7 @@ export default function JuegoEleccion({
         }
 
         dibujarGrillaOpciones(width: number, height: number, escalaUi: number) {
+          this.fichasContainers = [];
           const isPortrait = width < height;
           const cardWidth = Math.round(Phaser.Math.Clamp(width * (isPortrait ? 0.44 : 0.34), 160, 290));
           const cardHeight = Math.round(cardWidth * 0.72);
@@ -355,11 +358,12 @@ export default function JuegoEleccion({
             ficha.setData("cardWidth", cardWidth);
             ficha.setData("cardHeight", cardHeight);
 
+            this.fichasContainers.push(ficha);
+
             ficha.on("pointerdown", () => this.validarRespuesta(ficha, cardBg, cardWidth, cardHeight, escalaUi));
           });
         }
 
-        // 💡 MODIFICACIÓN: Mayor cantidad de confeti y mayor dispersión/duración
         lanzarConfeti(origenX: number, origenY: number, escalaUi: number) {
           const colores = [0xff4757, 0x2ed573, 0x00ff66, 0x1e90ff, 0xffa502, 0xeccc68, 0xff6b81, 0x9b59b6];
 
@@ -403,12 +407,34 @@ export default function JuegoEleccion({
           if (respuestaSeleccionada === this.palabraObjetivo) {
             cardBg.clear();
             
-            // 💡 MODIFICACIÓN: Relleno verde sutil de fondo y borde verde brillante de 12px
             cardBg.fillStyle(0x00ff66, 0.2);
             cardBg.fillRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
 
             cardBg.lineStyle(12 * escalaUi, 0x00ff66, 1);
             cardBg.strokeRoundedRect(-w / 2, -h / 2, w, h, 12 * escalaUi);
+
+            // 💡 Animación de la respuesta correcta e incorrectas
+            this.fichasContainers.forEach((f) => {
+              if (f === ficha) {
+                f.setDepth(15);
+                this.tweens.add({
+                  targets: f,
+                  scaleX: 1.18,
+                  scaleY: 1.18,
+                  duration: 450,
+                  ease: "Back.easeOut",
+                });
+              } else {
+                this.tweens.add({
+                  targets: f,
+                  scaleX: 0.75,
+                  scaleY: 0.75,
+                  alpha: 0.55,
+                  duration: 400,
+                  ease: "Cubic.easeOut",
+                });
+              }
+            });
 
             this.aciertos++;
             this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
@@ -421,7 +447,6 @@ export default function JuegoEleccion({
               onRondaGanada(this.aciertos);
             }
 
-            // 💡 MODIFICACIÓN: Pausa de 5 segundos (5000ms) antes de pasar al siguiente nivel/ronda
             this.time.delayedCall(5000, () => {
               if (this.aciertos >= 5) {
                 this.scene.start("PantallaFin", { errores: this.intentosFallidos });
