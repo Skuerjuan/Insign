@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LETRAS, COLORES_LETRAS, getAbecedarioVideoPath, getSiguienteLetra,getAnteriorLetra} from "@/src/diccionario/abecedario";
+import { LETRAS, COLORES_LETRAS, getAbecedarioVideoPath, getSiguienteLetra, getAnteriorLetra } from "@/src/diccionario/abecedario";
 import fondo from "./fondoP.png";
 
 interface AbecedarioViewProps {
@@ -104,7 +104,7 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
 
       {letraSeleccionada && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border-8 border-[#1e78ff] shadow-2xl p-5 md:p-6 relative max-w-xl w-full flex flex-col items-center animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl border-8 border-[#1e78ff] shadow-2xl p-5 md:p-6 relative max-w-2xl w-full flex flex-col items-center animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setSelectedLetraIndex(null)}
               className="absolute top-4 right-4 bg-[#ffd32a] hover:bg-[#fbc02d] text-[#05215b] font-black w-10 h-10 rounded-full border-2 border-white shadow-md flex items-center justify-center text-xl hover:scale-110 active:scale-90 transition-transform cursor-pointer z-10"
@@ -114,10 +114,10 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
             </button>
 
             <h2 className="text-xl md:text-2xl font-black text-[#05215b] mb-3 mt-1">
-              Seña de la letra <span className="text-[#1e78ff] text-3xl">{letraSeleccionada}</span>
+              Seña de la letra <span className="text-[#1e78ff] text-3xl md:text-4xl">{letraSeleccionada}</span>
             </h2>
 
-            <div className="w-full max-w-sm aspect-4/3 bg-slate-900 rounded-2xl overflow-hidden border-4 border-blue-100 shadow-inner flex items-center justify-center my-2">
+            <div className="w-full max-w-md aspect-4/3 bg-slate-900 rounded-2xl overflow-hidden border-4 border-blue-100 shadow-inner flex items-center justify-center my-2 max-h-[50vh]">
               <video
                 key={letraSeleccionada}
                 src={videoSrc}
@@ -129,17 +129,17 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
               />
             </div>
 
-            <div className="w-full flex items-center justify-between gap-3 mt-4">
+            <div className="w-full max-w-md flex items-center justify-between gap-3 mt-3 px-1">
               <button
                 onClick={handleAnteriorLetra}
-                className="bg-[#ffd32a] hover:bg-[#fbc02d] text-[#05215b] font-black px-5 py-2.5 rounded-full text-sm md:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+                className="bg-[#ffd32a] hover:bg-[#fbc02d] text-[#05215b] font-black px-6 py-2.5 rounded-full text-sm md:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
               >
                 ← Anterior
               </button>
 
               <button
                 onClick={handleSiguienteLetra}
-                className="bg-[#ffd32a] hover:bg-[#fbc02d] text-[#05215b] font-black px-5 py-2.5 rounded-full text-sm md:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+                className="bg-[#ffd32a] hover:bg-[#fbc02d] text-[#05215b] font-black px-6 py-2.5 rounded-full text-sm md:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
               >
                 Siguiente ➔
               </button>
