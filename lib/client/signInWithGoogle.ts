@@ -6,7 +6,7 @@ import { authClient } from '@/lib/auth/client';
 export default async function signInWithGoogle() {
     const { error } = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/menu',
+        callbackURL: new URL('/menu', window.location.origin).toString(),
     });
 
     if (error) {

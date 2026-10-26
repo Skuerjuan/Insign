@@ -3,9 +3,7 @@
 
 import { prisma } from "@/db"
 import { auth } from "@/lib/auth/server"
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ACHIEVEMENTS, type AchievementId } from "@/lib/achievements";
 import { LEVELS } from "@/src/diccionario/diccionario";
 import type { Prisma } from "@/prisma/generated/client";
 import { getLocalDayNumber, getWeeklyActivity, registerActiveDay } from "./streak";
@@ -14,6 +12,16 @@ export type GameName = "eleccion" | "memoria" | "adivinar" | "completar";
 export type GameOrigin = "menu" | "training" | "exam";
 
 const GAMES_PER_LEVEL = 4;
+
+async function levelUp(
+    tx: Prisma.TransactionClient,
+    userId: string,
+) {
+    return tx.profiles.update({
+        where: { user_id: userId },
+        data: { nivel: { increment: 1 } },
+    });
+}
 
 async function calculateAchievementSnapshot(
     db: Prisma.TransactionClient | typeof prisma,
@@ -66,7 +74,7 @@ async function calculateAchievementSnapshot(
         profile.racha,
         profile.ultimo_dia_activo,
     ).count;
-    const unlocked = new Set<AchievementId>();
+    const unlocked = new Set<string>();
 
     if (profile.juegos_jugados >= 1) unlocked.add("primeras-senas");
     if (activities.some((activity) => activity.origen === "training")) unlocked.add("manos-a-la-obra");
@@ -143,9 +151,16 @@ export async function getLearnedSignsCount(userId: string) {
     return completedExercises.length;
 }
 
+export async function getLogros() {
+    return prisma.logros.findMany({
+        orderBy: { id: "asc" },
+    });
+}
+
 export async function getAchievementProgress(userId: string) {
     await getProfile(userId);
     const snapshot = await calculateAchievementSnapshot(prisma, userId);
+    const logros = await getLogros();
 
     if (snapshot.unlocked.length > 0) {
         await prisma.logros_desbloqueados.createMany({
@@ -167,10 +182,12 @@ export async function getAchievementProgress(userId: string) {
         learnedSigns: snapshot.learnedSigns,
         totalSigns,
         completedTopics: snapshot.completedTopics,
-        achievements: ACHIEVEMENTS.map((achievement) => ({
-            ...achievement,
-            unlocked: unlockedDates.has(achievement.id),
-            unlockedAt: unlockedDates.get(achievement.id) ?? null,
+        achievements: logros.map((logro) => ({
+            id: logro.id,
+            name: logro.name,
+            description: logro.description,
+            unlocked: unlockedDates.has(logro.id),
+            unlockedAt: unlockedDates.get(logro.id) ?? null,
         })),
     };
 }
@@ -247,6 +264,17 @@ export async function completeGame(
         });
 
         if (origin === "menu" && safeLevel) {
+            const existingCompletion = await tx.juegos_completados.findUnique({
+                where: {
+                    usuario_id_nivel_juego: {
+                        usuario_id: user.id,
+                        nivel: safeLevel,
+                        juego: game,
+                    },
+                },
+                select: { id: true },
+            });
+
             await tx.juegos_completados.upsert({
                 where: {
                     usuario_id_nivel_juego: {
@@ -266,11 +294,13 @@ export async function completeGame(
             const completedInLevel = await tx.juegos_completados.count({
                 where: { usuario_id: user.id, nivel: safeLevel },
             });
-            if (completedInLevel >= GAMES_PER_LEVEL && safeLevel < LEVELS.length) {
-                updatedProfile = await tx.profiles.update({
-                    where: { user_id: user.id },
-                    data: { nivel: Math.max(profile.nivel, safeLevel + 1) },
-                });
+            if (
+                !existingCompletion &&
+                completedInLevel >= GAMES_PER_LEVEL &&
+                profile.nivel === safeLevel &&
+                safeLevel < LEVELS.length
+            ) {
+                updatedProfile = await levelUp(tx, user.id);
             }
         }
 
@@ -314,15 +344,6 @@ export async function completeGame(
             activeDays: updatedProfile.dias_activos,
         };
     });
-
-    // La navegación de regreso puede reutilizar el Router Cache de Next.js.
-    // Invalidamos todas las pantallas que muestran métricas del perfil para
-    // que el día recién registrado aparezca apenas termina la partida.
-    revalidatePath("/menu");
-    revalidatePath("/perfil");
-    revalidatePath("/entrenamiento");
-    revalidatePath("/progreso");
-    if (safeLevel) revalidatePath(`/nivel/${safeLevel}`);
 
     return result;
 }

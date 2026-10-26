@@ -33,7 +33,6 @@ model opciones {
 model palabras {
   id        Int        @id @default(autoincrement())
   palabra   String     @unique
-  dibujo    String?
   animacion String?
   opciones  opciones[]
 
@@ -56,12 +55,12 @@ model user {
   invitation              invitation[]
   member                  member[]
   session                 session[]
+  actividades             actividades[]
   completado              completado[]
+  juegos_completados      juegos_completados[]
+  logros_desbloqueados    logros_desbloqueados[]
   profiles                profiles?
   sesiones_contabilizadas sesiones_contabilizadas[]
-  juegos_completados      juegos_completados[]
-  actividades             actividades[]
-  logros_desbloqueados    logros_desbloqueados[]
 
   @@schema("neon_auth")
 }
@@ -189,6 +188,8 @@ model jwks {
   privateKey String
   createdAt  DateTime  @db.Timestamptz(6)
   expiresAt  DateTime? @db.Timestamptz(6)
+  alg        String?
+  crv        String?
 
   @@schema("neon_auth")
 }
@@ -264,4 +265,12 @@ model verification {
 
   @@index([identifier])
   @@schema("neon_auth")
+}
+
+model logros {
+  id          String @id
+  name        String
+  description String
+
+  @@schema("public")
 }

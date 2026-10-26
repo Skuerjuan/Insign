@@ -532,7 +532,7 @@ export default function JuegoAdivinar({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("completar", this.errores, origin, level)
+            completeGame("adivinar", this.errores, origin, level)
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -540,7 +540,7 @@ export default function JuegoAdivinar({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  window.location.href = level ? `/nivel/${level}` : "/menu";
+                  router.push(level ? `/nivel/${level}` : "/menu");
                 });
               })
               .catch(() => {
@@ -592,7 +592,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, userName, points, origin, level]);
+  }, [nivel, palabras, onRondaGanada, userName, points, origin, level, router]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

@@ -4,7 +4,7 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import Input from "@/components/Input";
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { Suspense } from 'react';
 import { signInWithEmail } from './actions';
 import signInWithGoogle from '@/lib/client/signInWithGoogle';
@@ -12,11 +12,22 @@ import { useSearchParams } from "next/navigation";
 
 function SignInForm() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
+    const [googleError, setGoogleError] = useState<string | null>(null);
     const searchParams = useSearchParams();
     const oauthError = searchParams.get('error');
     const oauthErrorMessage = oauthError === 'account_not_linked'
       ? 'Esta cuenta de Google no está vinculada a una cuenta existente. Inicia sesión con el método original o pide que habiliten el vínculo en Neon Auth.'
       : null;
+
+    const handleGoogleSignIn = async () => {
+      setGoogleError(null);
+      try {
+        await signInWithGoogle();
+      } catch (error) {
+        console.error('No se pudo iniciar sesión con Google', error);
+        setGoogleError('No se pudo iniciar sesión con Google. Inténtalo de nuevo.');
+      }
+    };
 
     return (
     <div className={styles.fondo}>
@@ -69,6 +80,12 @@ function SignInForm() {
           </div>
         )}
 
+        {googleError && (
+          <div className="rounded-md px-3 py-2 text-sm text-red-500" role="alert">
+            {googleError}
+          </div>
+        )}
+
         <button type="submit" disabled={isPending} className={styles.inicia}>
           Inicia Sesión
         </button>
@@ -89,7 +106,7 @@ function SignInForm() {
 
         <button
           type="button"
-          onClick={signInWithGoogle}
+          onClick={handleGoogleSignIn}
           className={styles.googleBtn}
         >
           <img

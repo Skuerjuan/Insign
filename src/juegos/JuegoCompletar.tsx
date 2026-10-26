@@ -729,7 +729,7 @@ export default function JuegoCompletarCeldas({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  window.location.href = level ? `/nivel/${level}` : "/menu";
+                  router.push(level ? `/nivel/${level}` : "/menu");
                 });
               })
               .catch(() => {

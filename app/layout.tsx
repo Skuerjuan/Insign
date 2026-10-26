@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Rubik, Baloo_2 } from "next/font/google";
+import ThemeInitializer from "@/components/ThemeInitializer";
 import "./globals.css";
 
 // Configuración nativa de fuentes
@@ -39,21 +40,8 @@ export default function RootLayout({
    <html lang="es" className={`h-full antialiased ${baloo2.className} ${geistSans.variable} ${geistMono.variable} ${rubik.variable} ${baloo2.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                var savedTheme = localStorage.getItem("insign-theme");
-                document.documentElement.dataset.theme = savedTheme === "oscuro" ? "dark" : "light";
-              } catch (error) {
-                document.documentElement.dataset.theme = "light";
-              }
-            `,
-          }}
-        />
-      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <ThemeInitializer />
         {children}
       </body>
     </html>
