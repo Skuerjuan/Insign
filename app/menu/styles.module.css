@@ -11,6 +11,46 @@
   font-family: var(--font-baloo);
 }
 
+.surveyButton {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #ffd32a;
+  color: #084bb5;
+  box-shadow: 0 4px 14px rgba(0, 35, 90, 0.32);
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.surveyButton[href]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 18px rgba(0, 35, 90, 0.4);
+}
+
+.surveyButton:focus-visible {
+  outline: 3px solid #084bb5;
+  outline-offset: 4px;
+}
+
+.levels::after {
+  content: "";
+  min-height: 72px;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surveyButton {
+    transition: none;
+  }
+}
+
 .logo {
   font-family: var(--font-rubik-one);
   font-size: clamp(54px, 5.5vw, 80px);

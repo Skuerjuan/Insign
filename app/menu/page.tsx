@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Menu() {
   const user = await getSession();
+  const surveyUrl = "https://forms.gle/4jvd8xA6PrMveW87A";
 
     const { puntos, racha, ultimo_dia_activo, nivel } = await getProfile(user.id);
     const rachaActual = getWeeklyActivity(racha, ultimo_dia_activo).count;
@@ -115,6 +116,20 @@ export default async function Menu() {
           })}
         </main>
       </div>
+      <a
+        href={surveyUrl}
+        className={styles.surveyButton}
+        aria-label="Completar encuesta (se abre en otra pestaña)"
+        title="Completar encuesta"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="5" y="4" width="14" height="17" rx="2" />
+          <rect x="9" y="2" width="6" height="4" rx="1" fill="#ffd32a" />
+          <path d="m8 11 1 1 2-2M13 11h3m-8 5 1 1 2-2m2 1h3" />
+        </svg>
+      </a>
     </div>
   );
 }
