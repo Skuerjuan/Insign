@@ -199,10 +199,7 @@ export const DICCIONARIO_CATEGORIAS: Record<string, string[]> = CATEGORIAS.reduc
   {} as Record<string, string[]>
 );
 
-// Los archivos originales no usan el mismo nombre que las palabras visibles:
-// incluyen numeración, espacios, palabras sin tilde y, en algunos casos, un
-// solo video representa dos palabras. Esta tabla mantiene esa diferencia en un
-// único lugar para que todos los juegos carguen exactamente el mismo recurso.
+
 const ARCHIVOS_VIDEO: Record<string, Record<string, string>> = {
   "presentacion-1": {
     Hola: "Hola.mp4",

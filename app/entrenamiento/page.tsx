@@ -87,7 +87,7 @@ export default async function Entrenamiento() {
                   <p>Aprende las letras del abecedario.</p>
                 </div>
                 <Link
-                  href="/juego-eleccion?origen=entrenamiento"
+                  href="/abecedario?origen=entrenamiento"
                   className={styles.cardButton}
                   aria-label="Ir a Abecedario"
                 >
