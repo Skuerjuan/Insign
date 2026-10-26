@@ -160,7 +160,6 @@ export default function JuegoAdivinar({
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
-          // Carga de palabras dinámicas desde el diccionario
           const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
           this.mazoJuego = mazoObtenido;
 
@@ -180,7 +179,9 @@ export default function JuegoAdivinar({
           const azul = 0x1e78ff;
           const amarillo = 0xffd32a;
           const azulTexto = "#05215b";
-          const topY = Math.max(30 * escalaUi, height * 0.06);
+          
+          const topY = Math.max(28 * escalaUi, height * 0.05);
+          const headerY = 20 * escalaUi;
 
           const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 20 * escalaUi, azul);
           botonVolver.setInteractive({ useHandCursor: true });
@@ -199,10 +200,10 @@ export default function JuegoAdivinar({
           const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
           const titleBg = this.add.graphics();
           titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 8 * escalaUi, titleWidth, 48 * escalaUi, 10 * escalaUi);
+          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, headerY, titleWidth, 48 * escalaUi, 10 * escalaUi);
 
           this.add
-            .text(width / 2, 32 * escalaUi, "Adivinar", {
+            .text(width / 2, headerY + 24 * escalaUi, "Adivinar", {
               fontSize: `${Phaser.Math.Clamp(34 * escalaUi, 24, 44)}px`,
               fontFamily,
               color: "#ffffff",
@@ -217,12 +218,12 @@ export default function JuegoAdivinar({
           const scoreX = width - scoreWidth - 16 * escalaUi;
           const scoreBg = this.add.graphics();
           scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
+          scoreBg.fillRoundedRect(scoreX, headerY, scoreWidth, 42 * escalaUi, 21 * escalaUi);
           scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 8 * escalaUi, scoreWidth, 42 * escalaUi, 21 * escalaUi);
-          this.add.star(scoreX + 18 * escalaUi, 29 * escalaUi, 5, 8 * escalaUi, 16 * escalaUi, amarillo);
+          scoreBg.strokeRoundedRect(scoreX, headerY, scoreWidth, 42 * escalaUi, 21 * escalaUi);
+          this.add.star(scoreX + 18 * escalaUi, headerY + 21 * escalaUi, 5, 8 * escalaUi, 16 * escalaUi, amarillo);
           this.add
-            .text(scoreX + 38 * escalaUi, 29 * escalaUi, puntosTexto, {
+            .text(scoreX + 38 * escalaUi, headerY + 21 * escalaUi, puntosTexto, {
               fontSize: `${Phaser.Math.Clamp(17 * escalaUi, 14, 21)}px`,
               fontFamily,
               color: azulTexto,
@@ -231,7 +232,7 @@ export default function JuegoAdivinar({
             .setOrigin(0, 0.5);
 
           this.add
-            .text(width / 2, 85 * escalaUi, "Adivina esta seña", {
+            .text(width / 2, headerY + 80 * escalaUi, "Adivina esta seña", {
               fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 18, 28)}px`,
               fontFamily,
               color: "#ffffff",
@@ -287,16 +288,17 @@ export default function JuegoAdivinar({
 
         dibujarPanelVideoPrincipal(width: number, height: number, escalaUi: number) {
           const isPortrait = width < height;
-          const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.7 : 0.4), 200, 360);
-          const panelHeight = panelWidth * 0.75;
+          // Cuadro de video sensiblemente más grande
+          const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.78 : 0.48), 260, 480);
+          const panelHeight = panelWidth * 0.72;
           const centroX = width / 2;
-          const centroY = isPortrait ? height * 0.38 : height * 0.45;
+          const centroY = isPortrait ? height * 0.40 : height * 0.45;
 
           const elementoVideo = document.createElement("video");
           elementoVideo.style.width = `${Math.round(panelWidth)}px`;
           elementoVideo.style.height = `${Math.round(panelHeight)}px`;
           elementoVideo.style.objectFit = "contain";
-          elementoVideo.style.borderRadius = "12px";
+          elementoVideo.style.borderRadius = "14px";
           elementoVideo.style.pointerEvents = "none";
 
           elementoVideo.autoplay = true;
@@ -321,7 +323,7 @@ export default function JuegoAdivinar({
           const botonHeight = Phaser.Math.Clamp(65 * escalaUi, 55, 80);
 
           const centroX = width / 2;
-          const inicioY = isPortrait ? height * 0.68 : height * 0.80;
+          const inicioY = isPortrait ? height * 0.68 : height * 0.78;
           const gapX = 16 * escalaUi;
           const gapY = 16 * escalaUi;
 
