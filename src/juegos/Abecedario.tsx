@@ -7,6 +7,7 @@ import { LETRAS, COLORES_LETRAS, getAbecedarioVideoPath, getSiguienteLetra, getA
 import fondo from "./fondoP.png";
 
 interface AbecedarioViewProps {
+  points?: number,
   userName?: string;
 }
 
