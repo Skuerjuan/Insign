@@ -7,5 +7,6 @@ export default auth.middleware({
 export const config = {
     matcher: [
         '/account/:path*',
+        '/menu/:path*',
     ],
 };

@@ -1,0 +1,25 @@
+.container {
+  width: 100%;
+  margin: 12px auto 0;
+}
+
+.button {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 2px solid #d9d9d9;
+  border-radius: 12px;
+  color: #111;
+  background: white;
+  font-family: var(--font-baloo);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.button:disabled { opacity: 0.65; cursor: wait; }
+.button:focus-visible { outline: 3px solid #126cff; outline-offset: 3px; }
+.error { color: #b91c1c; font-size: 14px; margin-top: 8px; text-align: center; }

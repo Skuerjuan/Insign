@@ -2,6 +2,7 @@
 
 import styles from "./style.module.css";
 import Input from "@/components/Input";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 import { useActionState } from 'react';
 import { signUpWithEmail } from './actions';
@@ -68,6 +69,7 @@ export default function SignUpForm() {
         <button type="submit" disabled={isPending} className={styles.inicia}>
           Registrarme
         </button>
+        <GoogleAuthButton />
       </div>
       </form>
       </div>

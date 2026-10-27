@@ -4,30 +4,19 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import Input from "@/components/Input";
 
-import { useActionState, useState } from 'react';
+import { useActionState } from 'react';
 import { Suspense } from 'react';
 import { signInWithEmail } from './actions';
-import signInWithGoogle from '@/lib/client/signInWithGoogle';
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 import { useSearchParams } from "next/navigation";
 
 function SignInForm() {
     const [state, formAction, isPending] = useActionState(signInWithEmail, null);
-    const [googleError, setGoogleError] = useState<string | null>(null);
     const searchParams = useSearchParams();
     const oauthError = searchParams.get('error');
     const oauthErrorMessage = oauthError === 'account_not_linked'
       ? 'Esta cuenta de Google no está vinculada a una cuenta existente. Inicia sesión con el método original o pide que habiliten el vínculo en Neon Auth.'
-      : null;
-
-    const handleGoogleSignIn = async () => {
-      setGoogleError(null);
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        console.error('No se pudo iniciar sesión con Google', error);
-        setGoogleError('No se pudo iniciar sesión con Google. Inténtalo de nuevo.');
-      }
-    };
+      : oauthError ? 'No se pudo completar el acceso con Google. Inténtalo de nuevo.' : null;
 
     return (
     <div className={styles.fondo}>
@@ -80,11 +69,7 @@ function SignInForm() {
           </div>
         )}
 
-        {googleError && (
-          <div className="rounded-md px-3 py-2 text-sm text-red-500" role="alert">
-            {googleError}
-          </div>
-        )}
+
 
         <button type="submit" disabled={isPending} className={styles.inicia}>
           Inicia Sesión
@@ -104,19 +89,7 @@ function SignInForm() {
           <div className={styles.linea}></div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          className={styles.googleBtn}
-        >
-          <img
-            src="/google.png"
-            className={styles.googleIcon}
-            alt=""
-            />
-
-          <span className={styles.googleLink}>Google</span>
-        </button>
+        <GoogleAuthButton />
 
         <div className={styles.registro}>
           <p className={styles.registroTexto}>

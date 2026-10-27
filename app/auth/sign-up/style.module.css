@@ -86,14 +86,14 @@
   padding: clamp(18px, 2.6vh, 24px) clamp(30px, 3vw, 42px);
   border-radius: 15px;
   background: var(--app-surface-background);
-  --auth-field-height: 64px;
+  --auth-field-height: 58px;
   --auth-field-margin: 0;
 }
 
 .titulo {
   display: flex;
   justify-content: center;
-  margin: 0 0 26px;
+  margin: 0 0 18px;
   color: var(--app-surface-foreground);
   font-family: var(--font-baloo);
   font-size: clamp(40px, 5vw, 58px);
