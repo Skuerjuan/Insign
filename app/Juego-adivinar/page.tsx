@@ -21,7 +21,7 @@ export default async function JuegoAdivinarPage({ searchParams }: PageProps) {
   const { origen, nivel } = await searchParams;
   const level = Number(nivel) || undefined;
 
-  if (level && (!getLevel(level) || (level > 1 && profile.nivel < level))) {
+  if (level && (!getLevel(level) || (origen !== "entrenamiento" && level > 1 && profile.nivel < level))) {
     redirect("/menu");
   }
 

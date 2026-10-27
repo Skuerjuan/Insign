@@ -37,7 +37,7 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
   return (
     <div 
       className="w-full h-screen p-3 md:p-5 flex flex-col items-center justify-between overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${fondo.src})`, backgroundColor: "#87CEEB" }}
+      style={{ backgroundImage: `url(${fondo.src})`, backgroundColor: "#87CEEB", fontFamily: "var(--font-baloo)" }}
     >
       
       <div className="w-full max-w-7xl flex items-center justify-between relative my-1">

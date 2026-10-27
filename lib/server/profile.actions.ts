@@ -4,7 +4,9 @@
 import { prisma } from "@/db"
 import { auth } from "@/lib/auth/server"
 import { redirect } from "next/navigation";
-import { LEVELS } from "@/src/diccionario/diccionario";
+import { getLevel, getLevelWords, LEVELS } from "@/src/diccionario/diccionario";
+import { getSignProgress } from "@/lib/sign-progress";
+import { revalidatePath } from "next/cache";
 import type { Prisma } from "@/prisma/generated/client";
 import { getLocalDayNumber, getWeeklyActivity, registerActiveDay } from "./streak";
 
@@ -27,17 +29,12 @@ async function calculateAchievementSnapshot(
     db: Prisma.TransactionClient | typeof prisma,
     userId: string,
 ) {
-    const [profile, completedGames, activities, completedExercises] = await Promise.all([
+    const [profile, completedGames, activities] = await Promise.all([
         db.profiles.findUniqueOrThrow({ where: { user_id: userId } }),
         db.juegos_completados.findMany({ where: { usuario_id: userId } }),
         db.actividades.findMany({
             where: { usuario_id: userId },
             orderBy: { completado_at: "asc" },
-        }),
-        db.completado.findMany({
-            where: { usuario_id: userId, aprobado: true },
-            distinct: ["ejercicio_id"],
-            select: { ejercicio_id: true },
         }),
     ]);
 
@@ -53,13 +50,6 @@ async function calculateAchievementSnapshot(
             .filter(([, games]) => games.size >= GAMES_PER_LEVEL)
             .map(([level]) => level),
     );
-    const learnedSignsSet = new Set<string>();
-    for (const level of LEVELS) {
-        if (completedLevels.has(level.id)) {
-            level.palabras.forEach((word) => learnedSignsSet.add(word));
-        }
-    }
-
     const perfectGamesByLevel = new Map<number, Set<string>>();
     for (const activity of activities) {
         if (activity.origen !== "menu" || activity.nivel === null || activity.errores !== 0) continue;
@@ -68,7 +58,7 @@ async function calculateAchievementSnapshot(
         perfectGamesByLevel.set(activity.nivel, games);
     }
 
-    const learnedSigns = Math.max(learnedSignsSet.size, completedExercises.length);
+    const learnedSigns = getSignProgress(profile.senas_aprendidas).learned;
     const completedTopics = completedLevels.size;
     const weeklyActivity = getWeeklyActivity(
         profile.racha,
@@ -137,18 +127,25 @@ export async function getProfile(userId: string){
 }
 
 export async function getLearnedSignsCount(userId: string) {
-    const completedExercises = await prisma.completado.findMany({
-        where: {
-            usuario_id: userId,
-            aprobado: true,
-        },
-        distinct: ["ejercicio_id"],
-        select: {
-            ejercicio_id: true,
-        },
-    });
+    const profile = await getProfile(userId);
+    return getSignProgress(profile.senas_aprendidas).learned;
+}
 
-    return completedExercises.length;
+export async function recordLearnedSign(levelIdentifier: number | string, word: string) {
+    const user = await getSession();
+    const level = getLevel(levelIdentifier);
+    if (!level || !getLevelWords(level.id).includes(word)) {
+        throw new Error("Seña no válida para este nivel");
+    }
+    await getProfile(user.id);
+    const key = `${level.categoryId}:${word}`;
+    await prisma.profiles.updateMany({
+        where: { user_id: user.id, NOT: { senas_aprendidas: { has: key } } },
+        data: { senas_aprendidas: { push: key } },
+    });
+    revalidatePath("/progreso");
+    revalidatePath("/perfil");
+    return true;
 }
 
 export async function getLogros() {
@@ -176,7 +173,7 @@ export async function getAchievementProgress(userId: string) {
     const unlockedDates = new Map(
         unlockedRows.map((row) => [row.logro_id, row.desbloqueado_at]),
     );
-    const totalSigns = new Set(LEVELS.flatMap((level) => level.palabras)).size;
+    const totalSigns = getSignProgress([]).total;
 
     return {
         learnedSigns: snapshot.learnedSigns,
@@ -230,7 +227,7 @@ export async function completeGame(
         : undefined;
 
     const safeMistakes = Math.max(0, Math.trunc(Number(mistakes) || 0));
-    const pointsAwarded = calculatePoints(game, safeMistakes);
+    const pointsAwarded = origin === "training" ? 0 : calculatePoints(game, safeMistakes);
     const starsAwarded = safeMistakes === 0 ? 3 : safeMistakes === 1 ? 2 : safeMistakes === 2 ? 1 : 0;
     const today = getLocalDayNumber();
 

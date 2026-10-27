@@ -10,6 +10,9 @@ export default async function Progreso() {
   const user = await getSession();
   const profile = await getProfile(user.id)
   const achievementProgress = await getAchievementProgress(user.id);
+  const learnedPercent = achievementProgress.totalSigns
+    ? achievementProgress.learnedSigns / achievementProgress.totalSigns * 100
+    : 0;
   const totalMinutes = Math.floor(profile.tiempo_total_segundos / 60);
   const currentLevel = Math.min(9, Math.max(1, profile.nivel ?? 1));
   const experience = Math.max(0, profile.experiencia ?? profile.puntos ?? 0);
@@ -100,8 +103,14 @@ export default async function Progreso() {
             <h2>Señas aprendidas</h2>
 
             <div className={styles.learnedContent}>
-              <div className={styles.chartPlaceholder}>
-                <span>Espacio para gráfico o imagen</span>
+              <div className={styles.signChart}>
+                <svg viewBox="0 0 240 82" role="img" aria-label={`${learnedPercent.toFixed(1)}% de señas aprendidas y ${(100 - learnedPercent).toFixed(1)}% por aprender`}>
+                  <text x="10" y="22" fill="#2eab00">{learnedPercent.toFixed(1)}%</text>
+                  <text x="230" y="22" textAnchor="end" fill="#707070">{(100 - learnedPercent).toFixed(1)}%</text>
+                  <path d="M10 45H230" stroke="#bfbfbf" strokeWidth="16" strokeLinecap="round" />
+                  {learnedPercent > 0 && <path d={`M10 45h${220 * learnedPercent / 100}`} stroke="#2eab00" strokeWidth="16" strokeLinecap="round" />}
+                  <text x="120" y="77" textAnchor="middle" fill="currentColor">Tu aprendizaje</text>
+                </svg>
               </div>
 
               <div className={styles.legend}>

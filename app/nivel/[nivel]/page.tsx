@@ -19,9 +19,12 @@ const games: Array<{ name: GameName; label: string; href: string; image?: string
 
 export default async function LevelGamesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ nivel: string }>;
+  searchParams: Promise<{ origen?: string }>;
 }) {
+  const practice = (await searchParams).origen === "entrenamiento";
   const { nivel: rawLevel } = await params;
   const levelId = Number(rawLevel);
   const level = getLevel(levelId);
@@ -31,7 +34,7 @@ export default async function LevelGamesPage({
   const user = await getSession();
   const profile = await getProfile(user.id);
 
-  if (level.id > 1 && profile.nivel < level.id) redirect("/menu");
+  if (!practice && level.id > 1 && profile.nivel < level.id) redirect("/menu");
 
   const completedGames = new Set(await getCompletedGames(user.id, level.id));
   const streak = getWeeklyActivity(profile.racha, profile.ultimo_dia_activo).count;
@@ -44,7 +47,7 @@ export default async function LevelGamesPage({
           <span>In</span><strong>Sign</strong>
         </h1>
         <nav className={styles.navigation} aria-label="Navegación principal">
-          <Link href="/menu" className={styles.activeLink}><Image src="/casablanco.png" alt="" width={40} height={40} />Inicio</Link>
+          <Link href={practice ? "/menu?origen=entrenamiento" : "/menu"} className={styles.activeLink}><Image src="/casablanco.png" alt="" width={40} height={40} />Inicio</Link>
           <Link href="/entrenamiento"><Image src="/pesa.png" alt="" width={40} height={40} />Entrenamiento</Link>
           <Link href="/progreso"><Image src="/premio.png" alt="" width={40} height={40} />Progreso</Link>
           <Link href="/perfil"><Image src="/userwhite.png" alt="" width={40} height={40} />Perfil</Link>
@@ -68,7 +71,7 @@ export default async function LevelGamesPage({
 
         <main className={styles.main}>
           <section className={styles.levelBanner} aria-labelledby="level-title">
-            <Link href="/menu" className={styles.backButton} aria-label="Volver a los niveles">
+            <Link href={practice ? "/menu?origen=entrenamiento" : "/menu"} className={styles.backButton} aria-label="Volver a los niveles">
               <Image
                 src="/flecha-tarjeta.png"
                 alt=""
@@ -80,7 +83,7 @@ export default async function LevelGamesPage({
             <Image src="/mono-seccion.png" alt="" width={142} height={142} className={styles.monkey} />
             <div>
               <h1 id="level-title">{level.title}</h1>
-              <p>{level.description}</p>
+              <p>{practice ? "Modo practicar · Sin puntos" : level.description}</p>
             </div>
           </section>
 
@@ -91,7 +94,7 @@ export default async function LevelGamesPage({
               return (
                 <a
                   key={game.name}
-                  href={`${game.href}?nivel=${level.id}`}
+                  href={`${game.href}?nivel=${level.id}${practice ? "&origen=entrenamiento" : ""}`}
                   className={styles.gameCard}
                   aria-label={`${game.label}${completed ? ", completado" : ""}`}
                 >

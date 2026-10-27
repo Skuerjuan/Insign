@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
@@ -35,6 +36,7 @@ export default function JuegoEleccion({
   useEffect(() => {
     let cancelado = false;
     let resultadoGuardado = false;
+    const signRecorder = createSignRecorder();
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -437,6 +439,7 @@ export default function JuegoEleccion({
             });
 
             this.aciertos++;
+            signRecorder.record(level ?? nivel, this.palabraObjetivo);
             this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
 
             if (this.badgeAciertos) {
@@ -545,7 +548,7 @@ export default function JuegoEleccion({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("eleccion", this.errores, origin, level)
+            signRecorder.flush().then(() => completeGame("eleccion", this.errores, origin, level))
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -553,7 +556,7 @@ export default function JuegoEleccion({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push(level ? `/nivel/${level}` : "/menu");
+                  router.push(level ? `/nivel/${level}${origin === "training" ? "?origen=entrenamiento" : ""}` : origin === "training" ? "/menu?origen=entrenamiento" : "/menu");
                 });
               })
               .catch(() => {
@@ -615,7 +618,7 @@ export default function JuegoEleccion({
         <PantallaSinVidas
           rutaEntrenamiento="/entrenamiento"
           rutaInicio="/menu"
-          onVolverInicio={() => router.push("/menu")}
+          onVolverInicio={() => router.push(origin === "training" ? "/menu?origen=entrenamiento" : "/menu")}
           onIrEntrenamiento={() => router.push("/entrenamiento")}
         />
       )}

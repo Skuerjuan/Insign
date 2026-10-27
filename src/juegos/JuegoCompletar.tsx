@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
@@ -47,6 +48,7 @@ export default function JuegoCompletarCeldas({
   useEffect(() => {
     let cancelado = false;
     let resultadoGuardado = false;
+    const signRecorder = createSignRecorder();
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -559,6 +561,7 @@ export default function JuegoCompletarCeldas({
 
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
+            signRecorder.record(level ?? nivel, this.palabraObjetivo);
 
             if (this.badgeAciertos) {
               this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
@@ -721,7 +724,7 @@ export default function JuegoCompletarCeldas({
 
           const guardarResultado = () => {
             resultadoGuardado = true;
-            completeGame("completar", this.errores, origin, level)
+            signRecorder.flush().then(() => completeGame("completar", this.errores, origin, level))
               .then((resultado) => {
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
@@ -729,7 +732,7 @@ export default function JuegoCompletarCeldas({
                 botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push(level ? `/nivel/${level}` : "/menu");
+                  router.push(level ? `/nivel/${level}${origin === "training" ? "?origen=entrenamiento" : ""}` : origin === "training" ? "/menu?origen=entrenamiento" : "/menu");
                 });
               })
               .catch(() => {
@@ -791,7 +794,7 @@ export default function JuegoCompletarCeldas({
         <PantallaSinVidas
           rutaEntrenamiento="/entrenamiento"
           rutaInicio="/menu"
-          onVolverInicio={() => router.push("/menu")}
+          onVolverInicio={() => router.push(origin === "training" ? "/menu?origen=entrenamiento" : "/menu")}
           onIrEntrenamiento={() => router.push("/entrenamiento")}
         />
       )}

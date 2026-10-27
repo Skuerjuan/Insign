@@ -113,7 +113,7 @@ export default async function Entrenamiento() {
                   <p>Juega sin temor de hacerlo mal.</p>
                 </div>
                 <Link
-                  href="/juego-memoria?origen=entrenamiento"
+                  href="/menu?origen=entrenamiento"
                   className={`${styles.cardButton} ${styles.greenButton}`}
                   aria-label="Ir a Practicar"
                 >
