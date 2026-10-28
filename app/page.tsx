@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 const games = [
   { title: "Abecedario", copy: "Explorá las letras y descubrí nuevas señas paso a paso.", tone: "blue", image: "/abecedario-sin-borde.png", alt: "Tarjetas con las letras A, B y C" },
   { title: "Memoria", copy: "Encontrá pares, practicá movimientos y entrená jugando.", tone: "green", image: "/memoria-sin-borde.png", alt: "Dos cartas del juego de memoria" },
-  { title: "Desafíos", copy: "Sumá estrellas, sostené tu racha y desbloqueá aventuras.", tone: "yellow", image: "/desafios.png", alt: "Koko explorando con sus binoculares" },
+  { title: "Desafíos", copy: "Sumá estrellas, sostené tu racha y desbloqueá aventuras.", tone: "yellow", image: "/loro-desafios.png", alt: "Waki explorando con sus binoculares" },
 ] as const;
 
 const familyGames = [
@@ -42,10 +42,15 @@ export default function Home() {
 
   useEffect(() => {
     const targets = document.querySelectorAll<HTMLElement>("[data-scene]");
-    const observer = new IntersectionObserver((entries) => {
-      const current = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (current) setScene((current.target as HTMLElement).dataset.scene ?? "hero");
-    }, { threshold: [0.35, 0.55, 0.75] });
+    const observer = new IntersectionObserver(() => {
+      // En celulares una sección puede ser más alta que la ventana completa.
+      const current = Array.from(targets).map((target) => {
+        const bounds = target.getBoundingClientRect();
+        const visible = Math.max(0, Math.min(bounds.bottom, window.innerHeight) - Math.max(bounds.top, 0));
+        return { target, visible };
+      }).sort((a, b) => b.visible - a.visible)[0];
+      if (current?.visible) setScene(current.target.dataset.scene ?? "hero");
+    }, { threshold: [0, 0.01, 0.05, 0.1, 0.2, 0.35, 0.55, 0.75] });
     targets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
   }, []);
@@ -84,13 +89,13 @@ export default function Home() {
         <div className={styles.heroContent}>
           <div className={styles.heroCopy}>
             <h1>Aprender LSA también puede ser <em>un juego.</em></h1>
-            <p className={styles.lead}>Una aventura interactiva para que chicos y chicas aprendan LSA jugando, practicando y celebrando cada logro.</p>
+            <p className={styles.lead}>Una aventura interactiva para que chicos y chicas aprendan LSA con Waki, jugando, practicando y celebrando cada logro.</p>
             <div className={styles.heroActions}>
               <a className={styles.primaryButton} href="#juegos">Empezar a jugar <span>→</span></a>
               <button className={styles.textButton} type="button" onClick={() => setVideoOpen(true)}><span className={styles.playDot}>▶</span> Ver cómo funciona</button>
             </div>
           </div>
-          <div className={styles.heroVisual}><Image className={styles.heroImage} src="/gorila-saludando-inicio-sesion.png" alt="Koko, el gorila de InSign, saludando" width={760} height={760} priority /></div>
+          <div className={styles.heroVisual}><Image className={styles.heroImage} src="/loro-saludando.png" alt="Waki, el loro de InSign, saludando" width={760} height={760} priority /></div>
         </div>
         <a className={styles.scrollHint} href="#como-funciona"><span>Descubrí la aventura</span><b>⌄</b></a>
       </section>
@@ -114,7 +119,7 @@ export default function Home() {
           <a className={styles.sectionScroll} href="#progreso">Descubrí la aventura <b>⌄</b></a>
         </section>
 
-        <section id="progreso" className={styles.progressSection} data-scene="banana">
+        <section id="progreso" className={styles.progressSection} data-scene="mango">
           <div className={styles.familyPanel}>
             <div className={styles.familyCopy}>
               <h2>Cada pequeño avance merece celebrarse</h2>
@@ -131,18 +136,21 @@ export default function Home() {
       </div>
 
       <aside className={`${styles.travelMascot} ${styles[`scene_${scene}`]}`} aria-hidden="true">
-        <Image className={styles.swingMonkeyImage} src="/gorila-columpiandose.png" alt="" width={1000} height={1000} priority />
+        <Image className={styles.flyingParrotImage} src="/loro-volando.png" alt="" width={1000} height={1000} priority />
       </aside>
 
       <footer className={styles.footer}>
-        <a className={styles.logo} href="#inicio"><span>In</span><strong>Sign</strong></a><p>Jugar, aprender y comunicar</p><span>Lengua de señas argentinas - LSA</span>
+        <a className={styles.logo} href="#inicio"><span>In</span><strong>Sign</strong></a><p>Jugar, aprender y comunicar</p><span>Lengua de señas argentina - LSA</span>
       </footer>
 
       {videoOpen && (
         <div className={styles.videoModal} role="dialog" aria-modal="true" aria-label="Video: cómo funciona InSign" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
           <div className={styles.videoDialog}>
             <button ref={closeButtonRef} className={styles.videoClose} type="button" aria-label="Cerrar video" onClick={() => setVideoOpen(false)}>×</button>
-            <video className={styles.video} controls autoPlay playsInline preload="metadata"><source src="/grabacion-insign.mp4" type="video/mp4" />Tu navegador no puede reproducir este video.</video>
+            <video className={styles.video} controls autoPlay playsInline preload="metadata">
+              <source src="/grabacion-insign.mp4" type="video/mp4" />
+              Tu navegador no puede reproducir este video.
+            </video>
           </div>
         </div>
       )}

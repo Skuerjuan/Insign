@@ -58,8 +58,8 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
       <div className="w-full max-w-7xl flex items-center gap-3.5 my-1 pl-2">
         <div className="relative w-18 h-18 md:w-24 md:h-24 shrink-0 drop-shadow-md">
           <Image
-            src="/mono-seccion.png"
-            alt="Mascota InSign"
+            src="/loro-mango.png"
+            alt="Waki, el loro de InSign"
             fill
             className="object-contain"
           />

@@ -19,8 +19,8 @@ export default function ForgotPassword(){
                 <div className={`${styles.monkeyWrap} ${styles.forgotMonkeyWrap}`}>
                     <Image
                         className={`${styles.monkey} ${styles.forgotMonkey}`}
-                        src="/mono-olvidaste-contrasena.png"
-                        alt="Mono de InSign con las manos en la cintura"
+                        src="/loro-ayuda.png"
+                        alt="Waki con las alas en la cintura"
                         width={506}
                         height={768}
                         priority

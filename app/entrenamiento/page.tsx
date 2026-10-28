@@ -75,8 +75,8 @@ export default async function Entrenamiento() {
                   aria-label="Imagen correspondiente al nivel Abecedario"
                 >
                   <Image
-                    src="/mono-abecedario.png"
-                    alt="Mono saludando"
+                    src="/loro-saludando.png"
+                    alt="Waki saludando"
                     width={208}
                     height={275}
                   />
@@ -101,8 +101,8 @@ export default async function Entrenamiento() {
                   aria-label="Imagen correspondiente al nivel Practicar"
                 >
                   <Image
-                    src="/mono-practicar.png"
-                    alt="Mono cargando un tronco"
+                    src="/loro-practicar.png"
+                    alt="Waki cargando un tronco"
                     width={236}
                     height={236}
                   />

@@ -5,8 +5,9 @@ import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
-import fondoCartas from "./fondo.png";
+import fondoCartas from "./fondo-mangos.png";
 import fondo from "./fondoP.png";
+import { getTextoSena, getSeniasSinAmbiguedad } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
@@ -107,7 +108,7 @@ export default function JuegoMemoria({
           this.errores = 0;
 
           const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
-          const pares = mazoObtenido.slice(0, 8); // Tomamos máximo 8 pares para mantener un tablero de 16 cartas (2x8)
+          const pares = getSeniasSinAmbiguedad(Phaser.Utils.Array.Shuffle([...mazoObtenido])).slice(0, 8);
           this.totalPares = pares.length;
 
           const senias = Phaser.Utils.Array.Shuffle([...pares]);
@@ -372,7 +373,7 @@ export default function JuegoMemoria({
               contenidoVisible = this.add.dom(0, 0, elementoVideo);
             } else {
               contenidoVisible = this.add
-                .text(0, 0, item, {
+                .text(0, 0, getTextoSena(item), {
                   fontSize: `${Math.max(20, 26 * layout.escalaUi)}px`,
                   fontFamily,
                   color: "#003895",

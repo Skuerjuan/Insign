@@ -13,8 +13,8 @@ export const dynamic = "force-dynamic";
 const games: Array<{ name: GameName; label: string; href: string; image?: string }> = [
   { name: "memoria", label: "Memoria", href: "/juego-memoria", image: "/juego-memoria.png" },
   { name: "eleccion", label: "Elección", href: "/juego-eleccion", image: "/juego-eleccion.png" },
-  { name: "completar", label: "Completar", href: "/Juego-completar", image: "/juego-completar.png" },
-  { name: "adivinar", label: "Múltiple elección", href: "/Juego-adivinar", image: "/juego-multiple-eleccion.png" },
+  { name: "completar", label: "Completar", href: "/Juego-completar", image: "/completar-mango.png" },
+  { name: "adivinar", label: "Múltiple elección", href: "/Juego-adivinar", image: "/loro-pensando.png" },
 ];
 
 export default async function LevelGamesPage({
@@ -80,7 +80,7 @@ export default async function LevelGamesPage({
                 className={styles.backArrowIcon}
               />
             </Link>
-            <Image src="/mono-seccion.png" alt="" width={142} height={142} className={styles.monkey} />
+            <Image src="/loro-mango.png" alt="" width={142} height={142} className={styles.monkey} />
             <div>
               <h1 id="level-title">{level.title}</h1>
               <p>{practice ? "Modo practicar · Sin puntos" : level.description}</p>

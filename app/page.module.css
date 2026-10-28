@@ -534,54 +534,59 @@
   font: 800 32px/1 Arial;
   cursor: pointer;
 }
-/* Animaciones existentes: se conservan sin cambios. */
+/* El loro cruza la pantalla en vuelo, con aleteo y cambios suaves de altura. */
 .travelMascot {
   z-index: 90;
   position: fixed;
-  top: -42px;
+  top: 95px;
   left: -240px;
   right: auto;
   width: 220px;
   height: auto;
   pointer-events: none;
   opacity: 0;
-  transform-origin: 42% 0;
+  transform-origin: center;
   will-change: transform;
 }
-.swingMonkeyImage {
+.flyingParrotImage {
   display: block;
   width: 100%;
   height: auto;
   filter: drop-shadow(0 16px 12px #12355c2b);
+  animation: wingbeat .65s ease-in-out infinite alternate;
 }
 .scene_games {
   opacity: 1;
-  animation: swingAcrossGames 5.6s ease-in-out infinite alternate;
+  animation: flyAcrossGames 11s linear infinite;
 }
-.scene_banana {
+.scene_mango {
   opacity: 1;
-  animation: swingAcrossFamily 5.2s ease-in-out infinite alternate;
+  animation: flyAcrossFamily 12s linear infinite;
 }
-@keyframes swingAcrossGames {
+@keyframes wingbeat {
+  from { transform: perspective(650px) rotateX(-12deg) scaleY(.94); }
+  to { transform: perspective(650px) rotateX(12deg) scaleY(1.04); }
+}
+@keyframes flyAcrossGames {
   0% {
-    transform: translateX(0) rotate(13deg);
+    transform: translate(0, 30px) rotate(-8deg);
   }
   50% {
-    transform: translateX(calc(50vw + 120px)) rotate(-12deg);
+    transform: translate(calc(50vw + 120px), -35px) rotate(5deg);
   }
   100% {
-    transform: translateX(calc(100vw + 260px)) rotate(13deg);
+    transform: translate(calc(100vw + 480px), 20px) rotate(-6deg);
   }
 }
-@keyframes swingAcrossFamily {
+@keyframes flyAcrossFamily {
   0% {
-    transform: translateX(calc(100vw + 260px)) rotate(13deg);
+    transform: translate(calc(100vw + 480px), 20px) scaleX(-1) rotate(-6deg);
   }
   50% {
-    transform: translateX(calc(50vw + 120px)) rotate(-12deg);
+    transform: translate(calc(50vw + 120px), 65px) scaleX(-1) rotate(5deg);
   }
   100% {
-    transform: translateX(0) rotate(13deg);
+    transform: translate(0, 10px) scaleX(-1) rotate(-8deg);
   }
 }
 .learningJourney:before, .learningJourney:after {
@@ -591,9 +596,9 @@
   top: 0;
   bottom: 0;
   width: 190px;
-  background: url("/camino-bananas.png") 0 0/170px auto repeat-y;
+  background: url("/camino-mangos.png") 0 0/170px auto repeat-y;
   pointer-events: none;
-  animation: bananaFall 7s linear infinite;
+  animation: mangoFall 7s linear infinite;
 }
 .learningJourney:before {
   left: 0;
@@ -606,17 +611,17 @@
   position: relative;
   z-index: 2;
 }
-@keyframes bananaFall {
+@keyframes mangoFall {
   to {
     background-position: 0 509px;
   }
 }
-@keyframes bananaFallTablet {
+@keyframes mangoFallTablet {
   to {
     background-position: 0 434px;
   }
 }
-@keyframes bananaFallMobile {
+@keyframes mangoFallMobile {
   to {
     background-position: 0 344px;
   }
@@ -670,7 +675,7 @@
   .learningJourney:before, .learningJourney:after {
     width: 165px;
     background-size: 145px auto;
-    animation-name: bananaFallTablet;
+    animation-name: mangoFallTablet;
   }
   .learningJourney:before {
     left: -45px;
@@ -812,7 +817,7 @@
     width: 135px;
     background-size: 115px auto;
     opacity: .78;
-    animation-name: bananaFallMobile;
+    animation-name: mangoFallMobile;
   }
   .learningJourney:before {
     left: -65px;

@@ -1,0 +1,16 @@
+{
+  "status": "Pendiente de grabar las pantallas actuales de InSign",
+  "maxDurationSeconds": 90,
+  "format": "Grabación continua de navegación por las pantallas reales, con cortes de esperas, voz en español, subtítulos y Waki como guía. Sin diapositivas.",
+  "chapters": [
+    {"section":"Inicio de la aventura","route":"/","speech":"¡Hola! Soy Waki. Te muestro cómo aprender lengua de señas argentina en In Sign."},
+    {"section":"Tu cuenta","route":"/auth/sign-in","speech":"Creá tu cuenta o iniciá sesión. También podés entrar con Google y recuperar tu contraseña."},
+    {"section":"Niveles","route":"/menu","speech":"En Inicio, elegí un tema. Completá los cuatro juegos de cada nivel para desbloquear el siguiente."},
+    {"section":"Los cuatro juegos","route":"/nivel/1","speech":"En Elección, elegís el video de una palabra. En Memoria, unís palabras y señas. En Completar, ordenás letras. En Múltiple elección, mirás una seña y elegís su significado. Al terminar, se guarda tu resultado."},
+    {"section":"Entrenamiento","route":"/entrenamiento","speech":"En Entrenamiento, repasá los temas a tu ritmo, sin sumar puntos ni desbloquear niveles."},
+    {"section":"Abecedario","route":"/abecedario?origen=entrenamiento","speech":"En Abecedario, tocá una letra para ver su video y pasá a la anterior o siguiente."},
+    {"section":"Progreso","route":"/progreso","speech":"Progreso muestra tu nivel, puntos, señas aprendidas, juegos, tiempo y días de actividad."},
+    {"section":"Perfil","route":"/perfil","speech":"En Perfil, editá tu nombre y foto, y revisá tus logros, premios y racha."},
+    {"section":"Configuración","route":"/configuracion","speech":"En Configuración, elegí el tema claro u oscuro, cambiá tu contraseña o cerrá sesión. ¡Vamos a practicar juntos!"}
+  ]
+}

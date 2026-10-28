@@ -36,8 +36,8 @@ export default function ModalVictoria({
         {/* Personaje Centrado */}
         <div className="my-2 relative w-40 h-40 flex items-center justify-center">
           <img
-            src="/mono.png" // Reemplaza por la ruta de tu imagen de mono
-            alt="Mono victorioso"
+            src="/loro-saludando.png"
+            alt="Waki celebrando"
             className="w-full h-full object-contain drop-shadow-lg"
           />
         </div>

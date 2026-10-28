@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Tutorial render intermediates (publish only the final MP4, captions and poster)
+/media/tutorial/build/
+/asset-inventory.jpg
+
+# Local tutorial draft; the screen-recorded replacement is deferred.
+/public/tutorial-insign.mp4
+/public/tutorial-insign/

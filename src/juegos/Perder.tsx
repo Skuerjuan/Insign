@@ -68,7 +68,7 @@ export default function PantallaSinVidas({
         {/* Imagen del Monito Triste Superpuesto */}
         <div className="w-36 h-36 -mb-8 z-20 relative flex items-center justify-center">
           <img
-            src="/mono-triste.png"
+            src="/loro-triste.png"
             alt="Sin vidas"
             className="w-full h-full object-contain filter drop-shadow-md"
           />

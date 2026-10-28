@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
-import fondoCartas from "./fondo.png";
+import fondoCartas from "./fondo-mangos.png";
 import fondo from "./fondoP.png";
+import { getTextoSena, getGrupoSena } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
@@ -279,7 +280,7 @@ export default function JuegoAdivinar({
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          const distractores = this.mazoJuego.filter((p) => p !== this.palabraObjetivo);
+          const distractores = this.mazoJuego.filter((p) => getGrupoSena(p) !== getGrupoSena(this.palabraObjetivo));
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 5);
 
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
@@ -350,7 +351,7 @@ export default function JuegoAdivinar({
             backgroundBoton.strokeRoundedRect(-botonWidth / 2, -botonHeight / 2, botonWidth, botonHeight, 16 * escalaUi);
 
             const textoBoton = this.add
-              .text(0, 0, palabraOpcion, {
+              .text(0, 0, getTextoSena(palabraOpcion), {
                 fontSize: `${Phaser.Math.Clamp(24 * escalaUi, 18, 28)}px`,
                 fontFamily,
                 color: "#05215b",

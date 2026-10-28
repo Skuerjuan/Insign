@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
-import fondoCartas from "./fondo.png";
+import fondoCartas from "./fondo-mangos.png";
 import fondo from "./fondoP.png";
+import { getTextoSena, getGrupoSena } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
@@ -288,18 +289,20 @@ export default function JuegoEleccion({
 
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          const distractores = this.mazoJuego.filter((p) => p !== this.palabraObjetivo);
+          const distractores = this.mazoJuego.filter((p) => getGrupoSena(p) !== getGrupoSena(this.palabraObjetivo));
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 3);
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
 
-          const palabraTextoFormatted = this.palabraObjetivo.toUpperCase();
+          const palabraTextoFormatted = getTextoSena(this.palabraObjetivo).toUpperCase();
 
           this.textoPalabra = this.add
-            .text(width / 2, 88 * escalaUi, `¿Qué seña es ${palabraTextoFormatted}?`, {
+            .text(width / 2, 88 * escalaUi, `Elegí la seña de «${palabraTextoFormatted}»`, {
               fontSize: `${Phaser.Math.Clamp(26 * escalaUi, 20, 36)}px`,
               fontFamily,
               color: "#05215b",
               fontStyle: "800",
+              align: "center",
+              wordWrap: { width: width - 32 * escalaUi },
             })
             .setOrigin(0.5)
             .setDepth(10);

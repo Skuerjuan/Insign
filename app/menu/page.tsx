@@ -86,7 +86,7 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
                 className={`${styles.levelCard} ${styles[level.colorClass]} ${isLocked ? styles.locked : ""}`}
               >
                 <div className={styles.levelImagePlaceholder}>
-                  <Image src="/mono-seccion.png" alt="" width={179} height={180} className={styles.levelImage} />
+                  <Image src="/loro-mango.png" alt="" width={179} height={180} className={styles.levelImage} />
                   {isLocked && (
                     <Image
                       src="/lock.png"

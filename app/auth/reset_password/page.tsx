@@ -18,8 +18,8 @@ export default function ResetPassword(){
                 <div className={`${styles.monkeyWrap} ${styles.resetMonkeyWrap}`}>
                     <Image
                         className={`${styles.monkey} ${styles.resetMonkey}`}
-                        src="/mono-nueva-contrasena.png"
-                        alt="Mono de InSign señalando hacia arriba"
+                        src="/loro-contrasena.png"
+                        alt="Waki señalando hacia arriba"
                         width={506}
                         height={730}
                         priority

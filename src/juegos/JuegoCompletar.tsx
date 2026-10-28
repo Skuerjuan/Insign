@@ -7,6 +7,7 @@ import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
 import fondo from "./fondoP.png";
+import { getPalabraCompletar } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
 
@@ -14,7 +15,8 @@ const normalizarTexto = (texto: string, mantenerEspacios: boolean = false) => {
   const normalizado = texto
     .trim()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u0302\u0304-\u036f]/g, "")
+    .normalize("NFC")
     .toUpperCase();
 
   return mantenerEspacios ? normalizado : normalizado.replace(/\s+/g, "");
@@ -294,15 +296,16 @@ export default function JuegoCompletarCeldas({
           const indexRandom = Phaser.Math.Between(0, palabrasDisponiblesFiltradas.length - 1);
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           
-          this.palabraObjetivoConEspacios = normalizarTexto(this.palabraObjetivo, true);
-          this.palabraObjetivoNormalizada = normalizarTexto(this.palabraObjetivo, false);
+          const termino = getPalabraCompletar(this.palabraObjetivo);
+          this.palabraObjetivoConEspacios = normalizarTexto(termino, true);
+          this.palabraObjetivoNormalizada = normalizarTexto(termino, false);
           
           this.palabrasUsadas.push(this.palabraObjetivo);
 
           const azulTexto = "#05215b";
 
           const textoPregunta = this.add
-            .text(width / 2, 85 * escalaUi, "Escribe la palabra correcta", {
+            .text(width / 2, 85 * escalaUi, "Completá la palabra de la seña", {
               fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 17, 30)}px`,
               fontFamily,
               color: azulTexto,
@@ -529,8 +532,7 @@ export default function JuegoCompletarCeldas({
             return;
           }
 
-          const quitarTildes = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const pressedChar = quitarTildes(event.key.toUpperCase());
+          const pressedChar = normalizarTexto(event.key);
           
           const matchIndex = this.availableChars.findIndex(
             (c) => c.char === pressedChar && c.active
@@ -552,7 +554,7 @@ export default function JuegoCompletarCeldas({
           const wordFormed = this.inputtedChars.map((c) => c.char).join("");
 
           if (wordFormed === this.palabraObjetivoNormalizada) {
-            const letrasConTilde = this.palabraObjetivo.toUpperCase().replace(/\s+/g, "").split("");
+            const letrasConTilde = getPalabraCompletar(this.palabraObjetivo).toUpperCase().replace(/\s+/g, "").split("");
             
             this.inputSlots.forEach((slot, index) => {
               const slotText = slot.getData("text") as Phaser.GameObjects.Text;
