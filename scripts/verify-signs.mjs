@@ -4,7 +4,9 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import ts from 'typescript';
 import crypto from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const trackedFiles = new Set(execFileSync('git', ['ls-files', '-z', '--', 'public'], {cwd: root, encoding: 'utf8'}).split('\0'));
 const catalog = JSON.parse(fs.readFileSync(path.join(root, 'src/diccionario/videos.json'), 'utf8'));
 function load(file) {
   const evaluatedModule = {exports:{}};
@@ -35,7 +37,7 @@ assert.equal(alphabet.LETRAS.length,27);
 for(const letter of alphabet.LETRAS) {
   const file=alphabet.getAbecedarioVideoPath(letter);
   const parts=file.slice(1).split('/');
-  assert(fs.readdirSync(path.join(root,'public')).includes(parts[0]),`Folder case mismatch: ${file}`);
+  assert(trackedFiles.has(`public${file}`),`Letter clip path/case differs from Git (deploy): ${file}`);
   assert(fs.readdirSync(path.join(root,'public',parts[0])).includes(parts[1]),`Letter clip missing: ${file}`);
 }
 assert.equal(getTextoSena('Encantado-a'),'Encantado / Encantada');
