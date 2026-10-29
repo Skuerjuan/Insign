@@ -98,7 +98,7 @@
   width: min(1270px,100%);
   margin: auto;
   display: grid;
-  grid-template-columns: 1.05fr .95fr;
+  grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr);
   align-items: center;
   gap: 46px;
 }
@@ -194,10 +194,11 @@
   box-shadow: 0 11px 26px #06458238;
 }
 .heroVisual {
-  align-self: end;
-  justify-self: center;
-  width: min(45vw,640px);
-  height: min(68vh,650px);
+  align-self: center;
+  justify-self: end;
+  width: min(100%,360px);
+  height: min(50svh,440px);
+  min-width: 0;
   display: grid;
   place-items: end center;
 }
@@ -655,7 +656,7 @@
     gap: 22px;
   }
   .heroContent {
-    grid-template-columns: 1.1fr .9fr;
+    grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
   }
   .showcaseSection {
     padding-inline: 9vw;
@@ -755,8 +756,9 @@
     font-size: 17px;
   }
   .heroVisual {
-    width: 100%;
-    height: 320px;
+    justify-self: center;
+    width: min(100%,260px);
+    height: 260px;
   }
   .showcaseSection {
     padding: 96px 18px 24px;

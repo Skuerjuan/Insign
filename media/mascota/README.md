@@ -1,6 +1,14 @@
 # Loro y mangos de InSign
 
-Actualización: la mascota se llama **Waki** y también es el favicon. Se restauraron los adornos originales `public/vector-seccion.png` y `public/patron-juegos.png`, retirando sus versiones de mangos grises. Por pedido del usuario, el video se retoma en otro momento: la landing conserva `public/grabacion-insign.mp4`. El guion para el recorrido real de hasta 90 segundos está en `media/tutorial/guion-recorrido.json`.
+Actualización: la mascota se llama **Waki** y también es el favicon. Se restauraron los adornos originales `public/vector-seccion.png` y `public/patron-juegos.png`, retirando sus versiones de mangos grises. El video de la landing, `public/grabacion-insign.mp4`, se reemplazó por un recorrido de las pantallas reales de Insign, con datos de demostración, Waki como guía, narración en español y subtítulos. Dura **84,063 segundos**. El guion está en `media/tutorial/guion-recorrido.json` y los tiempos finales en `media/tutorial/tiempos-recorrido.json`.
+
+## Recorrido con Waki
+
+Entrega: `output/video/insign-recorrido-waki.mp4`. Codificación H.264/AAC, 1440 × 810, 24 fps de salida. Captura de la interfaz y sus interacciones mediante Computer Use; sin diapositivas. Las tomas muestran la landing, acceso y registro, niveles, los cuatro juegos, entrenamiento, abecedario, progreso, perfil y configuración, incluido el cambio de apariencia.
+
+La grabación usa una copia aislada de los componentes reales con un perfil ficticio. No se utilizan contraseñas, sesiones personales, claves de producción ni conexiones a la base de datos. La configuración de autenticación de la aplicación real permanece intacta. El panel lateral y la banda inferior reservan espacio para Waki y los subtítulos sin tapar los controles.
+
+Fuentes: `scripts/prepare-tour-demo.mjs`, `scripts/narrate-waki-tour.ps1` y `scripts/render-waki-tour.mjs`. Capturas y archivos intermedios: `media/tutorial/build/recorrido/`. Portada, capítulos y transcripción: `public/recorrido-waki/`.
 
 Las ilustraciones se generaron con la herramienta integrada `image_gen`, usando como referencia de identidad `C:/Users/ariel/Downloads/image 83.png`. La imagen de saludo es una copia intacta del original. No se usó la API ni el modo CLI.
 

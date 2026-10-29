@@ -1,0 +1,85 @@
+{
+  "duration": 84.063,
+  "format": "screen recording",
+  "syntheticProfile": true,
+  "chapters": [
+    {
+      "section": "Inicio de la aventura",
+      "start": 0,
+      "end": 8,
+      "recordings": [
+        "00-landing"
+      ]
+    },
+    {
+      "section": "Tu cuenta",
+      "start": 8,
+      "end": 15.333333333333332,
+      "recordings": [
+        "01-cuenta"
+      ]
+    },
+    {
+      "section": "Niveles",
+      "start": 15.333333333333332,
+      "end": 25.541666666666664,
+      "recordings": [
+        "02-niveles",
+        "02b-juegos"
+      ]
+    },
+    {
+      "section": "Los cuatro juegos",
+      "start": 25.541666666666664,
+      "end": 44.375,
+      "recordings": [
+        "03a-eleccion",
+        "03b-memoria",
+        "03c-completar",
+        "03d-multiple"
+      ]
+    },
+    {
+      "section": "Entrenamiento",
+      "start": 44.375,
+      "end": 51.583333333333336,
+      "recordings": [
+        "04-entrenamiento"
+      ]
+    },
+    {
+      "section": "Abecedario",
+      "start": 51.583333333333336,
+      "end": 57.79166666666667,
+      "recordings": [
+        "05a-abecedario",
+        "05b-letras-video"
+      ]
+    },
+    {
+      "section": "Progreso",
+      "start": 57.79166666666667,
+      "end": 65.70833333333334,
+      "recordings": [
+        "06-progreso"
+      ]
+    },
+    {
+      "section": "Perfil",
+      "start": 65.70833333333334,
+      "end": 72.41666666666667,
+      "recordings": [
+        "07-perfil"
+      ]
+    },
+    {
+      "section": "Configuración",
+      "start": 72.41666666666667,
+      "end": 84.04166666666667,
+      "recordings": [
+        "08-configuracion",
+        "09-cierre"
+      ]
+    }
+  ]
+}

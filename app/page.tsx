@@ -144,11 +144,12 @@ export default function Home() {
       </footer>
 
       {videoOpen && (
-        <div className={styles.videoModal} role="dialog" aria-modal="true" aria-label="Video: cómo funciona InSign" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
+        <div className={styles.videoModal} role="dialog" aria-modal="true" aria-label="Video: recorrido de InSign con Waki" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
           <div className={styles.videoDialog}>
             <button ref={closeButtonRef} className={styles.videoClose} type="button" aria-label="Cerrar video" onClick={() => setVideoOpen(false)}>×</button>
-            <video className={styles.video} controls autoPlay playsInline preload="metadata">
-              <source src="/grabacion-insign.mp4" type="video/mp4" />
+            <video className={styles.video} controls autoPlay playsInline preload="metadata" poster="/recorrido-waki/portada.jpg">
+              <source src="/grabacion-insign.mp4?v=waki-recorrido-84" type="video/mp4" />
+              <track kind="chapters" src="/recorrido-waki/capitulos.vtt" srcLang="es" label="Recorrido con Waki" />
               Tu navegador no puede reproducir este video.
             </video>
           </div>
