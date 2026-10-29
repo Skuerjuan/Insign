@@ -1,7 +1,5 @@
 import { recordLearnedSign } from "@/lib/server/profile.actions";
 
-// Las escenas se reinician entre rondas; esta cola conserva los guardados
-// y reintenta los fallidos antes de finalizar la partida.
 export function createSignRecorder() {
   const pending = new Map<string, { level: number | string; word: string; result: Promise<boolean> }>();
   return {
