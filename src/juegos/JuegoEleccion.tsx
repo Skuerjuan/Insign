@@ -357,6 +357,7 @@ export default function JuegoEleccion({
             cardBg.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12 * escalaUi);
 
             ficha.add([domVideo, cardBg]);
+            signRecorder.record(level ?? nivel, palabraOpcion);
 
             ficha.setData("valor", palabraOpcion);
             ficha.setData("graphics", cardBg);
@@ -442,7 +443,6 @@ export default function JuegoEleccion({
             });
 
             this.aciertos++;
-            signRecorder.record(level ?? nivel, this.palabraObjetivo);
             this.lanzarConfeti(ficha.x, ficha.y, this.escalaUiGlobal);
 
             if (this.badgeAciertos) {

@@ -14,6 +14,8 @@ export default async function Progreso() {
     ? achievementProgress.learnedSigns / achievementProgress.totalSigns * 100
     : 0;
   const totalMinutes = Math.floor(profile.tiempo_total_segundos / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
   const currentLevel = Math.min(9, Math.max(1, profile.nivel ?? 1));
   const experience = Math.max(0, profile.experiencia ?? profile.puntos ?? 0);
   const levelExperience = experience % 1000;
@@ -148,7 +150,7 @@ export default async function Progreso() {
                   alt="Reloj"
                   className={styles.summaryIcon}
                 />
-                <strong>{totalMinutes} min</strong>
+                <strong>{hours} h {minutes} min</strong>
                 <span>Tiempo de juego</span>
               </article>
 

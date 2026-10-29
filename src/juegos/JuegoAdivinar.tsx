@@ -312,6 +312,7 @@ export default function JuegoAdivinar({
           elementoVideo.src = getVideoPath(level ?? nivel, this.palabraObjetivo) ?? "";
 
           this.add.dom(centroX, centroY, elementoVideo);
+          signRecorder.record(level ?? nivel, this.palabraObjetivo);
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
@@ -428,7 +429,6 @@ export default function JuegoAdivinar({
             this.lanzarConfeti(contenedor.x, contenedor.y, escalaUi);
 
             this.aciertos++;
-            signRecorder.record(level ?? nivel, this.palabraObjetivo);
             if (this.badgeAciertos) {
               this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
             }

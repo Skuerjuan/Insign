@@ -459,6 +459,7 @@ export default function JuegoMemoria({
               carta.setData("volteada", true);
 
               if (carta.getData("tipo") === "senia" && "node" in contenidoVisible) {
+                signRecorder.record(level ?? nivel, carta.getData("valor"));
                 const videoEl = (contenidoVisible as Phaser.GameObjects.DOMElement)
                   .node as HTMLVideoElement;
                 if (videoEl && typeof videoEl.play === "function") {
@@ -503,7 +504,6 @@ export default function JuegoMemoria({
                 this.segundaCarta.fondoObj.setTint(0x4be06d);
 
                 this.aciertos++;
-                signRecorder.record(level ?? nivel, valor1);
 
                 if (this.textoMarcador) {
                   this.textoMarcador.setText(`Pares: ${this.aciertos}/${this.totalPares}`);

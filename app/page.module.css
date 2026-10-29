@@ -196,8 +196,8 @@
 .heroVisual {
   align-self: center;
   justify-self: end;
-  width: min(100%,360px);
-  height: min(50svh,440px);
+  width: min(100%,460px);
+  height: min(58svh,520px);
   min-width: 0;
   display: grid;
   place-items: end center;
@@ -757,8 +757,8 @@
   }
   .heroVisual {
     justify-self: center;
-    width: min(100%,260px);
-    height: 260px;
+    width: min(100%,300px);
+    height: 300px;
   }
   .showcaseSection {
     padding: 96px 18px 24px;

@@ -71,10 +71,10 @@
   bottom: -14px;
   /* Compensa el espacio transparente asimétrico dentro del PNG. */
   transform: translateX(-46%);
-  width: min(48vw, 82dvh, 940px);
+  width: min(54vw, 92dvh, 1050px);
   min-width: 300px;
   aspect-ratio: 3 / 2;
-  background: url("/loro-saludando.png") center bottom / contain no-repeat;
+  background: url("/loro-saludando.png") 54% bottom / contain no-repeat;
 }
 
 .container {
@@ -166,7 +166,7 @@
   .gorilaSaludando {
     position: static;
     transform: none;
-    width: clamp(120px, 27vw, 190px);
+    width: clamp(140px, 31vw, 215px);
     min-width: 0;
   }
 
@@ -187,7 +187,7 @@
   .leftStage { gap: 8px; }
   .logo { font-size: clamp(44px, 13vw, 62px); letter-spacing: -2px; }
   .blanco, .amarillo { -webkit-text-stroke-width: 3px; }
-  .gorilaSaludando { width: clamp(145px, 40vw, 175px); }
+  .gorilaSaludando { width: clamp(155px, 43vw, 190px); }
   .container {
     padding: 20px clamp(18px, 5vw, 28px) 26px;
     --auth-field-height: 58px;
@@ -197,7 +197,7 @@
 
 @media (max-height: 720px) and (min-width: 901px) {
   .fondo { padding-block: 20px; }
-  .gorilaSaludando { width: min(45vw, 73dvh, 700px); }
+  .gorilaSaludando { width: min(50vw, 82dvh, 790px); }
   .container { padding-block: 14px; --auth-field-height: 52px; }
   .fields { gap: 10px; }
 }

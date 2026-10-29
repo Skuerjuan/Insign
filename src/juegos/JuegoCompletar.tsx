@@ -332,6 +332,7 @@ export default function JuegoCompletarCeldas({
           elementoVideo.src = getVideoPath(level ?? nivel, this.palabraObjetivo) ?? "";
 
           this.add.dom(centroX, centroY, elementoVideo);
+          signRecorder.record(level ?? nivel, this.palabraObjetivo);
 
           const cardBg = this.add.graphics();
           cardBg.lineStyle(5 * escalaUi, 0x1e78ff, 1);
@@ -563,7 +564,6 @@ export default function JuegoCompletarCeldas({
 
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
-            signRecorder.record(level ?? nivel, this.palabraObjetivo);
 
             if (this.badgeAciertos) {
               this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
