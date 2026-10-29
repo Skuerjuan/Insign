@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
@@ -22,13 +23,14 @@ interface JuegoMemoriaProps {
 
 export default function JuegoMemoria({
   nivel = "presentacion-1",
-  palabras,
+  palabras: palabrasProp,
   onParAdivinado,
   points = 0,
   origin = "menu",
   level,
 }: JuegoMemoriaProps) {
   const router = useRouter();
+  const palabras = useGameWords(palabrasProp);
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
@@ -83,6 +85,10 @@ export default function JuegoMemoria({
         private aciertos = 0;
         private errores = 0;
         private totalPares = 0;
+        private pares: string[] = [];
+        private senias: string[] = [];
+        private significados: string[] = [];
+        private paresEncontrados = new Set<string>();
         private escalaUiGlobal = 1;
         private textoMarcador: Phaser.GameObjects.Text | null = null;
 
@@ -104,15 +110,18 @@ export default function JuegoMemoria({
           this.primeraCarta = null;
           this.segundaCarta = null;
           this.bloqueado = false;
-          this.aciertos = 0;
-          this.errores = 0;
 
           const mazoObtenido = palabras && palabras.length > 0 ? palabras : getPalabrasPorCategoria(nivel);
-          const pares = getSeniasSinAmbiguedad(Phaser.Utils.Array.Shuffle([...mazoObtenido])).slice(0, 8);
+          if (this.pares.length === 0) {
+            this.pares = getSeniasSinAmbiguedad(Phaser.Utils.Array.Shuffle([...mazoObtenido])).slice(0, 8);
+            this.senias = Phaser.Utils.Array.Shuffle([...this.pares]);
+            this.significados = Phaser.Utils.Array.Shuffle([...this.pares]);
+          }
+          const pares = this.pares;
           this.totalPares = pares.length;
 
-          const senias = Phaser.Utils.Array.Shuffle([...pares]);
-          const significados = Phaser.Utils.Array.Shuffle([...pares]);
+          const senias = this.senias;
+          const significados = this.significados;
 
           const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.75, 1.3);
           this.escalaUiGlobal = escalaUi;
@@ -179,8 +188,13 @@ export default function JuegoMemoria({
             escalaUi
           );
 
-          this.scale.on("resize", () => {
+          const onResize = () => {
+            if (this.bloqueado) return;
             this.scene.restart();
+          };
+          this.scale.on("resize", onResize);
+          this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.scale.off("resize", onResize);
           });
         }
 
@@ -285,7 +299,7 @@ export default function JuegoMemoria({
           );
 
           this.textoMarcador = this.add
-            .text(width / 2, marcadorY + marcadorHeight / 2, `Pares: 0/${this.totalPares}`, {
+            .text(width / 2, marcadorY + marcadorHeight / 2, `Pares: ${this.aciertos}/${this.totalPares}`, {
               fontSize: `${Phaser.Math.Clamp(28 * escalaUi, 22, 34)}px`,
               fontFamily,
               color: "#003895",
@@ -342,6 +356,7 @@ export default function JuegoMemoria({
 
           items.forEach((item, index) => {
             if (!item) return;
+            if (this.paresEncontrados.has(item)) return;
 
             const columna = index % columnas;
             const fila = Math.floor(index / columnas);
@@ -459,6 +474,7 @@ export default function JuegoMemoria({
               carta.setData("volteada", true);
 
               if (carta.getData("tipo") === "senia" && "node" in contenidoVisible) {
+                signRecorder.record(level ?? nivel, carta.getData("valor"));
                 const videoEl = (contenidoVisible as Phaser.GameObjects.DOMElement)
                   .node as HTMLVideoElement;
                 if (videoEl && typeof videoEl.play === "function") {
@@ -503,7 +519,7 @@ export default function JuegoMemoria({
                 this.segundaCarta.fondoObj.setTint(0x4be06d);
 
                 this.aciertos++;
-                signRecorder.record(level ?? nivel, valor1);
+                this.paresEncontrados.add(valor1);
 
                 if (this.textoMarcador) {
                   this.textoMarcador.setText(`Pares: ${this.aciertos}/${this.totalPares}`);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
@@ -35,7 +36,7 @@ interface JuegoCompletarProps {
 
 export default function JuegoCompletarCeldas({
   nivel = "presentacion-1",
-  palabras,
+  palabras: palabrasProp,
   onRondaGanada,
   onJuegoTerminado,
   points = 0,
@@ -43,6 +44,7 @@ export default function JuegoCompletarCeldas({
   level,
 }: JuegoCompletarProps) {
   const router = useRouter();
+  const palabras = useGameWords(palabrasProp);
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -191,12 +193,16 @@ export default function JuegoCompletarCeldas({
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
 
-          this.scale.on("resize", () => {
+          const onResize = () => {
             this.scene.restart({
               aciertos: this.aciertos,
               palabrasUsadas: this.palabrasUsadas,
               intentosFallidos: this.intentosFallidos,
             });
+          };
+          this.scale.on("resize", onResize);
+          this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.scale.off("resize", onResize);
           });
 
           this.input.on("pointerdown", () => {
@@ -332,6 +338,7 @@ export default function JuegoCompletarCeldas({
           elementoVideo.src = getVideoPath(level ?? nivel, this.palabraObjetivo) ?? "";
 
           this.add.dom(centroX, centroY, elementoVideo);
+          signRecorder.record(level ?? nivel, this.palabraObjetivo);
 
           const cardBg = this.add.graphics();
           cardBg.lineStyle(5 * escalaUi, 0x1e78ff, 1);
@@ -563,7 +570,6 @@ export default function JuegoCompletarCeldas({
 
             this.lanzarConfeti(this.scale.width / 2, this.scale.height * 0.6, this.escalaUiGlobal);
             this.aciertos++;
-            signRecorder.record(level ?? nivel, this.palabraObjetivo);
 
             if (this.badgeAciertos) {
               this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);

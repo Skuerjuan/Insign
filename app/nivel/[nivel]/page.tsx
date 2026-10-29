@@ -6,6 +6,7 @@ import Foto from "@/components/Foto";
 import { getLevel } from "@/src/diccionario/diccionario";
 import { getCompletedGames, getProfile, getSession, type GameName } from "@/lib/server/profile.actions";
 import { getWeeklyActivity } from "@/lib/server/streak";
+import { getLevelSignProgress } from "@/lib/sign-progress";
 import styles from "./styles.module.css";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +38,7 @@ export default async function LevelGamesPage({
   if (!practice && level.id > 1 && profile.nivel < level.id) redirect("/menu");
 
   const completedGames = new Set(await getCompletedGames(user.id, level.id));
+  const signProgress = getLevelSignProgress(level.id, profile.senas_aprendidas);
   const streak = getWeeklyActivity(profile.racha, profile.ultimo_dia_activo).count;
   const levelStyle = { "--level-color": level.color } as CSSProperties;
 
@@ -84,6 +86,7 @@ export default async function LevelGamesPage({
             <div>
               <h1 id="level-title">{level.title}</h1>
               <p>{practice ? "Modo practicar · Sin puntos" : level.description}</p>
+              {!practice && <p>Señas vistas: {signProgress.learned} de {signProgress.total}. Para avanzar, tenés que verlas todas al menos una vez.</p>}
             </div>
           </section>
 
