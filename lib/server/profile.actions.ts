@@ -113,8 +113,6 @@ export async function getProfile(userId: string){
         })
     }
 
-    // El acceso depende de las señas vistas, también para perfiles anteriores
-    // que pudieron avanzar con el criterio de completar cuatro juegos.
     return { ...profile, nivel: getUnlockedLevel(profile.senas_aprendidas) };
 }
 
