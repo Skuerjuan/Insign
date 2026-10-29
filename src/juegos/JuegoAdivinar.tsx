@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
@@ -24,7 +25,7 @@ interface JuegoAdivinarProps {
 
 export default function JuegoAdivinar({
   nivel = "presentacion-1",
-  palabras,
+  palabras: palabrasProp,
   onRondaGanada,
   userName = "user",
   points = 0,
@@ -32,6 +33,7 @@ export default function JuegoAdivinar({
   level,
 }: JuegoAdivinarProps) {
   const router = useRouter();
+  const palabras = useGameWords(palabrasProp);
   const gameRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [perdio, setPerdio] = useState(false);
@@ -169,12 +171,16 @@ export default function JuegoAdivinar({
           this.crearHud(width, height, escalaUi);
           this.generarNuevaRonda(width, height, escalaUi);
 
-          this.scale.on("resize", () => {
+          const onResize = () => {
             this.scene.restart({
               aciertos: this.aciertos,
               palabrasUsadas: this.palabrasUsadas,
               intentosFallidos: this.intentosFallidos,
             });
+          };
+          this.scale.on("resize", onResize);
+          this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.scale.off("resize", onResize);
           });
         }
 

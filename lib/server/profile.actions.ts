@@ -5,7 +5,7 @@ import { prisma } from "@/db"
 import { auth } from "@/lib/auth/server"
 import { redirect } from "next/navigation";
 import { getLevel, getLevelWords, LEVELS } from "@/src/diccionario/diccionario";
-import { getSignProgress } from "@/lib/sign-progress";
+import { getSignProgress, getUnlockedLevel } from "@/lib/sign-progress";
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@/prisma/generated/client";
 import { getLocalDayNumber, getWeeklyActivity, registerActiveDay } from "./streak";
@@ -14,16 +14,6 @@ export type GameName = "eleccion" | "memoria" | "adivinar" | "completar";
 export type GameOrigin = "menu" | "training" | "exam";
 
 const GAMES_PER_LEVEL = 4;
-
-async function levelUp(
-    tx: Prisma.TransactionClient,
-    userId: string,
-) {
-    return tx.profiles.update({
-        where: { user_id: userId },
-        data: { nivel: { increment: 1 } },
-    });
-}
 
 async function calculateAchievementSnapshot(
     db: Prisma.TransactionClient | typeof prisma,
@@ -123,7 +113,9 @@ export async function getProfile(userId: string){
         })
     }
 
-    return profile;
+    // El acceso depende de las señas vistas, también para perfiles anteriores
+    // que pudieron avanzar con el criterio de completar cuatro juegos.
+    return { ...profile, nivel: getUnlockedLevel(profile.senas_aprendidas) };
 }
 
 export async function getLearnedSignsCount(userId: string) {
@@ -139,9 +131,15 @@ export async function recordLearnedSign(levelIdentifier: number | string, word: 
     }
     await getProfile(user.id);
     const key = `${level.categoryId}:${word}`;
-    await prisma.profiles.updateMany({
-        where: { user_id: user.id, NOT: { senas_aprendidas: { has: key } } },
-        data: { senas_aprendidas: { push: key } },
+    await prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT user_id FROM public.profiles WHERE user_id = ${user.id}::uuid FOR UPDATE`;
+        const profile = await tx.profiles.findUniqueOrThrow({ where: { user_id: user.id } });
+        if (profile.senas_aprendidas.includes(key)) return;
+        const unlockedLevel = getUnlockedLevel([...profile.senas_aprendidas, key]);
+        await tx.profiles.update({
+            where: { user_id: user.id },
+            data: { senas_aprendidas: { push: key }, nivel: unlockedLevel },
+        });
     });
     revalidatePath("/progreso");
     revalidatePath("/perfil");
@@ -239,6 +237,10 @@ export async function completeGame(
         const profile = await tx.profiles.findUniqueOrThrow({
             where: { user_id: user.id },
         });
+        const unlockedLevel = getUnlockedLevel(profile.senas_aprendidas);
+        if (origin !== "training" && safeLevel && safeLevel > unlockedLevel) {
+            throw new Error("Tenés que ver todas las señas del nivel anterior para avanzar");
+        }
         const streak = registerActiveDay(
             profile.racha,
             profile.ultimo_dia_activo,
@@ -250,6 +252,7 @@ export async function completeGame(
         let updatedProfile = await tx.profiles.update({
             where: { user_id: user.id },
             data: {
+                nivel: unlockedLevel,
                 puntos: profile.puntos == null
                     ? pointsAwarded
                     : { increment: pointsAwarded },
@@ -261,17 +264,6 @@ export async function completeGame(
         });
 
         if (origin === "menu" && safeLevel) {
-            const existingCompletion = await tx.juegos_completados.findUnique({
-                where: {
-                    usuario_id_nivel_juego: {
-                        usuario_id: user.id,
-                        nivel: safeLevel,
-                        juego: game,
-                    },
-                },
-                select: { id: true },
-            });
-
             await tx.juegos_completados.upsert({
                 where: {
                     usuario_id_nivel_juego: {
@@ -287,18 +279,6 @@ export async function completeGame(
                     juego: game,
                 },
             });
-
-            const completedInLevel = await tx.juegos_completados.count({
-                where: { usuario_id: user.id, nivel: safeLevel },
-            });
-            if (
-                !existingCompletion &&
-                completedInLevel >= GAMES_PER_LEVEL &&
-                profile.nivel === safeLevel &&
-                safeLevel < LEVELS.length
-            ) {
-                updatedProfile = await levelUp(tx, user.id);
-            }
         }
 
         await tx.actividades.create({
