@@ -9,6 +9,8 @@ const profile = { user_id: 'test-user', senas_aprendidas: [], puntos: 35, nivel:
   premios: 0, racha: 0, ultimo_dia_activo: null, juegos_jugados: 0, dias_activos: 0 };
 let completions = 0;
 let activities = [];
+const catalog = new Map();
+const unlocked = new Map();
 const db = {
   profiles: {
     findUnique: async () => profile,
@@ -35,7 +37,22 @@ const db = {
     count: async () => completions,
   },
   actividades: { findMany: async () => activities, create: async ({ data }) => { activities.push(data); } },
-  logros_desbloqueados: { createMany: async () => {}, count: async () => 0 },
+  logros: {
+    createMany: async ({ data }) => {
+      for (const row of data) if (!catalog.has(row.id)) catalog.set(row.id, row);
+    },
+    findMany: async ({ where }) => [...catalog.values()].filter(row => where.id.in.includes(row.id)),
+  },
+  logros_desbloqueados: {
+    createMany: async ({ data }) => {
+      for (const row of data) {
+        assert(catalog.has(row.logro_id), `Foreign key: missing achievement ${row.logro_id}`);
+        if (!unlocked.has(row.logro_id)) unlocked.set(row.logro_id, { ...row, desbloqueado_at: new Date() });
+      }
+    },
+    findMany: async () => [...unlocked.values()],
+    count: async () => unlocked.size,
+  },
   $queryRaw: async () => [],
   $transaction: async (fn) => fn(db),
 };
@@ -66,7 +83,7 @@ function load(file) {
 (async () => {
   const { getSignProgress, getLevelSignProgress, getUnlockedLevel } = load(path.join(root, 'lib/sign-progress.ts'));
   const { LEVELS, getLevelWords } = load(path.join(root, 'src/diccionario/diccionario.ts'));
-  const { recordLearnedSign, completeGame, getProfile } = load(path.join(root, 'lib/server/profile.actions.ts'));
+  const { recordLearnedSign, completeGame, getProfile, getAchievementProgress } = load(path.join(root, 'lib/server/profile.actions.ts'));
   const before = getSignProgress([]);
   assert.equal(before.total, 419);
   await Promise.all([recordLearnedSign(1, 'Hola'), recordLearnedSign(1, 'Hola')]);
@@ -119,5 +136,22 @@ function load(file) {
   profile.senas_aprendidas = [];
   assert.equal((await getProfile(profile.user_id)).nivel, 1, 'Los perfiles antiguos respetan el nuevo criterio');
   profile.senas_aprendidas = saved;
+  // Reproduce the malformed ID in the deployed catalog, with 25 learned signs.
+  catalog.delete('gran-aprendiz');
+  catalog.set('gran-aprendiz, Gran Aprendiz, Aprender 25 señas.', {
+    id: 'gran-aprendiz, Gran Aprendiz, Aprender 25 señas.', name: 'Gran Aprendiz', description: 'Aprender 25 señas.',
+  });
+  profile.senas_aprendidas = allKeys.slice(0, 25);
+  const progress = await getAchievementProgress(profile.user_id);
+  assert.equal(progress.achievements.length, 14, 'El catálogo inválido no duplica logros');
+  assert.equal(progress.achievements.find(row => row.id === 'gran-aprendiz').unlocked, true);
+  const unlockedAt = unlocked.get('gran-aprendiz').desbloqueado_at;
+  await Promise.all([getAchievementProgress(profile.user_id), getAchievementProgress(profile.user_id)]);
+  assert.equal(unlocked.get('gran-aprendiz').desbloqueado_at, unlockedAt, 'Las visitas conservan la fecha de desbloqueo');
+  catalog.clear();
+  await completeGame('memoria', 0, 'training', 1);
+  assert.equal(catalog.size, 14, 'Guardar una partida también repara un catálogo vacío');
+  assert.equal(profile.premios, unlocked.size);
+  console.log('OK: Perfil/Progreso reparan el ID de Gran Aprendiz, las visitas son idempotentes y las partidas funcionan con catálogo vacío.');
   console.log('OK: señas únicas, cobertura de los nueve niveles, bloqueo con una seña pendiente, desbloqueo al ver la última, sin exigir cuatro juegos y validación de acceso.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });

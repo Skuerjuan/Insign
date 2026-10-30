@@ -9,6 +9,7 @@ import { getSignProgress, getUnlockedLevel } from "@/lib/sign-progress";
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@/prisma/generated/client";
 import { getLocalDayNumber, getWeeklyActivity, registerActiveDay } from "./streak";
+import { ACHIEVEMENTS, ensureAchievementCatalog } from "./achievements";
 
 export type GameName = "eleccion" | "memoria" | "adivinar" | "completar";
 export type GameOrigin = "menu" | "training" | "exam";
@@ -145,7 +146,9 @@ export async function recordLearnedSign(levelIdentifier: number | string, word: 
 }
 
 export async function getLogros() {
+    await ensureAchievementCatalog(prisma);
     return prisma.logros.findMany({
+        where: { id: { in: ACHIEVEMENTS.map(({ id }) => id) } },
         orderBy: { id: "asc" },
     });
 }
@@ -292,6 +295,7 @@ export async function completeGame(
 
         const achievementSnapshot = await calculateAchievementSnapshot(tx, user.id);
         if (achievementSnapshot.unlocked.length > 0) {
+            await ensureAchievementCatalog(tx);
             await tx.logros_desbloqueados.createMany({
                 data: achievementSnapshot.unlocked.map((logro_id) => ({
                     usuario_id: user.id,
