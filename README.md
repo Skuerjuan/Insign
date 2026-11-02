@@ -34,3 +34,22 @@ npx tsc --noEmit
 Los recursos gráficos de la aplicación están en WebP, con transparencia y
 compresión sin pérdida. `scripts/convert-images.mjs` convierte recursos existentes
 y actualiza sus referencias; `scripts/build-waki-icons.mjs` regenera los íconos WebP.
+
+
+### Videos de señas más livianos
+
+Los clips de juegos y abecedario conservan su pista H.264 original, sin recodificar
+la imagen ni cambiar resolución, cuadros, duración u orientación. Se retira el
+audio que esos reproductores ya reproducen silenciado y se prepara el MP4 para
+carga progresiva. La presentación conserva su narración y sus capítulos.
+
+Con FFmpeg y FFprobe disponibles en PATH, ejecutar:
+
+```sh
+node scripts/optimize-videos.mjs
+```
+
+Antes de reemplazar cada archivo, el script comprueba el SHA-256 de la pista de
+video y sus parámetros de reproducción. Solo guarda versiones más pequeñas.
+El informe de esta optimización está en `output/media/video-optimization-report.json`:
+191 clips optimizados, 7.852.792 bytes menos (3,45 % del total de videos públicos).
