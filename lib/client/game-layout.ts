@@ -94,3 +94,17 @@ export function getMultipleChoiceLayout(width: number, height: number, count: nu
   }));
   return { ...frame, video, buttons };
 }
+
+
+export function getMemoryPairPreview(width: number, height: number, cardWidth: number, cardHeight: number) {
+  const padding = Math.max(16, Math.min(40, width * 0.04));
+  const gap = Math.max(16, Math.min(28, width * 0.025));
+  const previewWidth = Math.min(360, (width - padding * 2 - gap) / 2, height * 0.56 * cardWidth / cardHeight);
+  const previewHeight = previewWidth * cardHeight / cardWidth;
+  return [0, 1].map((index) => ({
+    x: width / 2 + (index === 0 ? -1 : 1) * (previewWidth + gap) / 2,
+    y: height / 2,
+    width: previewWidth,
+    height: previewHeight,
+  }));
+}

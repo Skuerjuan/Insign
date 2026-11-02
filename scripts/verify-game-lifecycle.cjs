@@ -14,7 +14,8 @@ async function checkGame(name) {
     useMemo(fn, deps) { const i = cursor++; if (!same(slots[i]?.deps, deps)) slots[i] = { deps, value: fn() }; return slots[i].value; },
     useEffect(fn, deps) { const i = cursor++; if (!same(slots[i]?.deps, deps)) { const previous = slots[i]; effects.push(() => { previous?.cleanup?.(); slots[i] = { deps, cleanup: fn() }; }); } },
   };
-  const router = { push() {} };
+  let navigated;
+  const router = { push(href) { navigated = href; } };
   const mocks = {
     react,
     'react/jsx-runtime': { jsx() {}, jsxs() {} },
@@ -85,7 +86,93 @@ async function checkGame(name) {
     assert.equal(scene.scale.listenerCount('resize'), 1, 'Memoria: no acumula listeners');
     console.log('OK: Memoria conserva aciertos, errores y mazo tras cinco cambios de tamaño.');
   }
-  if (name === 'JuegoMemoria') return;
+  // La pantalla final habilita un botón explícito de regreso al inicio.
+  const finishMenu = new scenes[1]();
+  finishMenu.init({ errores: 0 });
+  finishMenu.scale = { width: 1200, height: 800 };
+  const texts = [];
+  const image = { setOrigin() { return this; }, setDisplaySize() { return this; } };
+  const graphic = { fillStyle() {}, fillRoundedRect() {}, lineStyle() {}, strokeRoundedRect() {} };
+  finishMenu.add = { image: () => image, graphics: () => graphic, text(x, y, label) {
+    const item = { label, handlers: {}, setOrigin() { return this; }, setText(value) { this.label = value; return this; }, setBackgroundColor() { return this; }, setInteractive() { return this; }, once(event, callback) { this.handlers[event] = callback; return this; } };
+    texts.push(item); return item;
+  } };
+  finishMenu.create();
+  assert(!texts.some(text => text.handlers.pointerdown), name + ': espera a guardar antes de salir');
+  await new Promise(resolve => setImmediate(resolve));
+  const back = texts.find(text => text.label === 'Volver al inicio');
+  assert(back, name + ': muestra el botón Volver al inicio');
+  back.handlers.pointerdown();
+  assert.equal(navigated, '/menu', name + ': vuelve al inicio, no al selector del nivel');
+
+  if (name === 'JuegoMemoria') {
+    const memory = new scenes[0]();
+    memory.scale = { width: 1200, height: 800 };
+    const delayed = [], tweens = [];
+    let backdropDestroyed = false, done = 0;
+    memory.time = { delayedCall(delay, callback) { delayed.push({ delay, callback }); } };
+    memory.tweens = { add(config) { tweens.push(config); } };
+    memory.add = { rectangle() { return { setDepth() { return this; }, destroy() { backdropDestroyed = true; } }; } };
+    const card = (type, x, y) => ({
+      carta: { x, y, width: 115, height: 115, scaleX: 1, scaleY: 1, depth: 3, alpha: 1,
+        getData: key => key === 'tipo' ? type : 'Hola', setDepth(value) { this.depth = value; return this; }, setAlpha(value) { this.alpha = value; return this; } },
+      fondoObj: { setTint() {} },
+      contenidoVisible: { depth: 7, setDepth(value) { this.depth = value; return this; } },
+    });
+    const meaning = card('significado', 120, 250), sign = card('senia', 900, 420), other = card('significado', 400, 250);
+    // Las selecciones y las entradas del tablero envuelven las mismas fichas en objetos distintos.
+    memory.cartas = [{ ...meaning }, { ...sign }, { ...other }];
+    memory.bloqueado = true;
+    memory.mostrarParejaAmpliada(sign, meaning, () => { done++; memory.bloqueado = false; });
+    assert.equal(tweens.length, 2);
+    assert.equal(tweens[0].targets, meaning.carta, 'El significado queda a la izquierda');
+    assert(tweens[0].x < tweens[1].x);
+    assert(tweens.every(tween => tween.scaleX > 1 && tween.y === 400));
+    assert.equal(meaning.carta.alpha, 1, 'La pareja ampliada mantiene su visibilidad');
+    assert.equal(other.carta.alpha, 0, 'Las otras señas no se superponen a la pareja ampliada');
+    assert.equal(done, 0);
+    const completeTween = tween => {
+      for (const key of ['x', 'y', 'scaleX', 'scaleY']) tween.targets[key] = tween[key];
+      tween.onComplete();
+    };
+    completeTween(tweens[0]);
+    assert.equal(delayed.length, 0, 'Espera a que ambas fichas terminen de ampliarse');
+    completeTween(tweens[1]);
+    assert.equal(delayed.length, 1);
+    assert.equal(delayed[0].delay, 1500, 'La pareja se mantiene grande durante 1,5 segundos');
+    assert.equal(memory.bloqueado, true);
+    delayed[0].callback();
+    completeTween(tweens[2]);
+    assert.equal(done, 0, 'No continúa hasta devolver las dos fichas');
+    completeTween(tweens[3]);
+    assert.equal(done, 1);
+    assert.equal(memory.bloqueado, false);
+    assert(backdropDestroyed);
+    assert.equal(other.carta.alpha, 1);
+    for (const [item, x, y] of [[meaning, 120, 250], [sign, 900, 420]]) {
+      assert.equal(item.carta.x, x); assert.equal(item.carta.y, y);
+      assert.equal(item.carta.scaleX, 1); assert.equal(item.carta.scaleY, 1);
+      assert.equal(item.carta.depth, 3); assert.equal(item.contenidoVisible.depth, 7);
+    }
+    // La última pareja también se muestra completa antes de abrir la felicitación.
+    const last = new scenes[0]();
+    let afterPreview, endStarted = false;
+    last.primeraCarta = meaning;
+    last.totalPares = 1;
+    last.lanzarConfeti = () => {};
+    last.time = { delayedCall(delay, callback) { callback(); } };
+    last.mostrarParejaAmpliada = (first, second, callback) => { afterPreview = callback; };
+    last.scene = { start(name) { endStarted = name === 'PantallaFin'; } };
+    last.verificarPar(sign.carta, sign.fondoObj, sign.contenidoVisible);
+    assert.equal(last.aciertos, 1);
+    assert.equal(last.bloqueado, true);
+    assert.equal(endStarted, false);
+    afterPreview();
+    assert.equal(endStarted, true);
+    console.log('OK: Memoria amplía la pareja durante 1,5 segundos, restaura las fichas y espera también en la última pareja.');
+    return;
+  }
+
   const results = [];
   const onExamResult = async mistakes => { results.push(mistakes); };
   await render({ ...props, origin: 'exam', palabras: ['Hola', 'Bien'], onExamResult });

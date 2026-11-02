@@ -11,7 +11,7 @@ function load(file) {
   new Function('module', 'exports', code)(module, module.exports);
   return module.exports;
 }
-const { getSpellingLayout, getChoiceLayout, getMultipleChoiceLayout } = load('lib/client/game-layout.ts');
+const { getSpellingLayout, getChoiceLayout, getMultipleChoiceLayout, getMemoryPairPreview } = load('lib/client/game-layout.ts');
 const { getPalabraCompletar } = load('src/diccionario/textos.ts');
 const catalog = JSON.parse(fs.readFileSync(path.join(root, 'src/diccionario/videos.json'), 'utf8'));
 const sizes = [[1920, 700], [1920, 400], [1366, 590], [1024, 600], [768, 640], [390, 650], [320, 520], [844, 330], [320, 300]];
@@ -40,6 +40,13 @@ for (const [width, height] of sizes) {
     assert.equal(keyboard.length, input.length);
     assert(layout.questionY + 12 * layout.scale < layout.video.y, 'Consigna separada del video');
     checked++;
+  }
+  const pair = getMemoryPairPreview(width, height, 115, 115);
+  const pairRects = pair.map(card => ({ x: card.x - card.width / 2, y: card.y - card.height / 2, width: card.width, height: card.height }));
+  assert(!intersects(pairRects[0], pairRects[1]), 'La pareja ampliada no se superpone');
+  for (const rect of pairRects) {
+    assert(rect.x >= 0 && rect.y >= 0 && rect.x + rect.width <= width && rect.y + rect.height <= height, 'Pareja ampliada visible dentro de la pantalla');
+    assert(rect.width > 115, 'La pareja se agranda');
   }
   const choice = getChoiceLayout(width, height);
   check(choice.cards, width, height, choice, `Elección ${width}x${height}`);

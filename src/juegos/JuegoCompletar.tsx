@@ -634,10 +634,10 @@ export default function JuegoCompletarCeldas({
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
+                botonFinal.setText("Volver al inicio").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push(level ? `/nivel/${level}${origin === "training" ? "?origen=entrenamiento" : ""}` : origin === "training" ? "/menu?origen=entrenamiento" : "/menu");
+                  router.push("/menu");
                 });
               })
               .catch(() => {

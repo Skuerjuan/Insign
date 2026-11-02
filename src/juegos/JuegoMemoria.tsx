@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getMemoryPairPreview } from "@/lib/client/game-layout";
 import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
@@ -81,6 +82,7 @@ export default function JuegoMemoria({
       };
 
       class MemoryScene extends Phaser.Scene {
+        private cartas: SelectedCard[] = [];
         private primeraCarta: SelectedCard | null = null;
         private segundaCarta: SelectedCard | null = null;
         private bloqueado = false;
@@ -109,6 +111,7 @@ export default function JuegoMemoria({
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
 
+          this.cartas = [];
           this.primeraCarta = null;
           this.segundaCarta = null;
           this.bloqueado = false;
@@ -358,7 +361,7 @@ export default function JuegoMemoria({
 
           items.forEach((item, index) => {
             if (!item) return;
-            if (this.paresEncontrados.has(item)) return;
+            const encontrada = this.paresEncontrados.has(item);
 
             const columna = index % columnas;
             const fila = Math.floor(index / columnas);
@@ -403,12 +406,14 @@ export default function JuegoMemoria({
                 .setOrigin(0.5);
             }
 
-            contenidoVisible.setVisible(false);
+            contenidoVisible.setVisible(encontrada);
+            if (encontrada) fondoObj.setTint(0x4be06d);
 
             carta.add([fondoObj, contenidoVisible]);
             carta.setData("valor", item);
             carta.setData("tipo", tipo);
-            carta.setData("volteada", false);
+            carta.setData("volteada", encontrada);
+            this.cartas.push({ carta, fondoObj, contenidoVisible });
 
             carta.on("pointerdown", () =>
               this.voltearCarta(carta, fondoObj, contenidoVisible)
@@ -466,6 +471,7 @@ export default function JuegoMemoria({
             }
           }
 
+          this.bloqueado = true;
           this.tweens.add({
             targets: carta,
             scaleX: 0,
@@ -495,6 +501,7 @@ export default function JuegoMemoria({
         ) {
           if (!this.primeraCarta) {
             this.primeraCarta = { carta, fondoObj, contenidoVisible };
+            this.bloqueado = false;
           } else {
             this.segundaCarta = { carta, fondoObj, contenidoVisible };
             this.bloqueado = true;
@@ -531,13 +538,13 @@ export default function JuegoMemoria({
                   onParAdivinado(this.aciertos);
                 }
 
-                if (this.aciertos === this.totalPares) {
-                  this.time.delayedCall(1200, () => {
+                this.mostrarParejaAmpliada(this.primeraCarta, this.segundaCarta, () => {
+                  if (this.aciertos === this.totalPares) {
                     this.scene.start("PantallaFin", { errores: this.errores });
-                  });
-                } else {
-                  this.resetSeleccion();
-                }
+                  } else {
+                    this.resetSeleccion();
+                  }
+                });
               });
             } else {
               this.errores++;
@@ -551,6 +558,56 @@ export default function JuegoMemoria({
               });
             }
           }
+        }
+
+        mostrarParejaAmpliada(first: SelectedCard, second: SelectedCard, alTerminar: () => void) {
+          // Mover las fichas originales conserva la reproducción de la seña.
+          const pareja = first.carta.getData("tipo") === "significado" ? [first, second] : [second, first];
+          const originales = pareja.map((item) => ({
+            x: item.carta.x, y: item.carta.y,
+            scaleX: item.carta.scaleX, scaleY: item.carta.scaleY,
+            depth: item.carta.depth, contentDepth: item.contenidoVisible.depth,
+          }));
+          const otras = this.cartas.filter((item) => item.carta !== first.carta && item.carta !== second.carta)
+            .map((item) => ({ carta: item.carta, alpha: item.carta.alpha }));
+          otras.forEach((item) => item.carta.setAlpha(0));
+          const { width, height } = this.scale;
+          const destinos = getMemoryPairPreview(width, height, first.carta.width, first.carta.height);
+          const fondoAmpliacion = this.add.rectangle(width / 2, height / 2, width, height, 0x05215b, 0.65).setDepth(1999);
+          let ampliadas = 0;
+          const volver = () => {
+            let devueltas = 0;
+            pareja.forEach((item, index) => {
+              const original = originales[index];
+              this.tweens.add({
+                targets: item.carta, x: original.x, y: original.y,
+                scaleX: original.scaleX, scaleY: original.scaleY,
+                duration: 220, ease: "Sine.easeInOut",
+                onComplete: () => {
+                  item.carta.setDepth(original.depth);
+                  item.contenidoVisible.setDepth(original.contentDepth);
+                  if (++devueltas === pareja.length) {
+                    fondoAmpliacion.destroy();
+                    otras.forEach((other) => other.carta.setAlpha(other.alpha));
+                    alTerminar();
+                  }
+                },
+              });
+            });
+          };
+          pareja.forEach((item, index) => {
+            item.carta.setDepth(2000 + index);
+            item.contenidoVisible.setDepth(2000 + index);
+            this.tweens.add({
+              targets: item.carta, x: destinos[index].x, y: destinos[index].y,
+              scaleX: destinos[index].width / item.carta.width,
+              scaleY: destinos[index].height / item.carta.height,
+              duration: 220, ease: "Sine.easeInOut",
+              onComplete: () => {
+                if (++ampliadas === pareja.length) this.time.delayedCall(1500, volver);
+              },
+            });
+          });
         }
 
         ocultarCarta(obj: SelectedCard) {
@@ -641,10 +698,10 @@ export default function JuegoMemoria({
                 resultadoTexto.setText(
                   `¡Partida terminada!\nGanaste ${resultado.pointsAwarded} puntos.`
                 );
-                botonFinal.setText("¡Felicidades!").setBackgroundColor("#2ed573");
+                botonFinal.setText("Volver al inicio").setBackgroundColor("#2ed573");
                 botonFinal.setInteractive({ useHandCursor: true });
                 botonFinal.once("pointerdown", () => {
-                  router.push(level ? `/nivel/${level}${origin === "training" ? "?origen=entrenamiento" : ""}` : origin === "training" ? "/menu?origen=entrenamiento" : "/menu");
+                  router.push("/menu");
                 });
               })
               .catch(() => {
