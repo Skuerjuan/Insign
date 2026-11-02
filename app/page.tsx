@@ -11,9 +11,9 @@ const games = [
 ] as const;
 
 const familyGames = [
-  { ...games[0], eyebrow: "", title: "Acompaña su progreso", copy: "Revisa sus logros, estrellas y rachas de aprendizaje en todo momento." },
-  { ...games[1], eyebrow: "", title: "Aprendan juntos", copy: "Compartí la experiencia y practicá las señas en familia." },
-  { ...games[2], eyebrow: "", title: "Celebra sus logros", copy: "Cada avance cuenta, motiva su aprendizaje con recompensas." },
+  { ...games[0], image: "/loro-familias-progreso.webp", alt: "Loro leyendo para acompañar el aprendizaje", eyebrow: "", title: "Acompaña su progreso", copy: "Revisa sus logros, estrellas y rachas de aprendizaje en todo momento." },
+  { ...games[1], image: "/loros-familias-juntos.webp", alt: "Familia de loros aprendiendo juntos", eyebrow: "", title: "Aprendan juntos", copy: "Compartí la experiencia y practicá las señas en familia." },
+  { ...games[2], image: "/loro-familias-logros.webp", alt: "Loro celebrando con una copa", eyebrow: "", title: "Celebra sus logros", copy: "Cada avance cuenta, motiva su aprendizaje con recompensas." },
 ] as const;
 
 function GameCards({ items = games }: { items?: ReadonlyArray<(typeof games)[number] | (typeof familyGames)[number]> }) {
