@@ -9,54 +9,42 @@ export type RespuestaEjercicio = {
 };
 
 
-export default async function getEjercicio(
-    tema: string,
-    dificultad: number,
-    tipo: string,
-) {
-    const user = await getSession();
+const CANTIDAD_POR_TIPO: Record<string, number> = {
+    eleccion: 4,
+    adivinar: 6,
+    completar: 1,
+    memoria: 8,
+};
 
-    const ejercicios = await prisma.ejercicios.findMany({
-        where: {
-            tema,
-            dificultad,
-            tipo,
-            completado: {
-                none: {
-                    usuario_id: user.id,
-                },
-            },
-        },
-        include: {
-            opciones: {
-                include: {
-                    palabras: {
-                        select: {
-                            palabra: true,
-                            animacion: true,
-                        },
-                    },
-                },
-            },
-        },
+function mezclar<T>(items: T[]): T[] {
+    const resultado = [...items];
+    for (let i = resultado.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [resultado[i], resultado[j]] = [resultado[j], resultado[i]];
+    }
+    return resultado;
+}
+
+export default async function getEjercicio(tipo: string, nivel: number) {
+    if (!Object.hasOwn(CANTIDAD_POR_TIPO, tipo) || !Number.isInteger(nivel) || nivel < 1) return null;
+    const cantidad = CANTIDAD_POR_TIPO[tipo];
+
+    await getSession();
+
+    const palabras = await prisma.palabras.findMany({
+        where: { nivel },
+        select: { id: true, palabra: true, video: true },
     });
 
-    if (ejercicios.length === 0) {
-        return null;
-    }
-
-    const ejercicio = ejercicios[Math.floor(Math.random() * ejercicios.length)];
+    if (palabras.length < cantidad) return null;
 
     return {
-        id: ejercicio.id,
-        tema: ejercicio.tema,
-        dificultad: ejercicio.dificultad,
-        tipo: ejercicio.tipo,
-        opciones: ejercicio.opciones.map((opcion) => ({
-            id: opcion.id,
-            palabraId: opcion.palabra_id,
-            palabra: opcion.palabras.palabra,
-            animacion: opcion.palabras.animacion,
+        tipo,
+        nivel,
+        senas: mezclar(palabras).slice(0, cantidad).map((palabra) => ({
+            id: palabra.id,
+            palabra: palabra.palabra,
+            video: palabra.video,
         })),
     };
 }

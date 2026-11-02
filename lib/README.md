@@ -134,11 +134,11 @@ type RespuestaEjercicio = {
 
 `seleccionada` indica si el usuario marcó esa opción.
 
-### `getEjercicio(tema, dificultad, tipo)`
+### `getEjercicio(tipo, nivel)`
 
-Obtiene el usuario de la sesión y busca ejercicios que coincidan con los tres filtros. Excluye los ejercicios que ya tengan una fila en `completado` con ese `usuario_id`. De los disponibles elige uno aleatoriamente.
+Requiere una sesión activa y toma señas aleatorias de `public.palabras` para el nivel solicitado. Las cantidades configuradas son cuatro para `eleccion`, seis para `adivinar`, una para `completar` y ocho para `memoria` (ocho pares en el tablero). Devuelve `null` para un tipo o nivel inválido o si el nivel no tiene suficientes palabras. Cada seña contiene `id`, `palabra` y `video`.
 
-Devuelve `null` si no hay ejercicios disponibles. Si encuentra uno, devuelve un objeto serializable con `id`, `tema`, `dificultad`, `tipo` y las opciones. Cada opción incluye `id`, `palabraId`, `palabra` y `animacion`; el campo `correcto` no se envía al cliente.
+La ruta `GET /api/ejercicio?tipo=eleccion&nivel=1` expone esta selección.
 
 ### `correctEjercicio(respuestas)`
 

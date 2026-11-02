@@ -31,10 +31,11 @@ model opciones {
 }
 
 model palabras {
-  id        Int        @id @default(autoincrement())
-  palabra   String     @unique
-  animacion String?
-  opciones  opciones[]
+  id       Int        @id @default(autoincrement())
+  palabra  String     @unique
+  video    String?
+  nivel    Int
+  opciones opciones[]
 
   @@schema("public")
 }
