@@ -31,23 +31,23 @@ export default async function Progreso() {
 
         <nav className={styles.navigation} aria-label="Navegación principal">
           <Link href="/menu" className={styles.inicio}>
-            <img src="/casablanco.png" alt="" className={styles.navIcon} />
+            <img src="/casablanco.webp" alt="" className={styles.navIcon} />
             Inicio
           </Link>
           <Link href="/entrenamiento" className={styles.train}>
-            <img src="/pesa.png" alt="" className={styles.navIcon} />
+            <img src="/pesa.webp" alt="" className={styles.navIcon} />
             Entrenamiento
           </Link>
           <Link href="/progreso" className={styles.progreso}>
-            <img src="/premio.png" alt="" className={styles.navIcon} />
+            <img src="/premio.webp" alt="" className={styles.navIcon} />
             Progreso
           </Link>
           <Link href="/perfil" className={styles.usuario}>
-            <img src="/userwhite.png" alt="" className={styles.navIcon} />
+            <img src="/userwhite.webp" alt="" className={styles.navIcon} />
             Perfil
           </Link>
           <Link href="/configuracion" className={styles.source}>
-            <img src="/ajustes.png" alt="" className={styles.navIcon} />
+            <img src="/ajustes.webp" alt="" className={styles.navIcon} />
             Configuración
           </Link>
         </nav>
@@ -57,7 +57,7 @@ export default async function Progreso() {
         <header className={styles.header}>
           <div className={styles.pageTitle}>
             <div className={styles.smallImagePlaceholder} aria-label="Ícono de progreso">
-              <img src="/copaprogreso.png" alt="" />
+              <img src="/copaprogreso.webp" alt="" />
             </div>
             <h1>Progreso</h1>
           </div>
@@ -74,7 +74,7 @@ export default async function Progreso() {
             <div className={styles.levelContent}>
               <div className={styles.levelBadge}>
                 <Image
-                  src={`/niveles/nivel-${currentLevel}.png`}
+                  src={`/niveles/nivel-${currentLevel}.webp`}
                   alt={`Insignia del nivel ${currentLevel}`}
                   width={150}
                   height={150}
@@ -136,7 +136,7 @@ export default async function Progreso() {
             <div className={styles.summaryGrid}>
               <article className={styles.summaryItem}>
                 <img
-                  src="/Joystick.png"
+                  src="/Joystick.webp"
                   alt="Joystick"
                   className={styles.summaryIcon}
                 />
@@ -146,7 +146,7 @@ export default async function Progreso() {
 
               <article className={styles.summaryItem}>
                 <img
-                  src="/Reloj.png"
+                  src="/Reloj.webp"
                   alt="Reloj"
                   className={styles.summaryIcon}
                 />
@@ -156,7 +156,7 @@ export default async function Progreso() {
 
               <article className={styles.summaryItem}>
                 <img
-                  src="/Calendario.png"
+                  src="/Calendario.webp"
                   alt="Calendario"
                   className={styles.summaryIcon}
                 />

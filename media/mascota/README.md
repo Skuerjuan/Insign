@@ -1,6 +1,6 @@
 # Loro y mangos de InSign
 
-Actualización: la mascota se llama **Waki** y también es el favicon. Se restauraron los adornos originales `public/vector-seccion.png` y `public/patron-juegos.png`, retirando sus versiones de mangos grises. El video de la landing, `public/grabacion-insign.mp4`, se reemplazó por un recorrido de las pantallas reales de Insign, con datos de demostración, Waki como guía, narración en español y subtítulos. Dura **84,063 segundos**. El guion está en `media/tutorial/guion-recorrido.json` y los tiempos finales en `media/tutorial/tiempos-recorrido.json`.
+Actualización: la mascota se llama **Waki** y también es el favicon. Se restauraron los adornos originales `public/vector-seccion.webp` y `public/patron-juegos.webp`, retirando sus versiones de mangos grises. El video de la landing, `public/grabacion-insign.mp4`, se reemplazó por un recorrido de las pantallas reales de Insign, con datos de demostración, Waki como guía, narración en español y subtítulos. Dura **84,063 segundos**. El guion está en `media/tutorial/guion-recorrido.json` y los tiempos finales en `media/tutorial/tiempos-recorrido.json`.
 
 ## Recorrido con Waki
 
@@ -16,23 +16,23 @@ Las ilustraciones se generaron con la herramienta integrada `image_gen`, usando 
 
 | Archivo | Uso |
 | --- | --- |
-| `public/loro-saludando.png` | Inicio, acceso, registro, verificación, abecedario y felicitaciones |
-| `public/loro-practicar.png` | Loro cargando un tronco |
-| `public/loro-volando.png` | Vuelo libre en la landing y cierre del tutorial |
-| `public/loro-desafios.png` | Loro explorando con binoculares y mangos |
-| `public/loro-explorador.png` | Explorador con sombrero y lupa |
-| `public/loro-pensando.png` | Múltiple elección |
-| `public/loro-contrasena.png` | Cambio y recuperación de contraseña |
-| `public/loro-ayuda.png` | Ayuda para recuperar la cuenta |
-| `public/loro-mango.png` | Secciones y niveles; loro comiendo mango |
-| `public/loro-triste.png` | Resultado sin intentos |
-| `public/completar-mango.png` | Tarjetas ABC con mango |
-| `public/camino-mangos.png` | Frutas de los bordes de la landing |
-| `public/patron-juegos.png` | Patrón original de los juegos, restaurado |
-| `public/vector-seccion.png` | Franja original de los niveles, restaurada |
-| `src/juegos/fondo-mangos.png` | Reverso de las cartas |
+| `public/loro-saludando.webp` | Inicio, acceso, registro, verificación, abecedario y felicitaciones |
+| `public/loro-practicar.webp` | Loro cargando un tronco |
+| `public/loro-volando.webp` | Vuelo libre en la landing y cierre del tutorial |
+| `public/loro-desafios.webp` | Loro explorando con binoculares y mangos |
+| `public/loro-explorador.webp` | Explorador con sombrero y lupa |
+| `public/loro-pensando.webp` | Múltiple elección |
+| `public/loro-contrasena.webp` | Cambio y recuperación de contraseña |
+| `public/loro-ayuda.webp` | Ayuda para recuperar la cuenta |
+| `public/loro-mango.webp` | Secciones y niveles; loro comiendo mango |
+| `public/loro-triste.webp` | Resultado sin intentos |
+| `public/completar-mango.webp` | Tarjetas ABC con mango |
+| `public/camino-mangos.webp` | Frutas de los bordes de la landing |
+| `public/patron-juegos.webp` | Patrón original de los juegos, restaurado |
+| `public/vector-seccion.webp` | Franja original de los niveles, restaurada |
+| `src/juegos/fondo-mangos.webp` | Reverso de las cartas |
 
-Se conservaron las ilustraciones de paisajes, hojas, letras, cartas, íconos y medallas. Solo se sustituyeron las mascotas y las bananas solicitadas. Los PNG conservan transparencia donde corresponde.
+Se conservaron las ilustraciones de paisajes, hojas, letras, cartas, íconos y medallas. Solo se sustituyeron las mascotas y las bananas solicitadas. Los WebP conservan transparencia donde corresponde.
 
 ## Prompts del loro
 

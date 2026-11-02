@@ -24,23 +24,23 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
         </h1>
 
         <Link href="/menu" className={styles.inicio}>
-          <img src="/casablanco.png" alt="" className={styles.casa} />
+          <img src="/casablanco.webp" alt="" className={styles.casa} />
           Inicio
         </Link>
         <Link href="/entrenamiento" className={styles.train}>
-          <img src="/pesa.png" alt="" className={styles.pesa} />
+          <img src="/pesa.webp" alt="" className={styles.pesa} />
           Entrenamiento
         </Link>
         <Link href="/progreso" className={styles.progreso}>
-          <img src="/premio.png" alt="" className={styles.premio} />
+          <img src="/premio.webp" alt="" className={styles.premio} />
           Progreso
         </Link>
         <Link href="/perfil" className={styles.usuario}>
-          <img src="/userwhite.png" alt="" className={styles.userwhite} />
+          <img src="/userwhite.webp" alt="" className={styles.userwhite} />
           Perfil
         </Link>
         <Link href="/configuracion" className={styles.source}>
-          <img src="/ajustes.png" alt="" className={styles.ajustes} />
+          <img src="/ajustes.webp" alt="" className={styles.ajustes} />
           Configuracion
         </Link>
       </aside>
@@ -54,7 +54,7 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
 
           <div className={styles.statsCard}>
             <div className={styles.statItem}>
-              <img src="/Star.png" alt="" className={styles.starIcon} />
+              <img src="/Star.webp" alt="" className={styles.starIcon} />
               <div>
                 <strong>{puntos ?? 0}</strong>
                 <span>Puntos</span>
@@ -62,7 +62,7 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
             </div>
             <div className={styles.statDivider} />
             <div className={styles.statItem}>
-              <img src="/Fire.png" alt="" className={styles.fireIcon} />
+              <img src="/Fire.webp" alt="" className={styles.fireIcon} />
               <div>
                 <strong>{rachaActual}</strong>
                 <span>Racha</span>
@@ -86,10 +86,10 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
                 className={`${styles.levelCard} ${styles[level.colorClass]} ${isLocked ? styles.locked : ""}`}
               >
                 <div className={styles.levelImagePlaceholder}>
-                  <Image src="/loro-mango.png" alt="" width={179} height={180} className={styles.levelImage} />
+                  <Image src="/loro-mango.webp" alt="" width={179} height={180} className={styles.levelImage} />
                   {isLocked && (
                     <Image
-                      src="/lock.png"
+                      src="/lock.webp"
                       alt="Nivel bloqueado"
                       width={54}
                       height={54}
@@ -105,11 +105,11 @@ export default async function Menu({ searchParams }: { searchParams: Promise<{ o
 
                 {isLocked ? (
                   <span className={`${styles.levelArrow} ${styles.disabledArrow}`} aria-hidden="true">
-                    <Image src="/flecha-seccion.png" alt="" width={87} height={87} />
+                    <Image src="/flecha-seccion.webp" alt="" width={87} height={87} />
                   </span>
                 ) : (
                   <Link href={`/nivel/${level.id}${practice ? "?origen=entrenamiento" : ""}`} className={styles.levelArrow} aria-label={`Jugar ${level.title}`}>
-                    <Image src="/flecha-seccion.png" alt="" width={87} height={87} aria-hidden="true" />
+                    <Image src="/flecha-seccion.webp" alt="" width={87} height={87} aria-hidden="true" />
                   </Link>
                 )}
               </section>

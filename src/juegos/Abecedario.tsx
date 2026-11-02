@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { LETRAS, COLORES_LETRAS, getAbecedarioVideoPath, getSiguienteLetra, getAnteriorLetra } from "@/src/diccionario/abecedario";
-import fondo from "./fondoP.png";
+import fondo from "./fondoP.webp";
 
 interface AbecedarioViewProps {
   points?: number,
@@ -58,7 +58,7 @@ export default function AbecedarioView({ userName }: AbecedarioViewProps) {
       <div className="w-full max-w-7xl flex items-center gap-3.5 my-1 pl-2">
         <div className="relative w-18 h-18 md:w-24 md:h-24 shrink-0 drop-shadow-md">
           <Image
-            src="/loro-mango.png"
+            src="/loro-mango.webp"
             alt="Waki, el loro de InSign"
             fill
             className="object-contain"

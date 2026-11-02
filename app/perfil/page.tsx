@@ -24,23 +24,23 @@ export default async function Perfil() {
         </h1>
 
         <Link href="/menu" className={styles.inicio}>
-          <img src="/casablanco.png" alt="" className={styles.casa} />
+          <img src="/casablanco.webp" alt="" className={styles.casa} />
           Inicio
         </Link>
         <Link href="/entrenamiento" className={styles.train}>
-          <img src="/pesa.png" alt="" className={styles.pesa} />
+          <img src="/pesa.webp" alt="" className={styles.pesa} />
           Entrenamiento
         </Link>
         <Link href="/progreso" className={styles.progreso}>
-          <img src="/premio.png" alt="" className={styles.premio} />
+          <img src="/premio.webp" alt="" className={styles.premio} />
           Progreso
         </Link>
         <Link href="/perfil" className={styles.usuario}>
-          <img src="/userwhite.png" alt="" className={styles.userwhite} />
+          <img src="/userwhite.webp" alt="" className={styles.userwhite} />
           Perfil
         </Link>
         <Link href="/configuracion" className={styles.source}>
-          <img src="/ajustes.png" alt="" className={styles.ajustes} />
+          <img src="/ajustes.webp" alt="" className={styles.ajustes} />
           Configuracion
         </Link>
       </aside>
@@ -49,7 +49,7 @@ export default async function Perfil() {
         <header className={styles.header}>
           <div className={styles.profileTitle}>
             <div className={styles.profileTitleIcon}>
-              <img src="/user.png" alt="" />
+              <img src="/user.webp" alt="" />
             </div>
             <h2>Perfil</h2>
           </div>
@@ -77,19 +77,19 @@ export default async function Perfil() {
 
             <div className={styles.profileStats}>
               <div className={styles.profileStat}>
-                <img src="/Star.png" alt="" />
+                <img src="/Star.webp" alt="" />
                 <strong>{puntos ?? 0}</strong>
                 <span>Puntos</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
-                <img src="/Fire.png" alt="" />
+                <img src="/Fire.webp" alt="" />
                 <strong>{rachaActual}</strong>
                 <span>Racha</span>
               </div>
               <div className={styles.profileStatDivider} />
               <div className={styles.profileStat}>
-                <img src="/cupdorada.png" alt="" />
+                <img src="/cupdorada.webp" alt="" />
                 <strong>{premios ?? 0}</strong>
                 <span>Premios</span>
               </div>
@@ -141,7 +141,7 @@ export default async function Perfil() {
                 return (
                   <div className={styles.weekDay} key={day}>
                     <img
-                      src={played ? "/tick-racha-dia.png" : "/circulo-dia-sin-racha.png"}
+                      src={played ? "/tick-racha-dia.webp" : "/circulo-dia-sin-racha.webp"}
                       alt={played ? `${day}: día jugado` : `${day}: día sin jugar`}
                     />
                     <span>{day}</span>

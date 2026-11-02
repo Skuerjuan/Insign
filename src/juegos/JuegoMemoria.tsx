@@ -6,8 +6,8 @@ import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
-import fondoCartas from "./fondo-mangos.png";
-import fondo from "./fondoP.png";
+import fondoCartas from "./fondo-mangos.webp";
+import fondo from "./fondoP.webp";
 import { getTextoSena, getSeniasSinAmbiguedad } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
@@ -19,6 +19,7 @@ interface JuegoMemoriaProps {
   points?: number;
   origin?: GameOrigin;
   level?: number;
+  onExamResult?: (mistakes: number) => Promise<void>;
 }
 
 export default function JuegoMemoria({
@@ -28,6 +29,7 @@ export default function JuegoMemoria({
   points = 0,
   origin = "menu",
   level,
+  onExamResult,
 }: JuegoMemoriaProps) {
   const router = useRouter();
   const palabras = useGameWords(palabrasProp);
@@ -57,7 +59,7 @@ export default function JuegoMemoria({
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
       const fondoPantallaSrc =
-        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.png" : fondo.src;
+        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.webp" : fondo.src;
 
       type CardBack = InstanceType<typeof Phaser.GameObjects.Image>;
       type CardContent =
@@ -539,6 +541,7 @@ export default function JuegoMemoria({
               });
             } else {
               this.errores++;
+              if (onExamResult) { void onExamResult(this.errores); return; }
               this.time.delayedCall(3000, () => {
                 if (this.primeraCarta && this.segundaCarta) {
                   this.ocultarCarta(this.primeraCarta);
@@ -583,6 +586,10 @@ export default function JuegoMemoria({
         }
 
         create() {
+          if (onExamResult) {
+            void onExamResult(this.errores);
+            return;
+          }
           const { width, height } = this.scale;
           const escalaUi = Phaser.Math.Clamp(
             Math.min(width / 500, height / 360),
@@ -690,7 +697,7 @@ export default function JuegoMemoria({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onParAdivinado, points, origin, level, router]);
+  }, [nivel, palabras, onParAdivinado, points, origin, level, router, onExamResult]);
 
   return <div ref={gameRef} style={{ width: "100%", height: "100%" }} />;
 }

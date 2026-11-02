@@ -5,9 +5,12 @@ const ts = require('typescript');
 
 const root = path.resolve(__dirname, '..');
 const cache = new Map();
-const profile = { user_id: 'test-user', senas_aprendidas: [], puntos: 35, nivel: 1,
+const profile = { user_id: 'test-user', senas_aprendidas: [], examenes_aprobados: [], puntos: 35, nivel: 1,
   premios: 0, racha: 0, ultimo_dia_activo: null, juegos_jugados: 0, dias_activos: 0 };
 let completions = 0;
+let completedGames = [];
+const attempts = new Map();
+let attemptId = 0;
 let activities = [];
 const catalog = new Map();
 const unlocked = new Map();
@@ -23,7 +26,7 @@ const db = {
     update: async ({ data }) => {
       for (const [key, value] of Object.entries(data)) {
         if (value === undefined) continue;
-        profile[key] = value && typeof value === 'object'
+        profile[key] = value && typeof value === 'object' && !Array.isArray(value)
           ? 'push' in value ? [...profile[key], value.push] : profile[key] + value.increment
           : value;
       }
@@ -31,9 +34,9 @@ const db = {
     },
   },
   juegos_completados: {
-    findMany: async () => [],
+    findMany: async ({ where }) => completedGames.filter(row => !where?.nivel || row.nivel === where.nivel),
     findUnique: async () => null,
-    upsert: async () => { completions++; },
+    upsert: async ({ create }) => { completions++; completedGames.push(create); },
     count: async () => completions,
   },
   actividades: { findMany: async () => activities, create: async ({ data }) => { activities.push(data); } },
@@ -52,6 +55,12 @@ const db = {
     },
     findMany: async () => [...unlocked.values()],
     count: async () => unlocked.size,
+  },
+  examenes_intentos: {
+    updateMany: async ({ where, data }) => { for (const row of attempts.values()) if (row.usuario_id === where.usuario_id && row.estado === where.estado) Object.assign(row, data); },
+    create: async ({ data }) => { const row = { ...data, id: `attempt-${++attemptId}`, ronda: 0, estado: 'activo' }; attempts.set(row.id, row); return row; },
+    findFirst: async ({ where }) => { const row = attempts.get(where.id); return row?.usuario_id === where.usuario_id ? row : null; },
+    update: async ({ where, data }) => Object.assign(attempts.get(where.id), data),
   },
   $queryRaw: async () => [],
   $transaction: async (fn) => fn(db),
@@ -84,6 +93,12 @@ function load(file) {
   const { getSignProgress, getLevelSignProgress, getUnlockedLevel } = load(path.join(root, 'lib/sign-progress.ts'));
   const { LEVELS, getLevelWords } = load(path.join(root, 'src/diccionario/diccionario.ts'));
   const { recordLearnedSign, completeGame, getProfile, getAchievementProgress } = load(path.join(root, 'lib/server/profile.actions.ts'));
+  const { createSignRecorder } = load(path.join(root, 'lib/client/learned-signs.ts'));
+  const examRecorder = createSignRecorder(false);
+  examRecorder.record(1, 'Hola');
+  examRecorder.record(1, 'Bien');
+  await examRecorder.flush();
+  assert.equal(profile.senas_aprendidas.length, 0, 'El examen no dispara Server Actions al mostrar señas');
   const before = getSignProgress([]);
   assert.equal(before.total, 419);
   await Promise.all([recordLearnedSign(1, 'Hola'), recordLearnedSign(1, 'Hola')]);
@@ -112,7 +127,7 @@ function load(file) {
   assert.equal(played.pointsAwarded, 15);
   assert.equal(profile.puntos, 50);
   assert.equal(completions, 1);
-  await assert.rejects(completeGame('eleccion', 0, 'menu', 2), /ver todas las señas/);
+  await assert.rejects(completeGame('eleccion', 0, 'menu', 2), /aprobar el examen final/);
   for (const game of ['memoria', 'adivinar', 'completar']) await completeGame(game, 0, 'menu', 1);
   assert.equal(profile.nivel, 1, 'Completar los cuatro juegos no alcanza si faltan señas');
   const words = getLevelWords(1);
@@ -123,19 +138,57 @@ function load(file) {
   assert.equal((await getProfile(profile.user_id)).nivel, 1, 'Las repeticiones no reemplazan una seña faltante');
   completions = 0;
   await recordLearnedSign(1, missing);
-  assert.equal(profile.nivel, 2, 'La última seña desbloquea inmediatamente el siguiente nivel');
-  assert.equal(completions, 0, 'No requiere completar los cuatro juegos');
-  assert.equal((await getProfile(profile.user_id)).nivel, 2);
-  await recordLearnedSign(1, missing);
-  assert.equal(profile.nivel, 2, 'Repetir la última seña no salta niveles');
+  assert.equal(profile.nivel, 1, 'Ver todas las señas no habilita el siguiente nivel');
+  assert.equal((await getProfile(profile.user_id)).nivel, 1);
   const allKeys = LEVELS.flatMap(level => getLevelWords(level.id).map(word => `${level.categoryId}:${word}`));
-  assert.equal(getUnlockedLevel(allKeys), 9);
-  assert.equal(getUnlockedLevel(allKeys.filter(key => !key.startsWith(`${LEVELS[0].categoryId}:`))), 1);
-  const saved = profile.senas_aprendidas;
+  assert.equal(getUnlockedLevel(LEVELS.map(level => level.id)), 9);
+  assert.equal(getUnlockedLevel([2, 3, 4]), 1, 'No permite saltar exámenes');
   profile.nivel = 9;
-  profile.senas_aprendidas = [];
-  assert.equal((await getProfile(profile.user_id)).nivel, 1, 'Los perfiles antiguos respetan el nuevo criterio');
-  profile.senas_aprendidas = saved;
+  assert.equal((await getProfile(profile.user_id)).nivel, 1, 'Los perfiles anteriores también necesitan exámenes');
+  const { createExamPlan, EXAM_GAMES } = load(path.join(root, 'lib/exam.ts'));
+  const { startExam, finishExamRound } = load(path.join(root, 'lib/server/exam.actions.ts'));
+  for (const level of LEVELS) {
+    const plan = createExamPlan(level.id);
+    assert.deepEqual([...new Set(plan.flatMap(round => round.words))].sort(), getLevelWords(level.id).sort());
+    assert.deepEqual(EXAM_GAMES, ['eleccion', 'completar', 'adivinar']);
+    assert.deepEqual([...new Set(plan.map(round => round.game))].sort(), [...EXAM_GAMES].sort());
+    assert.equal(plan.flatMap(round => round.words).length, getLevelWords(level.id).length, 'Cada seña aparece como objetivo una vez');
+    for (const round of plan) assert(round.words.length > 0 && round.words.length <= 5);
+  }
+  await assert.rejects(startExam(2), /bloqueado/);
+  await assert.rejects(completeGame('memoria', 0, 'exam', 1), /propio recorrido/);
+  const savedGames = completedGames;
+  completedGames = completedGames.filter(row => row.juego !== 'completar');
+  await assert.rejects(startExam(1), /cuatro juegos/);
+  completedGames = savedGames.filter(row => row.juego !== 'memoria');
+  await assert.rejects(startExam(1), /cuatro juegos/, 'Memoria sigue siendo requisito normal, no forma parte del examen');
+  completedGames = savedGames;
+  const legacy = await startExam(1);
+  attempts.get(legacy.id).plan[0].game = 'memoria';
+  await assert.rejects(finishExamRound(legacy.id, 0, 0), /examen cambió/, 'Un intento anterior con Memoria debe reiniciarse');
+  assert.equal((await getProfile(profile.user_id)).nivel, 1);
+  const failed = await startExam(1);
+  await assert.rejects(finishExamRound(failed.id, 1, 0), /en orden/);
+  assert.equal((await finishExamRound(failed.id, 0, 0)).round, 1);
+  assert.equal((await finishExamRound(failed.id, 0, 0)).round, 1, 'El reintento de red no duplica rondas');
+  assert.equal((await finishExamRound(failed.id, 1, 1)).failed, true);
+  assert.equal((await finishExamRound(failed.id, 1, 0)).failed, true, 'Un error invalida todo el intento');
+  assert.equal((await getProfile(profile.user_id)).nivel, 1);
+  const cancelled = await startExam(1);
+  const exam = await startExam(1);
+  assert.equal((await finishExamRound(cancelled.id, 0, 0)).failed, true, 'Una segunda pestaña cancela el intento anterior');
+  await assert.rejects(finishExamRound('not-owned', 0, 0));
+  await assert.rejects(finishExamRound(exam.id, 0, -1));
+  for (let round = 0; round < exam.plan.length; round++) {
+    const result = await finishExamRound(exam.id, round, 0);
+    assert.equal(result.passed, round === exam.plan.length - 1);
+    assert.equal((await getProfile(profile.user_id)).nivel, result.passed ? 2 : 1);
+  }
+  assert.deepEqual(profile.examenes_aprobados, [1]);
+  const count = activities.length;
+  await finishExamRound(exam.id, exam.plan.length - 1, 0);
+  assert.equal(activities.length, count, 'Guardar de nuevo la aprobación es idempotente');
+  assert.equal(getLevelSignProgress(1, profile.senas_aprendidas).complete, true);
   // Reproduce the malformed ID in the deployed catalog, with 25 learned signs.
   catalog.delete('gran-aprendiz');
   catalog.set('gran-aprendiz, Gran Aprendiz, Aprender 25 señas.', {
@@ -153,5 +206,5 @@ function load(file) {
   assert.equal(catalog.size, 14, 'Guardar una partida también repara un catálogo vacío');
   assert.equal(profile.premios, unlocked.size);
   console.log('OK: Perfil/Progreso reparan el ID de Gran Aprendiz, las visitas son idempotentes y las partidas funcionan con catálogo vacío.');
-  console.log('OK: señas únicas, cobertura de los nueve niveles, bloqueo con una seña pendiente, desbloqueo al ver la última, sin exigir cuatro juegos y validación de acceso.');
+  console.log('OK: examen de tres juegos sin Memoria, cobertura de todas las señas en nueve niveles, error reinicia, intentos aislados, guardado idempotente y avance exclusivo al aprobar.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });

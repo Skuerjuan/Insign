@@ -22,7 +22,7 @@ for (const name of ['public','node_modules']) {
 }
 const write=(name,text)=>fs.writeFileSync(path.join(demo,name),text);
 write('next.config.mjs',`export default {devIndicators:false,typescript:{ignoreBuildErrors:true},images:{unoptimized:true},outputFileTracingRoot:${JSON.stringify(root)}};\n`);
-write('lib/auth/server.ts',`const user={id:'tour-demo',name:'Aprendiz de LSA',email:'demo@example.invalid',image:'/loro-saludando.png'};
+write('lib/auth/server.ts',`const user={id:'tour-demo',name:'Aprendiz de LSA',email:'demo@example.invalid',image:'/loro-saludando.webp'};
 const ok=async()=>({data:{url:'/menu'},error:null});
 export const auth={getSession:async()=>({data:{user,session:{id:'tour-demo'}}}),signIn:{email:ok,social:ok},signUp:{email:ok},emailOtp:{verifyEmail:ok,sendVerificationOtp:ok}};
 `);
@@ -34,8 +34,8 @@ write('lib/server/profile.actions.ts',`'use server';
 import {getLocalDayNumber} from './streak';
 export type GameName='eleccion'|'memoria'|'adivinar'|'completar';
 export type GameOrigin='menu'|'training'|'exam';
-export async function getSession(){return {id:'tour-demo',name:'Aprendiz de LSA',email:'demo@example.invalid',image:'/loro-saludando.png'};}
-export async function getProfile(){return {user_id:'tour-demo',puntos:1250,experiencia:1250,nivel:3,premios:4,racha:7,ultimo_dia_activo:getLocalDayNumber(),juegos_jugados:12,tiempo_total_segundos:1800,dias_activos:3,senas_aprendidas:[]};}
+export async function getSession(){return {id:'tour-demo',name:'Aprendiz de LSA',email:'demo@example.invalid',image:'/loro-saludando.webp'};}
+export async function getProfile(){return {user_id:'tour-demo',puntos:1250,experiencia:1250,nivel:3,premios:4,racha:7,ultimo_dia_activo:getLocalDayNumber(),juegos_jugados:12,tiempo_total_segundos:1800,dias_activos:3,senas_aprendidas:[],examenes_aprobados:[1,2]};}
 export async function getCompletedGames(){return ['memoria'];}
 export async function getLearnedSignsCount(){return 28;}
 export async function recordLearnedSign(){return true;}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import fondo from "./fondoP.webp";
 
 interface ModalVictoriaProps {
   puntosGanados?: number;
@@ -19,7 +20,7 @@ export default function ModalVictoria({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
       <div
         className="relative w-full max-w-lg rounded-3xl p-6 text-center shadow-2xl flex flex-col items-center overflow-hidden border-4 border-yellow-400 bg-cover bg-center"
-        style={{ backgroundImage: "url('/fondoP.png')" }} // Usamos el fondo de la selva
+        style={{ backgroundImage: `url(${fondo.src})` }} // Usamos el fondo de la selva
       >
         {/* Título Principal */}
         <h1
@@ -36,7 +37,7 @@ export default function ModalVictoria({
         {/* Personaje Centrado */}
         <div className="my-2 relative w-40 h-40 flex items-center justify-center">
           <img
-            src="/loro-saludando.png"
+            src="/loro-saludando.webp"
             alt="Waki celebrando"
             className="w-full h-full object-contain drop-shadow-lg"
           />

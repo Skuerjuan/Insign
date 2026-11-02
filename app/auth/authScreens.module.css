@@ -203,7 +203,7 @@
   padding: 0 48px 0 48px !important;
   color: #062e6e !important;
   background-color: #fff !important;
-  background-image: url("/lock.png") !important;
+  background-image: url("/lock.webp") !important;
   background-repeat: no-repeat !important;
   background-position: 13px center !important;
   background-size: 24px !important;
@@ -211,11 +211,11 @@
   font-size: 17px !important;
   box-shadow: none !important;
 }
-.emailInput { background-image: url("/user.png") !important; }
+.emailInput { background-image: url("/user.webp") !important; }
 .authInput:focus { outline: 4px solid rgba(18, 108, 255, 0.18) !important; }
 .resetInput {
   border-color: #b8b8b8 !important;
-  background-image: url("/lock.png"), url("/eye.png") !important;
+  background-image: url("/lock.webp"), url("/eye.webp") !important;
   background-position: 13px center, calc(100% - 14px) center !important;
   background-size: 24px, 26px !important;
 }
@@ -246,7 +246,7 @@
   height: 35px;
   flex: 0 0 35px;
   display: block;
-  background: url("/arrow-right-circle.svg") center / contain no-repeat;
+  background: url("/arrow-right-circle.webp") center / contain no-repeat;
 }
 .primaryButton:hover,
 .continueButton:hover { background: #ffda28 !important; transform: translateY(-1px); }

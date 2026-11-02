@@ -100,7 +100,7 @@ function VerifyForm() {
                     {message && <p className={`${styles.message} ${isSuccess ? styles.success : ""}`} aria-live="polite">{message}</p>}
                 </section>
                 <div className={styles.monkeyWrap}>
-                    <Image className={`${styles.monkey} ${styles.verifyMonkey}`} src="/loro-saludando.png" alt="Waki" width={373} height={498} priority />
+                    <Image className={`${styles.monkey} ${styles.verifyMonkey}`} src="/loro-saludando.webp" alt="Waki" width={373} height={498} priority />
                 </div>
             </div>
         </main>

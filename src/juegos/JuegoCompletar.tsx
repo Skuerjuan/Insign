@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { getGameFrame, getSpellingLayout } from "@/lib/client/game-layout";
+import { drawGameHeader } from "@/lib/client/game-header";
 import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
 import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
-import fondo from "./fondoP.png";
+import fondo from "./fondoP.webp";
 import { getPalabraCompletar } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
@@ -31,6 +33,7 @@ interface JuegoCompletarProps {
   points?: number;
   origin?: GameOrigin;
   level?: number;
+  onExamResult?: (mistakes: number) => Promise<void>;
 
 }
 
@@ -42,6 +45,7 @@ export default function JuegoCompletarCeldas({
   points = 0,
   origin = "menu",
   level,
+  onExamResult,
 }: JuegoCompletarProps) {
   const router = useRouter();
   const palabras = useGameWords(palabrasProp);
@@ -52,7 +56,9 @@ export default function JuegoCompletarCeldas({
   useEffect(() => {
     let cancelado = false;
     let resultadoGuardado = false;
-    const signRecorder = createSignRecorder();
+    const targetCount = onExamResult ? palabras?.length ?? 5 : 5;
+    // El examen guarda las señas al aprobar, sin refrescar rutas mientras se juega.
+    const signRecorder = createSignRecorder(origin !== "exam");
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -72,7 +78,7 @@ export default function JuegoCompletarCeldas({
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
       const fondoPantallaSrc =
-        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.png" : fondo.src;
+        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.webp" : fondo.src;
 
       const crearPillBadge = (
         scene: Phaser.Scene,
@@ -84,7 +90,7 @@ export default function JuegoCompletarCeldas({
         isRightAligned: boolean = false
       ) => {
         const container = scene.add.container(x, y);
-        const fontSizePx = Math.round(Phaser.Math.Clamp(24 * escalaUi, 18, 30));
+        const fontSizePx = Math.max(10, Math.round(22 * escalaUi));
 
         const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
           fontSize: `${fontSizePx}px`,
@@ -180,7 +186,7 @@ export default function JuegoCompletarCeldas({
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.78, 1.35);
+          const escalaUi = getGameFrame(width, height).scale;
           this.escalaUiGlobal = escalaUi;
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
@@ -200,10 +206,13 @@ export default function JuegoCompletarCeldas({
               intentosFallidos: this.intentosFallidos,
             });
           };
-          this.scale.on("resize", onResize);
-          this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            this.scale.off("resize", onResize);
-          });
+          // FIT ajusta el examen sin recrear videos, opciones ni letras ingresadas.
+          if (!onExamResult) {
+            this.scale.on("resize", onResize);
+            this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+              this.scale.off("resize", onResize);
+            });
+          }
 
           this.input.on("pointerdown", () => {
             if (this.game.canvas) {
@@ -215,78 +224,12 @@ export default function JuegoCompletarCeldas({
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
-          const azul = 0x1e78ff;
-          const amarillo = 0xffd32a;
-          const azulTexto = "#05215b";
-          const topY = Math.max(34 * escalaUi, height * 0.09);
-
-          const botonVolver = this.add.circle(50 * escalaUi, topY - 3 * escalaUi, 20 * escalaUi, azul);
-          botonVolver.setInteractive({ useHandCursor: true });
-          botonVolver.on("pointerdown", () => window.history.back());
-
-          const flecha = this.add.graphics();
-          flecha.lineStyle(5 * escalaUi, 0xffffff, 1);
-          flecha.beginPath();
-          flecha.moveTo(52 * escalaUi, topY - 15 * escalaUi);
-          flecha.lineTo(38 * escalaUi, topY - 3 * escalaUi);
-          flecha.lineTo(52 * escalaUi, topY + 9 * escalaUi);
-          flecha.moveTo(39 * escalaUi, topY - 3 * escalaUi);
-          flecha.lineTo(66 * escalaUi, topY - 3 * escalaUi);
-          flecha.strokePath();
-
-          const titleWidth = Phaser.Math.Clamp(width * 0.24, 220 * escalaUi, 380 * escalaUi);
-          const titleBg = this.add.graphics();
-          titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, 12 * escalaUi, titleWidth, 48 * escalaUi, 12 * escalaUi);
-
-          this.add
-            .text(width / 2, 36 * escalaUi, "Completar", {
-              fontSize: `${Phaser.Math.Clamp(32 * escalaUi, 22, 42)}px`,
-              fontFamily,
-              color: "#ffffff",
-              stroke: "#d28b00",
-              strokeThickness: 4 * escalaUi,
-              fontStyle: "800",
-            })
-            .setOrigin(0.5);
-
-          const puntosTexto = `${points} puntos`;
-          const scoreWidth = Phaser.Math.Clamp(118 * escalaUi + puntosTexto.length * 7.5 * escalaUi, 160 * escalaUi, 310 * escalaUi);
-          const scoreX = width - scoreWidth - 38 * escalaUi;
-          const scoreBg = this.add.graphics();
-          scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
-          scoreBg.lineStyle(3 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, 12 * escalaUi, scoreWidth, 48 * escalaUi, 24 * escalaUi);
-          this.add.star(scoreX + 26 * escalaUi, 36 * escalaUi, 5, 11 * escalaUi, 22 * escalaUi, amarillo);
-          this.add
-            .text(scoreX + 54 * escalaUi, 36 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(20 * escalaUi, 16, 26)}px`,
-              fontFamily,
-              color: azulTexto,
-              fontStyle: "800",
-            })
-            .setOrigin(0, 0.5);
-
-          this.badgeAciertos = crearPillBadge(
-            this,
-            40 * escalaUi,
-            height - 40 * escalaUi,
-            `Aciertos: ${this.aciertos}/5`,
-            "⭐",
-            escalaUi,
-            false
-          );
-
-          this.badgeVidas = crearPillBadge(
-            this,
-            width - 40 * escalaUi,
-            height - 40 * escalaUi,
-            `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
-            "❤️",
-            escalaUi,
-            true
-          );
+          const frame = getGameFrame(width, height);
+          drawGameHeader(this, width, height, "Completar", points, fontFamily);
+          this.badgeAciertos = crearPillBadge(this, frame.margin, frame.footerY,
+            `Aciertos: ${this.aciertos}/${targetCount}`, "⭐", escalaUi, false);
+          this.badgeVidas = crearPillBadge(this, width - frame.margin, frame.footerY,
+            `Intentos: ${Math.max(0, (onExamResult ? 1 : 3) - this.intentosFallidos)}`, "❤️", escalaUi, true);
         }
 
         generarNuevaRonda(width: number, height: number, escalaUi: number) {
@@ -309,10 +252,11 @@ export default function JuegoCompletarCeldas({
           this.palabrasUsadas.push(this.palabraObjetivo);
 
           const azulTexto = "#05215b";
+          const layout = getSpellingLayout(width, height, this.palabraObjetivoConEspacios);
 
           const textoPregunta = this.add
-            .text(width / 2, 85 * escalaUi, "Completá la palabra de la seña", {
-              fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 17, 30)}px`,
+            .text(width / 2, layout.questionY, "Completá la palabra de la seña", {
+              fontSize: `${Math.max(12, 22 * escalaUi)}px`,
               fontFamily,
               color: azulTexto,
               fontStyle: "800",
@@ -320,15 +264,17 @@ export default function JuegoCompletarCeldas({
             .setOrigin(0.5);
           textoPregunta.setStroke("#ffffff", 4 * escalaUi);
 
-          const videoWidth = Math.round(Phaser.Math.Clamp(width * 0.5, 240 * escalaUi, 360 * escalaUi));
-          const videoHeight = Math.round(videoWidth * 0.60);
-          const centroX = width / 2;
-          const centroY = height * 0.42;
+          const videoWidth = layout.video.width;
+          const videoHeight = layout.video.height;
+          const centroX = layout.video.x + videoWidth / 2;
+          const centroY = layout.video.y + videoHeight / 2;
 
           const elementoVideo = document.createElement("video");
           elementoVideo.style.width = `${videoWidth}px`;
           elementoVideo.style.height = `${videoHeight}px`;
           elementoVideo.style.objectFit = "cover";
+          elementoVideo.style.objectPosition = "center";
+          elementoVideo.style.pointerEvents = "none";
           elementoVideo.style.borderRadius = `${Math.round(18 * escalaUi)}px`;
           elementoVideo.autoplay = true;
           elementoVideo.loop = true;
@@ -352,73 +298,19 @@ export default function JuegoCompletarCeldas({
             id: i,
           }));
 
-          this.crearGrillasDeLetras(width, height, escalaUi, centroY + videoHeight / 2 + 50 * escalaUi);
+          this.crearGrillasDeLetras(width, height, escalaUi);
         }
 
-        crearGrillasDeLetras(width: number, height: number, escalaUi: number, gapY: number) {
-          const availableLength = this.availableChars.length;
-          const palabraConEspacios = this.palabraObjetivoConEspacios.split("");
-
-          const baseCellSize = palabraConEspacios.length > 8 ? 45 : 60; 
-          const cellSize = Math.round(Phaser.Math.Clamp(baseCellSize * escalaUi, 35, 75));
-          const cellSpacing = Math.round(Phaser.Math.Clamp(8 * escalaUi, 4, 12));
-          
-          const spaceWidth = cellSize * 0.6; 
-
-          let inputGridWidth = 0;
-          palabraConEspacios.forEach((char, i) => {
-            inputGridWidth += char === " " ? spaceWidth : cellSize;
-            if (i < palabraConEspacios.length - 1) {
-              inputGridWidth += cellSpacing;
-            }
+        crearGrillasDeLetras(width: number, height: number, escalaUi: number) {
+          const layout = getSpellingLayout(width, height, this.palabraObjetivoConEspacios);
+          layout.inputCells.forEach((cell, index) => {
+            this.inputSlots.push(this.crearCelda(cell.x, cell.y, cell.size, escalaUi,
+              0xffffff, 0x1e78ff, true, index, false));
           });
-
-          let currentX = width / 2 - inputGridWidth / 2;
-          let slotIndex = 0;
-
-          palabraConEspacios.forEach((char) => {
-            if (char === " ") {
-              currentX += spaceWidth + cellSpacing;
-            } else {
-              const centerX = currentX + cellSize / 2;
-              const container = this.crearCelda(
-                centerX,
-                gapY,
-                cellSize,
-                escalaUi,
-                0xffffff,
-                0x1e78ff,
-                true,
-                slotIndex,
-                false
-              );
-              this.inputSlots.push(container);
-              
-              currentX += cellSize + cellSpacing;
-              slotIndex++;
-            }
+          layout.keyboardCells.forEach((cell, index) => {
+            this.keyboardTiles.push(this.crearCelda(cell.x, cell.y, cell.size, escalaUi,
+              0xffd32a, 0xd28b00, true, index, true, this.availableChars[index].char));
           });
-
-          const keyboardGridWidth = availableLength * cellSize + (availableLength - 1) * cellSpacing;
-          const keyboardStartX = width / 2 - keyboardGridWidth / 2 + cellSize / 2;
-          const keyboardY = gapY + cellSize + cellSpacing * 2;
-
-          for (let i = 0; i < availableLength; i++) {
-            const data = this.availableChars[i];
-            const container = this.crearCelda(
-              keyboardStartX + i * (cellSize + cellSpacing),
-              keyboardY,
-              cellSize,
-              escalaUi,
-              0xffd32a,
-              0xd28b00,
-              true,
-              i,
-              true,
-              data.char
-            );
-            this.keyboardTiles.push(container);
-          }
         }
 
         crearCelda(
@@ -448,7 +340,7 @@ export default function JuegoCompletarCeldas({
           container.add(graphics);
           container.setData("graphics", graphics);
 
-          const fontSizePx = Math.round(Phaser.Math.Clamp(size * 0.6, 20, 48));
+          const fontSizePx = Math.round(Math.max(10, Math.min(size * 0.55, 40)));
           const text = this.add
             .text(0, 0, char, {
               fontSize: `${fontSizePx}px`,
@@ -572,7 +464,7 @@ export default function JuegoCompletarCeldas({
             this.aciertos++;
 
             if (this.badgeAciertos) {
-              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
+              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/${targetCount}`);
             }
 
             if (typeof onRondaGanada === "function") {
@@ -589,7 +481,7 @@ export default function JuegoCompletarCeldas({
             });
 
             this.time.delayedCall(2000, () => {
-              if (this.aciertos >= 5) {
+              if (this.aciertos >= targetCount) {
                 if (typeof onJuegoTerminado === "function") {
                   onJuegoTerminado(this.aciertos * 10, this.aciertos);
                 } else {
@@ -605,9 +497,10 @@ export default function JuegoCompletarCeldas({
             });
           } else {
             this.intentosFallidos++;
+            if (onExamResult) { void onExamResult(this.intentosFallidos); return; }
 
             if (this.badgeVidas) {
-              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
+              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, (onExamResult ? 1 : 3) - this.intentosFallidos)}`);
             }
 
             this.tweens.add({
@@ -694,8 +587,12 @@ export default function JuegoCompletarCeldas({
         }
 
         create() {
+          if (onExamResult) {
+            void onExamResult(this.errores);
+            return;
+          }
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 500, height / 360), 0.68, 1.25);
+          const escalaUi = getGameFrame(width, height).scale;
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
@@ -765,10 +662,11 @@ export default function JuegoCompletarCeldas({
           createContainer: true,
         },
         scale: {
-          mode: Phaser.Scale.RESIZE,
+          mode: onExamResult ? Phaser.Scale.FIT : Phaser.Scale.RESIZE,
+          autoCenter: onExamResult ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER,
           parent: gameRef.current!,
-          width: "100%",
-          height: "100%",
+          width: onExamResult ? gameRef.current!.clientWidth : "100%",
+          height: onExamResult ? gameRef.current!.clientHeight : "100%",
         },
         backgroundColor: "#87CEEB",
         scene: [CompletarScene, PantallaFin],
@@ -792,7 +690,7 @@ export default function JuegoCompletarCeldas({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, level, router]);
+  }, [nivel, palabras, onRondaGanada, onJuegoTerminado, points, origin, level, router, onExamResult]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

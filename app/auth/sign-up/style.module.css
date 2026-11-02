@@ -74,7 +74,7 @@
   width: min(54vw, 92dvh, 1050px);
   min-width: 300px;
   aspect-ratio: 3 / 2;
-  background: url("/loro-saludando.png") 54% bottom / contain no-repeat;
+  background: url("/loro-saludando.webp") 54% bottom / contain no-repeat;
 }
 
 .container {

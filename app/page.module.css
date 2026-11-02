@@ -80,7 +80,7 @@
 .showcaseSection, .progressSection {
   position: relative;
   background-color: #eaf8ff;
-  background-image: url('/marco-hojas.png');
+  background-image: url('/marco-hojas.webp');
   background-position: center;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -92,7 +92,7 @@
   align-items: center;
   padding: 118px max(5vw,28px) 80px;
   isolation: isolate;
-  background: url('/paisaje-inicio.png') center bottom/cover no-repeat;
+  background: url('/paisaje-inicio.webp') center bottom/cover no-repeat;
 }
 .heroContent {
   width: min(1270px,100%);
@@ -597,7 +597,7 @@
   top: 0;
   bottom: 0;
   width: 190px;
-  background: url("/camino-mangos.png") 0 0/170px auto repeat-y;
+  background: url("/camino-mangos.webp") 0 0/170px auto repeat-y;
   pointer-events: none;
   animation: mangoFall 7s linear infinite;
 }

@@ -3,7 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --app-page-background: url("/FondoInicioSesion.png");
+  --app-page-background: url("/FondoInicioSesion.webp");
   --app-sidebar-background: #126cff;
   --app-header-background: #cde0ff;
   --app-surface-background: #ffffff;
@@ -24,7 +24,7 @@
 html[data-theme="dark"] {
   --background: #001a43;
   --foreground: #ffffff;
-  --app-page-background: url("/fondo-modo-oscuro.png");
+  --app-page-background: url("/fondo-modo-oscuro.webp");
   --app-sidebar-background: #001a43;
   --app-header-background: #001a43;
   --app-surface-background: #001a43;

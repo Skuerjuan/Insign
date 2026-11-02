@@ -1,0 +1,15 @@
+.page { height: 100dvh; min-height: 0; overflow: hidden; background: var(--app-page-background) center / cover; font-family: var(--font-baloo), sans-serif; color: #05215b; display: flex; flex-direction: column; }
+.header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: #126cff; color: white; }
+.header a { color: white; font-weight: 800; }
+.header h1, .header p { margin: 0; text-align: center; }
+.header strong { background: #ffd21a; color: #05215b; border-radius: 24px; padding: 8px 16px; }
+.examStatus { display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; }
+.signCount { color: #fff; font-size: 16px; font-weight: 800; white-space: nowrap; }
+.game { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.panel { overflow-y: auto; min-height: 0; flex-shrink: 1; width: min(640px, calc(100% - 32px)); margin: 48px auto; border: 4px solid #ffd21a; border-radius: 24px; padding: clamp(20px, 4vw, 40px); background: #fff; text-align: center; box-shadow: 0 8px 24px #05215b20; }
+.panel h2 { font-size: 30px; margin: 0 0 16px; line-height: 1.15; }
+.panel p { font-size: 20px; margin-bottom: 18px; }
+.panel button, .action { display: inline-block; border: 0; border-radius: 14px; padding: 14px 24px; color: white; background: #126cff; font: inherit; font-size: 22px; font-weight: 800; text-decoration: none; cursor: pointer; }
+.panel button:disabled { opacity: .6; cursor: wait; }
+.panel button:focus-visible, .action:focus-visible { outline: 3px solid #05215b; outline-offset: 4px; }
+@media (max-width: 620px) { .header { padding: 12px; flex-wrap: wrap; } .header h1 { font-size: 24px; } .header strong { font-size: 14px; } .examStatus { gap: 8px; } .signCount { font-size: 14px; } }

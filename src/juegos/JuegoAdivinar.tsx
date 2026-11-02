@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { getGameFrame, getMultipleChoiceLayout } from "@/lib/client/game-layout";
+import { drawGameHeader } from "@/lib/client/game-header";
 import { useGameWords } from "@/lib/client/use-game-words";
 import { createSignRecorder } from "@/lib/client/learned-signs";
 import { useRouter } from "next/navigation";
 import { completeGame, type GameOrigin } from "@/lib/server/profile.actions";
-import { getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
+import { getLevelWords, getPalabrasPorCategoria, getVideoPath } from "@/src/diccionario/diccionario";
 import PantallaSinVidas from "./Perder";
-import fondoCartas from "./fondo-mangos.png";
-import fondo from "./fondoP.png";
+import fondoCartas from "./fondo-mangos.webp";
+import fondo from "./fondoP.webp";
 import { getTextoSena, getGrupoSena } from "@/src/diccionario/textos";
 
 const FALLBACK_FONT_FAMILY = '"Baloo 2", Arial, sans-serif';
@@ -21,6 +23,7 @@ interface JuegoAdivinarProps {
   points?: number;
   origin?: GameOrigin;
   level?: number;
+  onExamResult?: (mistakes: number) => Promise<void>;
 }
 
 export default function JuegoAdivinar({
@@ -31,6 +34,7 @@ export default function JuegoAdivinar({
   points = 0,
   origin = "menu",
   level,
+  onExamResult,
 }: JuegoAdivinarProps) {
   const router = useRouter();
   const palabras = useGameWords(palabrasProp);
@@ -41,7 +45,9 @@ export default function JuegoAdivinar({
   useEffect(() => {
     let cancelado = false;
     let resultadoGuardado = false;
-    const signRecorder = createSignRecorder();
+    const targetCount = onExamResult ? palabras?.length ?? 5 : 5;
+    // El examen guarda las señas al aprobar, sin refrescar rutas mientras se juega.
+    const signRecorder = createSignRecorder(origin !== "exam");
 
     const crearJuego = async () => {
       await document.fonts.ready;
@@ -61,7 +67,7 @@ export default function JuegoAdivinar({
       if (!gameRef.current || gameInstanceRef.current) return;
       if (cancelado) return;
       const fondoPantallaSrc =
-        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.png" : fondo.src;
+        document.documentElement.dataset.theme === "dark" ? "/fondo-modo-oscuro.webp" : fondo.src;
 
       const crearPillBadge = (
         scene: Phaser.Scene,
@@ -73,7 +79,7 @@ export default function JuegoAdivinar({
         isRightAligned: boolean = false
       ) => {
         const container = scene.add.container(x, y);
-        const fontSizePx = Math.round(Phaser.Math.Clamp(22 * escalaUi, 16, 28));
+        const fontSizePx = Math.max(10, Math.round(22 * escalaUi));
 
         const tempText = scene.add.text(0, 0, `${textoLabel} ${icono}`, {
           fontSize: `${fontSizePx}px`,
@@ -160,7 +166,7 @@ export default function JuegoAdivinar({
 
         create() {
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 650), 0.7, 1.3);
+          const escalaUi = getGameFrame(width, height).scale;
 
           const background = this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0);
           background.setDisplaySize(width, height);
@@ -178,98 +184,22 @@ export default function JuegoAdivinar({
               intentosFallidos: this.intentosFallidos,
             });
           };
-          this.scale.on("resize", onResize);
-          this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            this.scale.off("resize", onResize);
-          });
+          // FIT ajusta el examen sin recrear videos, opciones ni letras ingresadas.
+          if (!onExamResult) {
+            this.scale.on("resize", onResize);
+            this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+              this.scale.off("resize", onResize);
+            });
+          }
         }
 
         crearHud(width: number, height: number, escalaUi: number) {
-          const azul = 0x1e78ff;
-          const amarillo = 0xffd32a;
-          const azulTexto = "#05215b";
-          
-          const topY = Math.max(28 * escalaUi, height * 0.05);
-          const headerY = 20 * escalaUi;
-
-          const botonVolver = this.add.circle(36 * escalaUi, topY + 12 * escalaUi, 20 * escalaUi, azul);
-          botonVolver.setInteractive({ useHandCursor: true });
-          botonVolver.on("pointerdown", () => window.history.back());
-
-          const flecha = this.add.graphics();
-          flecha.lineStyle(4 * escalaUi, 0xffffff, 1);
-          flecha.beginPath();
-          flecha.moveTo(38 * escalaUi, topY + 2 * escalaUi);
-          flecha.lineTo(26 * escalaUi, topY + 12 * escalaUi);
-          flecha.lineTo(38 * escalaUi, topY + 22 * escalaUi);
-          flecha.moveTo(27 * escalaUi, topY + 12 * escalaUi);
-          flecha.lineTo(48 * escalaUi, topY + 12 * escalaUi);
-          flecha.strokePath();
-
-          const titleWidth = Phaser.Math.Clamp(width * 0.35, 180 * escalaUi, 320 * escalaUi);
-          const titleBg = this.add.graphics();
-          titleBg.fillStyle(azul, 0.98);
-          titleBg.fillRoundedRect(width / 2 - titleWidth / 2, headerY, titleWidth, 48 * escalaUi, 10 * escalaUi);
-
-          this.add
-            .text(width / 2, headerY + 24 * escalaUi, "Adivinar", {
-              fontSize: `${Phaser.Math.Clamp(34 * escalaUi, 24, 44)}px`,
-              fontFamily,
-              color: "#ffffff",
-              stroke: "#d28b00",
-              strokeThickness: 4 * escalaUi,
-              fontStyle: "800",
-            })
-            .setOrigin(0.5);
-
-          const puntosTexto = `${points} pts`;
-          const scoreWidth = Phaser.Math.Clamp(85 * escalaUi + puntosTexto.length * 6 * escalaUi, 120 * escalaUi, 210 * escalaUi);
-          const scoreX = width - scoreWidth - 16 * escalaUi;
-          const scoreBg = this.add.graphics();
-          scoreBg.fillStyle(0xffe174, 1);
-          scoreBg.fillRoundedRect(scoreX, headerY, scoreWidth, 42 * escalaUi, 21 * escalaUi);
-          scoreBg.lineStyle(2 * escalaUi, 0xf7b928, 1);
-          scoreBg.strokeRoundedRect(scoreX, headerY, scoreWidth, 42 * escalaUi, 21 * escalaUi);
-          this.add.star(scoreX + 18 * escalaUi, headerY + 21 * escalaUi, 5, 8 * escalaUi, 16 * escalaUi, amarillo);
-          this.add
-            .text(scoreX + 38 * escalaUi, headerY + 21 * escalaUi, puntosTexto, {
-              fontSize: `${Phaser.Math.Clamp(17 * escalaUi, 14, 21)}px`,
-              fontFamily,
-              color: azulTexto,
-              fontStyle: "800",
-            })
-            .setOrigin(0, 0.5);
-
-          this.add
-            .text(width / 2, headerY + 80 * escalaUi, "Adivina esta seña", {
-              fontSize: `${Phaser.Math.Clamp(22 * escalaUi, 18, 28)}px`,
-              fontFamily,
-              color: "#ffffff",
-              fontStyle: "800",
-            })
-            .setOrigin(0.5)
-            .setStroke("#0042AD", 4 * escalaUi);
-
-          const bottomY = height - 35 * escalaUi;
-          this.badgeAciertos = crearPillBadge(
-            this,
-            18 * escalaUi,
-            bottomY,
-            `Aciertos: ${this.aciertos}/5`,
-            "⭐",
-            escalaUi,
-            false
-          );
-
-          this.badgeVidas = crearPillBadge(
-            this,
-            width - 18 * escalaUi,
-            bottomY,
-            `Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`,
-            "❤️",
-            escalaUi,
-            true
-          );
+          const frame = getGameFrame(width, height);
+          drawGameHeader(this, width, height, "Múltiple elección", points, fontFamily);
+          this.badgeAciertos = crearPillBadge(this, frame.margin, frame.footerY,
+            `Aciertos: ${this.aciertos}/${targetCount}`, "⭐", escalaUi, false);
+          this.badgeVidas = crearPillBadge(this, width - frame.margin, frame.footerY,
+            `Intentos: ${Math.max(0, (onExamResult ? 1 : 3) - this.intentosFallidos)}`, "❤️", escalaUi, true);
         }
 
         generarNuevaRonda(width: number, height: number, escalaUi: number) {
@@ -286,27 +216,27 @@ export default function JuegoAdivinar({
           this.palabraObjetivo = palabrasDisponiblesFiltradas[indexRandom];
           this.palabrasUsadas.push(this.palabraObjetivo);
 
-          const distractores = this.mazoJuego.filter((p) => getGrupoSena(p) !== getGrupoSena(this.palabraObjetivo));
+          const distractores = (onExamResult && level ? getLevelWords(level) : this.mazoJuego).filter((p) => getGrupoSena(p) !== getGrupoSena(this.palabraObjetivo));
           const distractoresMezclados = Phaser.Utils.Array.Shuffle([...distractores]).slice(0, 5);
 
           this.opciones = Phaser.Utils.Array.Shuffle([this.palabraObjetivo, ...distractoresMezclados]);
 
-          this.dibujarPanelVideoPrincipal(width, height, escalaUi);
+          this.dibujarPanelVideoPrincipal(width, height);
           this.dibujarBotoneraColumnas(width, height, escalaUi);
         }
 
-        dibujarPanelVideoPrincipal(width: number, height: number, escalaUi: number) {
-          const isPortrait = width < height;
-          // Cuadro de video sensiblemente más grande
-          const panelWidth = Phaser.Math.Clamp(width * (isPortrait ? 0.78 : 0.48), 260, 480);
-          const panelHeight = panelWidth * 0.72;
-          const centroX = width / 2;
-          const centroY = isPortrait ? height * 0.40 : height * 0.45;
+        dibujarPanelVideoPrincipal(width: number, height: number) {
+          const layout = getMultipleChoiceLayout(width, height, this.opciones.length);
+          const panelWidth = layout.video.width;
+          const panelHeight = layout.video.height;
+          const centroX = layout.video.x + panelWidth / 2;
+          const centroY = layout.video.y + panelHeight / 2;
 
           const elementoVideo = document.createElement("video");
           elementoVideo.style.width = `${Math.round(panelWidth)}px`;
           elementoVideo.style.height = `${Math.round(panelHeight)}px`;
-          elementoVideo.style.objectFit = "contain";
+          elementoVideo.style.objectFit = "cover";
+          elementoVideo.style.objectPosition = "center";
           elementoVideo.style.borderRadius = "14px";
           elementoVideo.style.pointerEvents = "none";
 
@@ -322,30 +252,13 @@ export default function JuegoAdivinar({
         }
 
         dibujarBotoneraColumnas(width: number, height: number, escalaUi: number) {
-          const isPortrait = width < height || width < 550;
-          const cols = isPortrait ? 2 : 3;
-
-          const botonWidth = Phaser.Math.Clamp(
-            (width * 0.95 - (cols - 1) * 16 * escalaUi) / cols,
-            140,
-            280
-          );
-          const botonHeight = Phaser.Math.Clamp(65 * escalaUi, 55, 80);
-
-          const centroX = width / 2;
-          const inicioY = isPortrait ? height * 0.68 : height * 0.78;
-          const gapX = 16 * escalaUi;
-          const gapY = 16 * escalaUi;
-
-          const totalW = cols * botonWidth + (cols - 1) * gapX;
-          const startX = centroX - totalW / 2 + botonWidth / 2;
-
+          const layout = getMultipleChoiceLayout(width, height, this.opciones.length);
           this.opciones.forEach((palabraOpcion, index) => {
-            const c = index % cols;
-            const r = Math.floor(index / cols);
-
-            const posX = startX + c * (botonWidth + gapX);
-            const posY = inicioY + r * (botonHeight + gapY);
+            const bounds = layout.buttons[index];
+            const botonWidth = bounds.width;
+            const botonHeight = bounds.height;
+            const posX = bounds.x + botonWidth / 2;
+            const posY = bounds.y + botonHeight / 2;
 
             const contenedorBoton = this.add.container(posX, posY);
             contenedorBoton.setSize(botonWidth, botonHeight);
@@ -359,14 +272,19 @@ export default function JuegoAdivinar({
 
             const textoBoton = this.add
               .text(0, 0, getTextoSena(palabraOpcion), {
-                fontSize: `${Phaser.Math.Clamp(24 * escalaUi, 18, 28)}px`,
+                fontSize: `${Math.max(12, 20 * escalaUi)}px`,
                 fontFamily,
                 color: "#05215b",
                 fontStyle: "800",
                 align: "center",
+                wordWrap: { width: botonWidth - 16 * escalaUi },
               })
               .setOrigin(0.5);
 
+            // Ajustar también etiquetas largas dentro de los límites de su botón.
+            textoBoton.setScale(Math.min(1,
+              (botonWidth - 16 * escalaUi) / textoBoton.width,
+              (botonHeight - 12 * escalaUi) / textoBoton.height));
             contenedorBoton.add([backgroundBoton, textoBoton]);
             contenedorBoton.setData("valor", palabraOpcion);
 
@@ -436,7 +354,7 @@ export default function JuegoAdivinar({
 
             this.aciertos++;
             if (this.badgeAciertos) {
-              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/5`);
+              this.badgeAciertos.actualizar(`Aciertos: ${this.aciertos}/${targetCount}`);
             }
 
             if (typeof onRondaGanada === "function") {
@@ -444,7 +362,7 @@ export default function JuegoAdivinar({
             }
 
             this.time.delayedCall(3000, () => {
-              if (this.aciertos >= 5) {
+              if (this.aciertos >= targetCount) {
                 this.scene.start("PantallaFin", { errores: this.intentosFallidos });
               } else {
                 this.scene.restart({
@@ -462,8 +380,9 @@ export default function JuegoAdivinar({
             graficoBg.strokeRoundedRect(-bWidth / 2, -bHeight / 2, bWidth, bHeight, 16 * escalaUi);
 
             this.intentosFallidos++;
+            if (onExamResult) { void onExamResult(this.intentosFallidos); return; }
             if (this.badgeVidas) {
-              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, 3 - this.intentosFallidos)}`);
+              this.badgeVidas.actualizar(`Intentos: ${Math.max(0, (onExamResult ? 1 : 3) - this.intentosFallidos)}`);
             }
 
             this.tweens.add({
@@ -506,8 +425,12 @@ export default function JuegoAdivinar({
         }
 
         create() {
+          if (onExamResult) {
+            void onExamResult(this.errores);
+            return;
+          }
           const { width, height } = this.scale;
-          const escalaUi = Phaser.Math.Clamp(Math.min(width / 450, height / 600), 0.7, 1.3);
+          const escalaUi = getGameFrame(width, height).scale;
 
           this.add.image(0, 0, "fondoPantalla").setOrigin(0, 0).setDisplaySize(width, height);
 
@@ -577,10 +500,11 @@ export default function JuegoAdivinar({
           createContainer: true,
         },
         scale: {
-          mode: Phaser.Scale.RESIZE,
+          mode: onExamResult ? Phaser.Scale.FIT : Phaser.Scale.RESIZE,
+          autoCenter: onExamResult ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER,
           parent: gameRef.current!,
-          width: "100%",
-          height: "100%",
+          width: onExamResult ? gameRef.current!.clientWidth : "100%",
+          height: onExamResult ? gameRef.current!.clientHeight : "100%",
         },
         backgroundColor: "#87CEEB",
         scene: [AdivinarScene, PantallaFin],
@@ -604,7 +528,7 @@ export default function JuegoAdivinar({
         gameInstanceRef.current = null;
       }
     };
-  }, [nivel, palabras, onRondaGanada, userName, points, origin, level, router]);
+  }, [nivel, palabras, onRondaGanada, userName, points, origin, level, router, onExamResult]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

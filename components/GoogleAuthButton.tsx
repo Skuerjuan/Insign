@@ -23,7 +23,7 @@ export default function GoogleAuthButton() {
   return (
     <div className={styles.container}>
       <button type="button" onClick={handleClick} disabled={pending} className={styles.button}>
-        <Image src="/google.png" width={24} height={24} alt="" />
+        <Image src="/google.webp" width={24} height={24} alt="" />
         {pending ? "Conectando…" : "Continuar con Google"}
       </button>
       {error && <p role="alert" className={styles.error}>{error}</p>}

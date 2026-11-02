@@ -43,7 +43,7 @@ function SignInForm() {
           <Input
             placeholder="Correo electrónico"
             type="email"
-            icon="/user.png"
+            icon="/user.webp"
             eyeIcon={null}
             idInput="email"
           />
@@ -51,8 +51,8 @@ function SignInForm() {
           <Input
             placeholder="Contraseña"
             type="password"
-            icon="/lock.png"
-            eyeIcon="/eye.png"
+            icon="/lock.webp"
+            eyeIcon="/eye.webp"
             idInput="password"
           />
         </div>

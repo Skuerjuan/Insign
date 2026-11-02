@@ -18,18 +18,18 @@ export default async function Configuracion() {
         </h1>
 
         <nav className={styles.navigation} aria-label="Navegación principal">
-          <Link href="/menu"><img src="/casablanco.png" alt="" />Inicio</Link>
-          <Link href="/entrenamiento"><img src="/pesa.png" alt="" />Entrenamiento</Link>
-          <Link href="/progreso"><img src="/premio.png" alt="" />Progreso</Link>
-          <Link href="/perfil"><img src="/userwhite.png" alt="" />Perfil</Link>
-          <Link href="/configuracion" className={styles.active}><img src="/ajustes.png" alt="" />Configuración</Link>
+          <Link href="/menu"><img src="/casablanco.webp" alt="" />Inicio</Link>
+          <Link href="/entrenamiento"><img src="/pesa.webp" alt="" />Entrenamiento</Link>
+          <Link href="/progreso"><img src="/premio.webp" alt="" />Progreso</Link>
+          <Link href="/perfil"><img src="/userwhite.webp" alt="" />Perfil</Link>
+          <Link href="/configuracion" className={styles.active}><img src="/ajustes.webp" alt="" />Configuración</Link>
         </nav>
       </aside>
 
       <div className={styles.mainContent}>
         <header className={styles.header}>
           <div className={styles.pageTitle}>
-            <span className={styles.titleIcon}><img src="/ajustes.png" alt="" /></span>
+            <span className={styles.titleIcon}><img src="/ajustes.webp" alt="" /></span>
             <h1>Configuración</h1>
           </div>
           <div className={styles.profilePhoto}><Foto user={user} /></div>

@@ -18,7 +18,7 @@ export default function ResetPassword(){
                 <div className={`${styles.monkeyWrap} ${styles.resetMonkeyWrap}`}>
                     <Image
                         className={`${styles.monkey} ${styles.resetMonkey}`}
-                        src="/loro-contrasena.png"
+                        src="/loro-contrasena.webp"
                         alt="Waki señalando hacia arriba"
                         width={506}
                         height={730}

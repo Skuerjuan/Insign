@@ -13,7 +13,7 @@
     padding:25px 24px; 
     box-sizing:border-box; 
     background-color:var(--app-sidebar-background);
-    background-image:url("/asidevector.svg");
+    background-image:url("/asidevector.webp");
 }
 .logo { 
     display:flex; 
@@ -103,8 +103,8 @@
     width:42px; 
     height:42px; 
     background:#126cff; 
-    mask:url("/ajustes.png") center/contain no-repeat; 
-    -webkit-mask:url("/ajustes.png") center/contain no-repeat; 
+    mask:url("/ajustes.webp") center/contain no-repeat;
+    -webkit-mask:url("/ajustes.webp") center/contain no-repeat;
 }
 .titleIcon img { 
     display:none; 

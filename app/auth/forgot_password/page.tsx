@@ -19,7 +19,7 @@ export default function ForgotPassword(){
                 <div className={`${styles.monkeyWrap} ${styles.forgotMonkeyWrap}`}>
                     <Image
                         className={`${styles.monkey} ${styles.forgotMonkey}`}
-                        src="/loro-ayuda.png"
+                        src="/loro-ayuda.webp"
                         alt="Waki con las alas en la cintura"
                         width={506}
                         height={768}

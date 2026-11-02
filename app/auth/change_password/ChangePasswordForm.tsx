@@ -39,7 +39,7 @@ function PasswordField({ label, name, value, onChange }: PasswordFieldProps) {
                     onClick={() => setIsVisible((visible) => !visible)}
                     aria-label={isVisible ? `Ocultar ${label.toLowerCase()}` : `Mostrar ${label.toLowerCase()}`}
                 >
-                    <Image src="/eye.png" alt="" width={28} height={28} aria-hidden="true" />
+                    <Image src="/eye.webp" alt="" width={28} height={28} aria-hidden="true" />
                 </button>
             </span>
         </label>
@@ -91,7 +91,7 @@ export default function ChangePasswordForm({ userName }: ChangePasswordFormProps
                 <div className={`${styles.monkeyWrap} ${styles.resetMonkeyWrap}`}>
                     <Image
                         className={`${styles.monkey} ${styles.resetMonkey}`}
-                        src="/loro-contrasena.png"
+                        src="/loro-contrasena.webp"
                         alt="Waki señalando hacia arriba"
                         width={506}
                         height={730}

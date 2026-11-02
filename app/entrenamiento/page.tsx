@@ -28,23 +28,23 @@ export default async function Entrenamiento() {
 
         <nav className={styles.navigation} aria-label="Navegación principal">
           <Link href="/menu" className={styles.inicio}>
-            <img src="/casablanco.png" alt="" className={styles.navIcon} />
+            <img src="/casablanco.webp" alt="" className={styles.navIcon} />
             Inicio
           </Link>
           <Link href="/entrenamiento" className={styles.train}>
-            <img src="/pesa.png" alt="" className={styles.navIcon} />
+            <img src="/pesa.webp" alt="" className={styles.navIcon} />
             Entrenamiento
           </Link>
           <Link href="/progreso" className={styles.progreso}>
-            <img src="/premio.png" alt="" className={styles.navIcon} />
+            <img src="/premio.webp" alt="" className={styles.navIcon} />
             Progreso
           </Link>
           <Link href="/perfil" className={styles.usuario}>
-            <img src="/userwhite.png" alt="" className={styles.navIcon} />
+            <img src="/userwhite.webp" alt="" className={styles.navIcon} />
             Perfil
           </Link>
           <Link href="/configuracion" className={styles.source}>
-            <img src="/ajustes.png" alt="" className={styles.navIcon} />
+            <img src="/ajustes.webp" alt="" className={styles.navIcon} />
             Configuración
           </Link>
         </nav>
@@ -54,7 +54,7 @@ export default async function Entrenamiento() {
         <header className={styles.header}>
           <div className={styles.pageTitle}>
             <div className={styles.titleIcon} aria-hidden="true">
-              <img src="/pesa.png" alt="" />
+              <img src="/pesa.webp" alt="" />
             </div>
             <h1>Entrenamiento</h1>
           </div>
@@ -75,7 +75,7 @@ export default async function Entrenamiento() {
                   aria-label="Imagen correspondiente al nivel Abecedario"
                 >
                   <Image
-                    src="/loro-saludando.png"
+                    src="/loro-saludando.webp"
                     alt="Waki saludando"
                     width={208}
                     height={275}
@@ -101,7 +101,7 @@ export default async function Entrenamiento() {
                   aria-label="Imagen correspondiente al nivel Practicar"
                 >
                   <Image
-                    src="/loro-practicar.png"
+                    src="/loro-practicar.webp"
                     alt="Waki cargando un tronco"
                     width={236}
                     height={236}
@@ -132,7 +132,7 @@ export default async function Entrenamiento() {
                 return (
                   <div className={styles.weekDay} key={day}>
                     <img
-                      src={trained ? "/tick-racha-dia.png" : "/circulo-dia-sin-racha.png"}
+                      src={trained ? "/tick-racha-dia.webp" : "/circulo-dia-sin-racha.webp"}
                       alt={trained ? `${day}: día entrenado` : `${day}: día sin entrenar`}
                     />
                     <span>{day}</span>

@@ -1,6 +1,6 @@
 "use client";
 
-const FOTO_POR_DEFECTO = "/user.png";
+const FOTO_POR_DEFECTO = "/user.webp";
 
 export default function obtenerFoto(image: string) {
     if (!image) return FOTO_POR_DEFECTO;

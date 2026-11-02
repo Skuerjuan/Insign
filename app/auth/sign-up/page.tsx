@@ -30,7 +30,7 @@ export default function SignUpForm() {
           <Input
             placeholder="Nombre de usuario"
             type="text"
-            icon="/user.png"
+            icon="/user.webp"
             eyeIcon={null}
             idInput={"name"}
           />
@@ -38,7 +38,7 @@ export default function SignUpForm() {
           <Input
             placeholder="Correo electrónico"
             type="email"
-            icon="/card.png"
+            icon="/card.webp"
             eyeIcon={null}
             idInput={"email"}
           />
@@ -46,16 +46,16 @@ export default function SignUpForm() {
           <Input
             placeholder="Contraseña"
             type="password"
-            icon="/lock.png"
-            eyeIcon="/eye.png"
+            icon="/lock.webp"
+            eyeIcon="/eye.webp"
             idInput={"password"}
           />
 
           <Input
             placeholder="Repetir contraseña"
             type="password"
-            icon="/lock.png"
-            eyeIcon="/eye.png"
+            icon="/lock.webp"
+            eyeIcon="/eye.webp"
             idInput={"confirmPassword"}
           />
         </div>

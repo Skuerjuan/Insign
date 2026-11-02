@@ -21,10 +21,10 @@ export function getLevelSignProgress(levelIdentifier: number | string, savedKeys
   return { learned, total, pending: total - learned, complete: total > 0 && learned === total };
 }
 
-export function getUnlockedLevel(savedKeys: string[]) {
+export function getUnlockedLevel(passedExams: number[] = []) {
   let unlocked = 1;
   for (const level of LEVELS.slice(0, -1)) {
-    if (!getLevelSignProgress(level.id, savedKeys).complete) break;
+    if (!passedExams.includes(level.id)) break;
     unlocked = level.id + 1;
   }
   return unlocked;

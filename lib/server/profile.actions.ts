@@ -20,27 +20,14 @@ async function calculateAchievementSnapshot(
     db: Prisma.TransactionClient | typeof prisma,
     userId: string,
 ) {
-    const [profile, completedGames, activities] = await Promise.all([
+    const [profile, activities] = await Promise.all([
         db.profiles.findUniqueOrThrow({ where: { user_id: userId } }),
-        db.juegos_completados.findMany({ where: { usuario_id: userId } }),
         db.actividades.findMany({
             where: { usuario_id: userId },
             orderBy: { completado_at: "asc" },
         }),
     ]);
 
-    const completedByLevel = new Map<number, Set<string>>();
-    for (const item of completedGames) {
-        const games = completedByLevel.get(item.nivel) ?? new Set<string>();
-        games.add(item.juego);
-        completedByLevel.set(item.nivel, games);
-    }
-
-    const completedLevels = new Set(
-        [...completedByLevel]
-            .filter(([, games]) => games.size >= GAMES_PER_LEVEL)
-            .map(([level]) => level),
-    );
     const perfectGamesByLevel = new Map<number, Set<string>>();
     for (const activity of activities) {
         if (activity.origen !== "menu" || activity.nivel === null || activity.errores !== 0) continue;
@@ -50,7 +37,7 @@ async function calculateAchievementSnapshot(
     }
 
     const learnedSigns = getSignProgress(profile.senas_aprendidas).learned;
-    const completedTopics = completedLevels.size;
+    const completedTopics = profile.examenes_aprobados.length;
     const weeklyActivity = getWeeklyActivity(
         profile.racha,
         profile.ultimo_dia_activo,
@@ -68,7 +55,7 @@ async function calculateAchievementSnapshot(
     if ([...perfectGamesByLevel.values()].some((games) => games.size >= GAMES_PER_LEVEL)) unlocked.add("todo-correcto");
     if (activities.some((activity) => activity.estrellas === 3)) unlocked.add("estrella-del-dia");
     if (completedTopics >= 5) unlocked.add("explorador-de-temas");
-    if (activities.some((activity) => activity.origen === "exam" && activity.errores <= 2)) unlocked.add("lo-logre");
+    if (activities.some((activity) => activity.origen === "exam" && activity.juego === "final" && activity.errores === 0)) unlocked.add("lo-logre");
     if (completedTopics >= LEVELS.length) unlocked.add("campeon-de-insign");
     if (weeklyActivity >= 7) unlocked.add("on-fire");
 
@@ -114,7 +101,7 @@ export async function getProfile(userId: string){
         })
     }
 
-    return { ...profile, nivel: getUnlockedLevel(profile.senas_aprendidas) };
+    return { ...profile, nivel: getUnlockedLevel(profile.examenes_aprobados) };
 }
 
 export async function getLearnedSignsCount(userId: string) {
@@ -134,10 +121,9 @@ export async function recordLearnedSign(levelIdentifier: number | string, word: 
         await tx.$queryRaw`SELECT user_id FROM public.profiles WHERE user_id = ${user.id}::uuid FOR UPDATE`;
         const profile = await tx.profiles.findUniqueOrThrow({ where: { user_id: user.id } });
         if (profile.senas_aprendidas.includes(key)) return;
-        const unlockedLevel = getUnlockedLevel([...profile.senas_aprendidas, key]);
         await tx.profiles.update({
             where: { user_id: user.id },
-            data: { senas_aprendidas: { push: key }, nivel: unlockedLevel },
+            data: { senas_aprendidas: { push: key } },
         });
     });
     revalidatePath("/progreso");
@@ -217,6 +203,10 @@ export async function completeGame(
 ){
     const user = await getSession();
 
+    if (origin !== "menu" && origin !== "training") {
+        throw new Error("El examen final se guarda desde su propio recorrido");
+    }
+
     if (!["eleccion", "memoria", "adivinar", "completar"].includes(game)) {
         throw new Error("Juego no válido");
     }
@@ -238,9 +228,9 @@ export async function completeGame(
         const profile = await tx.profiles.findUniqueOrThrow({
             where: { user_id: user.id },
         });
-        const unlockedLevel = getUnlockedLevel(profile.senas_aprendidas);
+        const unlockedLevel = getUnlockedLevel(profile.examenes_aprobados);
         if (origin !== "training" && safeLevel && safeLevel > unlockedLevel) {
-            throw new Error("Tenés que ver todas las señas del nivel anterior para avanzar");
+            throw new Error("Tenés que aprobar el examen final del nivel anterior para avanzar");
         }
         const streak = registerActiveDay(
             profile.racha,

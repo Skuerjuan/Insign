@@ -5,9 +5,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 
 const games = [
-  { title: "Abecedario", copy: "Explorá las letras y descubrí nuevas señas paso a paso.", tone: "blue", image: "/abecedario-sin-borde.png", alt: "Tarjetas con las letras A, B y C" },
-  { title: "Memoria", copy: "Encontrá pares, practicá movimientos y entrená jugando.", tone: "green", image: "/memoria-sin-borde.png", alt: "Dos cartas del juego de memoria" },
-  { title: "Desafíos", copy: "Sumá estrellas, sostené tu racha y desbloqueá aventuras.", tone: "yellow", image: "/loro-desafios.png", alt: "Waki explorando con sus binoculares" },
+  { title: "Abecedario", copy: "Explorá las letras y descubrí nuevas señas paso a paso.", tone: "blue", image: "/abecedario-sin-borde.webp", alt: "Tarjetas con las letras A, B y C" },
+  { title: "Memoria", copy: "Encontrá pares, practicá movimientos y entrená jugando.", tone: "green", image: "/memoria-sin-borde.webp", alt: "Dos cartas del juego de memoria" },
+  { title: "Desafíos", copy: "Sumá estrellas, sostené tu racha y desbloqueá aventuras.", tone: "yellow", image: "/loro-desafios.webp", alt: "Waki explorando con sus binoculares" },
 ] as const;
 
 const familyGames = [
@@ -25,7 +25,7 @@ function GameCards({ items = games }: { items?: ReadonlyArray<(typeof games)[num
           <div className={styles.cardBody}>
             <span>{"eyebrow" in game ? game.eyebrow : "Jugá y aprendé"}</span><h3>{game.title}</h3><p>{game.copy}</p>
             <a href="/auth/sign-in" aria-label={`Conocer ${game.title}`}>
-              <Image src="/flecha-tarjeta.png" alt="" width={27} height={40} />
+              <Image src="/flecha-tarjeta.webp" alt="" width={27} height={40} />
             </a>
           </div>
         </article>
@@ -95,7 +95,7 @@ export default function Home() {
               <button className={styles.textButton} type="button" onClick={() => setVideoOpen(true)}><span className={styles.playDot}>▶</span> Ver cómo funciona</button>
             </div>
           </div>
-          <div className={styles.heroVisual}><Image className={styles.heroImage} src="/loro-saludando.png" alt="Waki, el loro de InSign, saludando" width={760} height={760} priority /></div>
+          <div className={styles.heroVisual}><Image className={styles.heroImage} src="/loro-saludando.webp" alt="Waki, el loro de InSign, saludando" width={760} height={760} priority /></div>
         </div>
         <a className={styles.scrollHint} href="#como-funciona"><span>Descubrí la aventura</span><b>⌄</b></a>
       </section>
@@ -136,7 +136,7 @@ export default function Home() {
       </div>
 
       <aside className={`${styles.travelMascot} ${styles[`scene_${scene}`]}`} aria-hidden="true">
-        <Image className={styles.flyingParrotImage} src="/loro-volando.png" alt="" width={1000} height={1000} priority />
+        <Image className={styles.flyingParrotImage} src="/loro-volando.webp" alt="" width={1000} height={1000} priority />
       </aside>
 
       <footer className={styles.footer}>
@@ -147,7 +147,7 @@ export default function Home() {
         <div className={styles.videoModal} role="dialog" aria-modal="true" aria-label="Video: recorrido de InSign con Waki" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
           <div className={styles.videoDialog}>
             <button ref={closeButtonRef} className={styles.videoClose} type="button" aria-label="Cerrar video" onClick={() => setVideoOpen(false)}>×</button>
-            <video className={styles.video} controls autoPlay playsInline preload="metadata" poster="/recorrido-waki/portada.jpg">
+            <video className={styles.video} controls autoPlay playsInline preload="metadata" poster="/recorrido-waki/portada.webp">
               <source src="/grabacion-insign.mp4?v=waki-recorrido-84" type="video/mp4" />
               <track kind="chapters" src="/recorrido-waki/capitulos.vtt" srcLang="es" label="Recorrido con Waki" />
               Tu navegador no puede reproducir este video.

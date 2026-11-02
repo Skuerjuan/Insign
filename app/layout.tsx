@@ -28,6 +28,7 @@ const baloo2 = Baloo_2({
 
 export const metadata: Metadata = {
   title: "InSign",
+  icons: { icon: { url: "/icon.webp", type: "image/webp" }, apple: "/apple-icon.webp" },
   description: "Aprendé Lengua de Señas con InSign!",
 };
 

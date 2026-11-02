@@ -14,7 +14,7 @@ export default function Foto({ user, width = 106, height = 106 }) {
             className={styles.foto}
             unoptimized
             onError={(event) => {
-                event.currentTarget.src = "/user.png";
+                event.currentTarget.src = "/user.webp";
             }}
         />
     );

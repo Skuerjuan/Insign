@@ -11,7 +11,7 @@
 .aside {
   min-height: 100dvh;
   padding: 25px 24px;
-  background: #126cff url("/asidevector.svg") center / cover;
+  background: #126cff url("/asidevector.webp") center / cover;
 }
 
 .logo {
@@ -200,7 +200,7 @@
   display: grid;
   place-items: center;
   background-color: var(--level-color);
-  background-image: url("/patron-juegos.png");
+  background-image: url("/patron-juegos.webp");
   background-position: center;
   background-size: cover;
   background-blend-mode: soft-light;
@@ -229,7 +229,6 @@
   transition: background 180ms ease, color 180ms ease;
 }
 
-.completed { background: #58cc02; color: #fff; }
 
 .cardArrow {
   width: 36px;
@@ -239,7 +238,6 @@
   flex: 0 0 auto;
 }
 
-.completed .cardArrow { filter: brightness(0) invert(1); }
 
 @media (max-width: 850px) {
   .page { grid-template-columns: 1fr; overflow: visible; }
@@ -272,3 +270,11 @@
     gap: 14px;
   }
 }
+
+.examSection { width: 100%; margin-top: 24px; }
+.examBar { display: flex; width: 100%; min-height: 86px; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border: 4px solid #ffd21a; border-radius: 16px; color: #fff; background: #126cff; text-decoration: none; font-size: clamp(24px, 3vw, 34px); font-weight: 900; box-sizing: border-box; }
+.examBar small { display: block; margin-top: 4px; font-size: clamp(15px, 1.6vw, 19px); font-weight: 600; line-height: 1.2; }
+.examBar:focus-visible { outline: 3px solid #05215b; outline-offset: 4px; }
+.examBar:hover { filter: brightness(1.06); }
+.examLocked { background: #63748c; border-color: #bdc9d8; }
+.examPassed { background: #318000; }

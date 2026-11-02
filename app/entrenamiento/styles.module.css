@@ -20,7 +20,7 @@
   gap: 20px;
   padding: 25px 24px;
   background-color: var(--app-sidebar-background);
-  background-image: url("/asidevector.svg");
+  background-image: url("/asidevector.webp");
 }
 
 .logo {

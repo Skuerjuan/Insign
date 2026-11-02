@@ -1,9 +1,10 @@
 import { recordLearnedSign } from "@/lib/server/profile.actions";
 
-export function createSignRecorder() {
+export function createSignRecorder(enabled = true) {
   const pending = new Map<string, { level: number | string; word: string; result: Promise<boolean> }>();
   return {
     record(level: number | string, word: string) {
+      if (!enabled) return;
       const key = `${level}:${word}`;
       if (pending.has(key)) return;
       pending.set(key, { level, word, result: recordLearnedSign(level, word).catch(() => false) });

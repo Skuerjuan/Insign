@@ -40,7 +40,7 @@
 }
 
 .aside {
-    background-image: url("/asidevector.svg");
+    background-image: url("/asidevector.webp");
     background-color: var(--app-sidebar-background);
     height: 100dvh;
     width: 100%;

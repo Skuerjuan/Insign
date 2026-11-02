@@ -60,7 +60,7 @@ export default function ConfiguracionPanel() {
     <main className={styles.settingsMain}>
       <section className={styles.card}>
         <div className={`${styles.settingsIcon} ${styles.appearanceIcon}`}>
-          <Image src="/apariencia.png" alt="" width={58} height={58} aria-hidden="true" />
+          <Image src="/apariencia.webp" alt="" width={58} height={58} aria-hidden="true" />
         </div>
         <div className={styles.cardContent}>
           <h2>Apariencia</h2>
@@ -71,7 +71,7 @@ export default function ConfiguracionPanel() {
 
       <Link href="/auth/change_password" className={styles.optionCard}>
         <span className={`${styles.settingsIcon} ${styles.passwordIcon}`}>
-          <Image src="/contrasena.png" alt="" width={58} height={58} aria-hidden="true" />
+          <Image src="/contrasena.webp" alt="" width={58} height={58} aria-hidden="true" />
         </span>
         <span><strong>Contraseña</strong><small>Cambiá la contraseña de tu cuenta</small></span>
         <b aria-hidden="true">›</b>
@@ -79,7 +79,7 @@ export default function ConfiguracionPanel() {
 
       <button type="button" className={styles.logout} onClick={() => setMostrarConfirmacion(true)}>
         <span className={styles.logoutIcon} aria-hidden="true">
-          <Image src="/cerrar-sesion.png" alt="" width={100} height={100} />
+          <Image src="/cerrar-sesion.webp" alt="" width={100} height={100} />
         </span>
         <span><strong>Cerrar sesión</strong><small>Salir de tu cuenta</small></span>
       </button>

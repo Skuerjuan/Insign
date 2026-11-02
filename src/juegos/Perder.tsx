@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import fondo from "./fondoP.webp";
 import { useRouter } from "next/navigation";
 
 interface PantallaSinVidasProps {
@@ -39,7 +40,7 @@ export default function PantallaSinVidas({
       {/* Contenedor Principal con Fondo de Selva */}
       <div
         className="relative w-full max-w-sm rounded-3xl p-5 text-center shadow-2xl flex flex-col items-center bg-cover bg-center overflow-hidden"
-        style={{ backgroundImage: "url('/fondoP.png')" }}
+        style={{ backgroundImage: `url(${fondo.src})` }}
       >
         {/* Títulos con Borde Blanco Estilo Juego */}
         <div className="flex flex-col items-center mt-2 z-10">
@@ -68,7 +69,7 @@ export default function PantallaSinVidas({
         {/* Imagen del Monito Triste Superpuesto */}
         <div className="w-36 h-36 -mb-8 z-20 relative flex items-center justify-center">
           <img
-            src="/loro-triste.png"
+            src="/loro-triste.webp"
             alt="Sin vidas"
             className="w-full h-full object-contain filter drop-shadow-md"
           />
