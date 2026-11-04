@@ -115,9 +115,8 @@ export default async function Perfil() {
                     key={achievement.id}
                     className={`${styles.achievementCard} ${achievement.unlocked ? styles.achievementUnlocked : styles.achievementLocked}`}
                   >
-                    <div className={styles.achievementImage} aria-label={`Imagen pendiente para ${achievement.name}`}>
-                      <span aria-hidden="true">{achievement.unlocked ? "🏆" : "🔒"}</span>
-                      <small>Imagen pendiente</small>
+                    <div className={styles.achievementImage} aria-hidden="true">
+                      <span>{achievement.unlocked ? "🏆" : "🔒"}</span>
                     </div>
                     <div>
                       <h3>{achievement.name}</h3>
