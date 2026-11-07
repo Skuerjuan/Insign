@@ -81,7 +81,10 @@ export default function Home() {
             <a href="#juegos" onClick={() => setMenuOpen(false)}>Juegos</a>
             <a href="#familias" onClick={() => setMenuOpen(false)}>Para familias</a>
           </div>
-          <a className={styles.navCta} href="/auth/sign-in">Iniciar sesión</a>
+          <div className={styles.navActions}>
+            <a className={styles.navCta} href="/auth/sign-in">Iniciar sesión</a>
+            <a className={`${styles.navCta} ${styles.navRegister}`} href="/auth/sign-up">Registrarse</a>
+          </div>
         </nav>
       </header>
 
@@ -107,7 +110,6 @@ export default function Home() {
             <p>Actividades cortas, visuales y divertidas para aprender con confianza</p>
           </div>
           <div id="juegos"><GameCards /></div>
-          <a className={styles.sectionScroll} href="#familias">Descubrí la aventura <b>⌄</b></a>
         </section>
 
         <section id="familias" data-scene="games" className={styles.showcaseSection}>
@@ -116,7 +118,6 @@ export default function Home() {
             <p>Acompañando el aprendizaje de LSA con tu hijo/a</p>
           </div>
           <GameCards items={familyGames} />
-          <a className={styles.sectionScroll} href="#progreso">Descubrí la aventura <b>⌄</b></a>
         </section>
 
         <section id="progreso" className={styles.progressSection} data-scene="mango">

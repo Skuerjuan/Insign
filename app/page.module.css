@@ -19,6 +19,8 @@
   pointer-events: none;
 }
 .nav {
+  --nav-blue: #073c8f;
+  --nav-yellow: #ffd12a;
   width: min(1320px,100%);
   min-height: 76px;
   margin: auto;
@@ -54,7 +56,7 @@
   margin: auto;
 }
 .navLinks a, .navCta {
-  color: #073c8f;
+  color: var(--nav-blue);
   font-size: 15px;
   font-weight: 800;
   text-decoration: none;
@@ -64,13 +66,27 @@
   color: #126cff;
   transform: translateY(-2px);
 }
+.navActions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 10px;
+  margin-left: auto;
+}
 .navCta {
   padding: 14px 24px;
   border: 1px solid #e5ae00;
   border-radius: 15px;
-  background: #ffd12a;
+  background: var(--nav-yellow);
   box-shadow: 0 3px 0 #dfa900;
   white-space: nowrap;
+  text-align: center;
+}
+.navRegister {
+  border-color: var(--nav-blue);
+  background: var(--nav-blue);
+  color: var(--nav-yellow);
+  box-shadow: 0 3px 0 #052b66;
 }
 .menuButton {
   display: none;
@@ -208,7 +224,7 @@
   object-fit: contain;
   filter: drop-shadow(0 22px 20px #16375a30);
 }
-.scrollHint, .sectionScroll {
+.scrollHint {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -216,14 +232,12 @@
   text-decoration: none;
   font-size: 20px;
   font-weight: 800;
-}
-.scrollHint {
   position: absolute;
   left: 50%;
   bottom: 13px;
   transform: translateX(-50%);
 }
-.scrollHint b, .sectionScroll b {
+.scrollHint b {
   font-size: 32px;
   line-height: .55;
   animation: bounce 1.5s infinite;
@@ -370,10 +384,6 @@
   width: 27px;
   height: 40px;
   object-fit: contain;
-}
-.sectionScroll {
-  width: max-content;
-  margin: 16px auto 0;
 }
 .progressSection {
   padding: 112px max(2.7vw,28px) 36px;
@@ -608,7 +618,7 @@
   right: 0;
   transform: scaleX(-1);
 }
-.sectionIntro, .gameGrid, .sectionScroll, .familyPanel {
+.sectionIntro, .gameGrid, .familyPanel {
   position: relative;
   z-index: 2;
 }
@@ -685,7 +695,7 @@
     right: -45px;
   }
 }
-@media(max-width:760px) {
+@media(max-width:880px) {
   .navWrap {
     inset: 10px 0 auto;
     padding: 0 12px;
@@ -694,8 +704,9 @@
     min-height: 64px;
     padding: 8px 10px 8px 16px;
     border-radius: 18px;
+    gap: 10px;
   }
-  .logo {
+  .nav .logo {
     font-size: 30px;
     letter-spacing: -2px;
   }
@@ -737,6 +748,25 @@
   .navCta {
     padding: 9px 10px;
     font-size: 14px;
+  }
+}
+@media(max-width:420px) {
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+  .navActions {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: 0;
+  }
+  .navLinks {
+    top: calc(100% + 10px);
+  }
+}
+@media(max-width:760px) {
+  .footer .logo {
+    font-size: 30px;
   }
   .showcaseSection, .progressSection {
     background-size: 100% 100%;
@@ -830,6 +860,11 @@
   .videoClose {
     top: -14px;
     right: -8px;
+  }
+}
+@media(max-width:420px) {
+  .hero, .showcaseSection, .progressSection {
+    padding-top: 140px;
   }
 }
 @media(prefers-reduced-motion:reduce) {
