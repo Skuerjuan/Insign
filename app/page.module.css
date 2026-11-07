@@ -68,6 +68,7 @@
 }
 .navActions {
   display: grid;
+  flex-shrink: 0;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: 10px;
@@ -750,10 +751,13 @@
     font-size: 14px;
   }
 }
-@media(max-width:420px) {
+@media(max-width:440px) {
   .nav {
     display: grid;
     grid-template-columns: 1fr auto;
+  }
+  .nav .logo {
+    justify-self: start;
   }
   .navActions {
     grid-column: 1 / -1;
@@ -862,7 +866,7 @@
     right: -8px;
   }
 }
-@media(max-width:420px) {
+@media(max-width:440px) {
   .hero, .showcaseSection, .progressSection {
     padding-top: 140px;
   }
