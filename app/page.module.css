@@ -72,7 +72,6 @@
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: 10px;
-  margin-left: auto;
 }
 .navCta {
   padding: 14px 24px;
@@ -745,6 +744,9 @@
   }
   .navOpen {
     display: flex;
+  }
+  .navActions {
+    margin-left: auto;
   }
   .navCta {
     padding: 9px 10px;
