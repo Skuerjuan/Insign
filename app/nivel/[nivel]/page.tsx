@@ -121,7 +121,7 @@ export default async function LevelGamesPage({
           {!practice && (
             <section className={styles.examSection} aria-label="Examen final">
               {examReady ? (
-                <Link href={`/examen-final/${level.id}`} className={`${styles.examBar} ${examPassed ? styles.examPassed : ""}`}>
+                <Link href={`/examen-final/${level.id}`} className={styles.examBar}>
                   <span>Examen final{examPassed ? " · Aprobado ✓" : ""}<small>Tres juegos · Todas las señas · Sin errores</small></span>
                   <span aria-hidden="true">→</span>
                 </Link>
