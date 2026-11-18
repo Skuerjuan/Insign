@@ -35,7 +35,7 @@ export default async function Diccionario({ searchParams }: { searchParams: Prom
         <header className={`${menu.header} ${styles.header}`}>
           <div className={menu.greeting}>
             <h2>Diccionario</h2>
-            <p className={styles.subtitle}>Repasá las señas de tus unidades aprobadas.</p>
+            <p className={styles.subtitle}>Consultá las señas de tus niveles habilitados.</p>
           </div>
           <div className={menu.profilePlaceholder}><Foto user={user} /></div>
         </header>
@@ -47,9 +47,6 @@ export default async function Diccionario({ searchParams }: { searchParams: Prom
           </main>
         ) : (
           <main className={menu.levels} aria-label="Unidades del diccionario">
-            {!levels.some((level) => level.unlocked) && (
-              <p className={styles.notice}>Todavía no hay unidades habilitadas. Aprobá tu primer examen final para consultar sus señas acá.</p>
-            )}
             {levels.map((level) => (
               <section key={level.id} className={`${menu.levelCard} ${menu[level.colorClass]} ${!level.unlocked ? menu.locked : ""}`}>
                 <div className={menu.levelImagePlaceholder}>
@@ -58,7 +55,7 @@ export default async function Diccionario({ searchParams }: { searchParams: Prom
                 </div>
                 <div className={menu.levelInfo}>
                   <h3>{level.title}</h3>
-                  <p>{level.unlocked ? `${level.signs.length} señas para repasar` : "Aprobá el examen final de esta unidad para habilitarla."}</p>
+                  <p>{level.unlocked ? `${level.signs.length} señas para consultar` : "Aprobá el examen final del nivel anterior para habilitar esta unidad."}</p>
                 </div>
                 {level.unlocked ? (
                   <Link href={`/diccionario?unidad=${level.id}`} className={menu.levelArrow} aria-label={`Ver señas de ${level.title}`}>

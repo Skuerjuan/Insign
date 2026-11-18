@@ -28,8 +28,18 @@ node scripts/verify-learning.cjs
 node scripts/verify-game-lifecycle.cjs
 node scripts/verify-game-layout.cjs
 node scripts/verify-signs.mjs
+node scripts/verify-dictionary.mjs
 npx tsc --noEmit
 ```
+
+### Diccionario
+
+El Diccionario habilita los mismos niveles que Inicio. El nivel 1 está disponible
+desde el comienzo; aprobar el examen del nivel 1 habilita el nivel 2 tanto para
+jugar como para consultar sus señas, y así sucesivamente. Cada unidad habilitada
+muestra todas sus señas, ordenadas alfabéticamente, con búsqueda y reproducción
+individual del video. Consultar el Diccionario no suma puntos ni marca señas como
+aprendidas. Los niveles futuros siguen bloqueados, incluso al acceder por URL.
 
 Los recursos gráficos de la aplicación están en WebP, con transparencia y
 compresión sin pérdida. `scripts/convert-images.mjs` convierte recursos existentes

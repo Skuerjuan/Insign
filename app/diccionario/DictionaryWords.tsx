@@ -32,7 +32,7 @@ export default function DictionaryWords({ signs }: { signs: Sign[] }) {
             </button>
           ))}
         </div>
-      ) : <p className={styles.notice}>{signs.length ? "No encontramos esa seña en esta unidad. Probá con otra palabra." : "Todavía no hay señas vistas en esta unidad."}</p>}
+      ) : <p className={styles.notice}>{signs.length ? "No encontramos esa seña en esta unidad. Probá con otra palabra." : "Todavía no hay señas disponibles en esta unidad."}</p>}
       <dialog ref={dialog} className={styles.dialog} aria-labelledby="sign-title" onClose={() => setSelected(null)} onClick={(event) => { if (event.target === dialog.current) dialog.current?.close(); }}>
         {selected && (
           <div className={styles.player}>

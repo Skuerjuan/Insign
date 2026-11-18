@@ -45,25 +45,42 @@ function load(file) {
   const Page = load(path.join(root, 'app/diccionario/page.tsx')).default;
   const page = (unidad) => Page({ searchParams: Promise.resolve(unidad === undefined ? {} : { unidad }) });
 
-  assert(getDictionaryLevels(profile).every((level) => !level.unlocked && level.signs.length === 0));
-  // Ver señas en juegos o entrenamiento no habilita una unidad pendiente.
-  profile.senas_aprendidas = ['presentacion-1:Bien', 'presentacion-2:Cómo estás'];
-  assert(getDictionaryLevels(profile).every((level) => level.signs.length === 0));
-  await assert.rejects(() => page('1'), /redirect:\/diccionario/);
-  profile.examenes_aprobados = [1];
   let levels = getDictionaryLevels(profile);
-  assert.deepEqual(levels[0].signs.map((sign) => sign.label), ['Bien']);
-  assert.equal(levels[0].signs[0].video, '/Presentacion%201/Bien.mp4');
-  assert.equal(levels[1].unlocked, false);
-  assert.equal(levels[1].signs.length, 0);
+  assert.equal(levels[0].unlocked, true);
+  assert.equal(levels[0].signs.length, getLevelWords(1).length);
+  assert.equal(levels[0].signs.find((sign) => sign.label === 'Bien').video, '/Presentacion%201/Bien.mp4');
+  assert(levels.slice(1).every((level) => !level.unlocked && level.signs.length === 0));
   await page('1');
   await assert.rejects(() => page('2'), /redirect:\/diccionario/);
+
+  // Ver señas en entrenamiento no habilita niveles que siguen bloqueados en Inicio.
+  profile.senas_aprendidas = ['presentacion-2:Cómo estás'];
+  assert.equal(getDictionaryLevels(profile)[1].unlocked, false);
+  await assert.rejects(() => page('2'), /redirect:\/diccionario/);
+
+  // Aprobar el nivel 1 habilita todas las señas del 2, aunque aún no se haya jugado.
+  profile = { examenes_aprobados: [1], senas_aprendidas: [] };
+  levels = getDictionaryLevels(profile);
+  assert.deepEqual(levels.map((level) => level.unlocked), [true, true, false, false, false, false, false, false, false]);
+  assert.equal(levels[1].signs.length, getLevelWords(2).length);
+  await page('2');
+  await assert.rejects(() => page('3'), /redirect:\/diccionario/);
+  assert.deepEqual(profile.senas_aprendidas, [], 'Consultar no marca señas como aprendidas');
   for (const invalid of ['0', '-1', '999', 'abc', '1.5']) await assert.rejects(() => page(invalid), /not-found/);
 
-  // El examen guarda todas las señas de la unidad; comprobar rutas para los nueve niveles.
+  // Cada examen aprobado habilita el siguiente diccionario con la misma regla de Inicio.
+  for (let passed = 0; passed <= LEVELS.length; passed++) {
+    profile = { examenes_aprobados: LEVELS.slice(0, passed).map((level) => level.id), senas_aprendidas: [] };
+    for (const level of getDictionaryLevels(profile)) {
+      assert.equal(level.unlocked, level.id <= Math.min(passed + 1, LEVELS.length));
+      assert.equal(level.signs.length, level.unlocked ? getLevelWords(level.id).length : 0);
+    }
+  }
+
+  // Comprobar rutas para los nueve niveles, sin depender del registro de señas vistas.
   profile = {
     examenes_aprobados: LEVELS.map((level) => level.id),
-    senas_aprendidas: LEVELS.flatMap((level) => getLevelWords(level.id).map((word) => `${level.categoryId}:${word}`)),
+    senas_aprendidas: [],
   };
   levels = getDictionaryLevels(profile);
   for (const level of levels) {
@@ -72,5 +89,5 @@ function load(file) {
     for (const sign of level.signs) assert(fs.existsSync(path.join(root, 'public', decodeURIComponent(sign.video))));
     await page(String(level.id));
   }
-  console.log('OK: Diccionario filtra por examen aprobado y seña vista, bloquea acceso directo a unidades pendientes y resuelve los 419 videos.');
+  console.log('OK: Diccionario habilita todos los videos de los mismos niveles que Inicio, permite consultar el nivel actual y bloquea los futuros; 419 rutas verificadas.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });
