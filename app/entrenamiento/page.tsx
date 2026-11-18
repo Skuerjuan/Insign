@@ -1,3 +1,4 @@
+import DictionaryNavLink from "@/components/DictionaryNavLink";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./styles.module.css";
@@ -43,6 +44,7 @@ export default async function Entrenamiento() {
             <img src="/userwhite.webp" alt="" className={styles.navIcon} />
             Perfil
           </Link>
+          <DictionaryNavLink />
           <Link href="/configuracion" className={styles.source}>
             <img src="/ajustes.webp" alt="" className={styles.navIcon} />
             Configuración

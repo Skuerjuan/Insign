@@ -1,3 +1,4 @@
+import DictionaryNavLink from "@/components/DictionaryNavLink";
 import styles from "./style.module.css";
 import Link from "next/link";
 import EditButton from "@/components/EditButton";
@@ -39,6 +40,7 @@ export default async function Perfil() {
           <img src="/userwhite.webp" alt="" className={styles.userwhite} />
           Perfil
         </Link>
+        <DictionaryNavLink />
         <Link href="/configuracion" className={styles.source}>
           <img src="/ajustes.webp" alt="" className={styles.ajustes} />
           Configuracion

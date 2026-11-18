@@ -484,3 +484,6 @@
     font-size: 16px;
   }
 }
+
+/* Permite acceder a todas las opciones en pantallas de poca altura. */
+.aside { overflow-y: auto; }

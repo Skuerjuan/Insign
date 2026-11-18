@@ -747,3 +747,6 @@ flex: 0 0 auto;
     grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }
+
+/* Permite acceder a todas las opciones en pantallas de poca altura. */
+.aside { overflow-y: auto; }

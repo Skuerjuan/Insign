@@ -593,3 +593,6 @@ flex: 0 0 auto;
     margin-left: 8px;
   }
 }
+
+/* Permite acceder a todas las opciones en pantallas de poca altura. */
+.aside { overflow-y: auto; }

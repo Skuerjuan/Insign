@@ -1,3 +1,4 @@
+import DictionaryNavLink from "@/components/DictionaryNavLink";
 import Link from "next/link";
 import Foto from "@/components/Foto";
 import ConfiguracionPanel from "@/components/ConfiguracionPanel";
@@ -22,6 +23,7 @@ export default async function Configuracion() {
           <Link href="/entrenamiento"><img src="/pesa.webp" alt="" />Entrenamiento</Link>
           <Link href="/progreso"><img src="/premio.webp" alt="" />Progreso</Link>
           <Link href="/perfil"><img src="/userwhite.webp" alt="" />Perfil</Link>
+          <DictionaryNavLink />
           <Link href="/configuracion" className={styles.active}><img src="/ajustes.webp" alt="" />Configuración</Link>
         </nav>
       </aside>

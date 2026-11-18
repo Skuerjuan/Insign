@@ -79,6 +79,6 @@ export async function finishExamRound(id: string, round: number, mistakes: numbe
     await tx.examenes_intentos.update({ where: { id }, data: { ronda: next, estado: passed ? "aprobado" : "activo" } });
     return { passed, failed: false, round: next };
   });
-  for (const path of ["/menu", "/nivel", "/progreso", "/perfil"]) revalidatePath(path, "layout");
+  for (const path of ["/menu", "/nivel", "/progreso", "/perfil", "/diccionario"]) revalidatePath(path, "layout");
   return result;
 }

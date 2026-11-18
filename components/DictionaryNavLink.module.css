@@ -1,0 +1,23 @@
+.link {
+  width: 100%;
+  min-height: 50px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  border-radius: 5px;
+  color: #fff;
+  font-family: var(--font-baloo);
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link img { width: 40px; height: 40px; flex: 0 0 auto; }
+.link:hover, .link.active { background: #facc15; color: #126cff; }
+.link:focus-visible { outline: 3px solid #ffd32a; outline-offset: 3px; }
+
+@media (max-width: 980px) {
+  .link { max-width: 520px; margin-inline: auto; }
+}

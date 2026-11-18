@@ -277,3 +277,6 @@
 .examBar:focus-visible { outline: 3px solid #05215b; outline-offset: 4px; }
 .examBar:hover { filter: brightness(1.06); }
 .examLocked { border-color: #bdc9d8; }
+
+/* Permite acceder a todas las opciones en pantallas de poca altura. */
+.aside { overflow-y: auto; }

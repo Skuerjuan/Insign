@@ -1,3 +1,4 @@
+import DictionaryNavLink from "@/components/DictionaryNavLink";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +54,7 @@ export default async function LevelGamesPage({
           <Link href="/entrenamiento"><Image src="/pesa.webp" alt="" width={40} height={40} />Entrenamiento</Link>
           <Link href="/progreso"><Image src="/premio.webp" alt="" width={40} height={40} />Progreso</Link>
           <Link href="/perfil"><Image src="/userwhite.webp" alt="" width={40} height={40} />Perfil</Link>
+          <DictionaryNavLink />
           <Link href="/configuracion"><Image src="/ajustes.webp" alt="" width={40} height={40} />Configuración</Link>
         </nav>
       </aside>
