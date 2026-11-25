@@ -140,13 +140,21 @@ export default function Home() {
         <Image className={styles.flyingParrotImage} src="/loro-volando.webp" alt="" width={1000} height={1000} priority />
       </aside>
 
-      <section id="contacto" className={styles.contactSection} aria-labelledby="contacto-title">
-        <h2 id="contacto-title">Contacto</h2>
-        <a href="mailto:tobigerman2019@gmail.com">tobigerman2019@gmail.com</a>
-      </section>
-
       <footer className={styles.footer}>
-        <a className={styles.logo} href="#inicio"><span>In</span><strong>Sign</strong></a><p>Jugar, aprender y comunicar</p><span>Lengua de señas argentina - LSA</span>
+        <div className={styles.footerBrand}>
+          <a className={styles.logo} href="#inicio"><span>In</span><strong>Sign</strong></a>
+          <p>Jugar, aprender y comunicar</p>
+          <span>Lengua de señas argentina - LSA</span>
+        </div>
+        <div id="contacto" className={styles.footerGroup}>
+          <h2>Contacto</h2>
+          <a href="mailto:tobigerman2019@gmail.com">tobigerman2019@gmail.com</a>
+        </div>
+        <div className={styles.footerGroup}>
+          <h2>Nuestras redes</h2>
+          <a href="https://www.instagram.com/insign.lsa/" target="_blank" rel="noopener noreferrer">Instagram: @insign.lsa</a>
+          <a href="https://www.linkedin.com/company/insign-lsa/" target="_blank" rel="noopener noreferrer">LinkedIn: Insign-LSA</a>
+        </div>
       </footer>
 
       {videoOpen && (
