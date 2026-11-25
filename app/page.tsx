@@ -140,6 +140,11 @@ export default function Home() {
         <Image className={styles.flyingParrotImage} src="/loro-volando.webp" alt="" width={1000} height={1000} priority />
       </aside>
 
+      <section id="contacto" className={styles.contactSection} aria-labelledby="contacto-title">
+        <h2 id="contacto-title">Contacto</h2>
+        <a href="mailto:tobigerman2019@gmail.com">tobigerman2019@gmail.com</a>
+      </section>
+
       <footer className={styles.footer}>
         <a className={styles.logo} href="#inicio"><span>In</span><strong>Sign</strong></a><p>Jugar, aprender y comunicar</p><span>Lengua de señas argentina - LSA</span>
       </footer>

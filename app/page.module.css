@@ -484,6 +484,33 @@
   font-weight: 800;
   text-align: center;
 }
+.contactSection {
+  padding: 56px 22px;
+  text-align: center;
+  color: #073a8c;
+  background: #eaf8ff;
+}
+.contactSection h2 {
+  margin: 0 0 16px;
+  font-size: clamp(36px,4vw,48px);
+  line-height: 1.1;
+  font-weight: 800;
+}
+.contactSection a {
+  color: #0746a4;
+  font-size: clamp(18px,3vw,24px);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-underline-offset: 5px;
+}
+.contactSection a:hover {
+  color: #126cff;
+}
+.contactSection a:focus-visible {
+  outline: 3px solid #0746a4;
+  outline-offset: 6px;
+  border-radius: 4px;
+}
 .footer {
   min-height: 120px;
   padding: 26px max(3.5vw,28px);
